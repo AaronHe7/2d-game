@@ -36,7 +36,7 @@ class Player:
                 self.vy = 0
             self.on_ground = True
             self.ay = 0
-            self.y = (bottom.get_row_col()['r'] - player.h/tilesize) * 80
+            self.y = (bottom.get_row_col()['r'] - self.h/tilesize) * 80
         if bottom.get_tile() == 0:
             self.ay = gravity
             self.on_ground = False
