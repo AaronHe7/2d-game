@@ -41,14 +41,16 @@ while 1:
 
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_d:
-                player.vx = 5
+                player.vx += 5
             if event.key == pygame.K_a:
-                player.vx = -5
+                player.vx += -5
             if event.key == pygame.K_SPACE and player.on_ground == True:
                 player.vy = 30
         if event.type == pygame.KEYUP:
-            if event.key == pygame.K_d or event.key == pygame.K_a:
-                player.vx = 0
+            if event.key == pygame.K_d:
+                player.vx -= 5
+            if event.key == pygame.K_a:
+                player.vx += 5
 
     for row in range(len(tilemap)):
         for column in range(len(tilemap[row])):
