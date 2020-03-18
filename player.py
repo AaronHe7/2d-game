@@ -20,19 +20,21 @@ class Player:
         right = Coordinate(self.x + self.w, self.y + self.h/2, self.tilemap)
         bottom = Coordinate(self.x + self.w/2, self.y + self.h + 1, self.tilemap)
 
-        if top.get_tile()[0] != 0:
+        if top.get_tile() != 0:
             self.vy = 0
             self.y += 5
-        if left.get_tile()[0] != 0:
+        if left.get_tile() != 0:
             self.vx = 0
             self.x += 5
-        if bottom.get_tile()[0] != 0:
-            self.vy = 0
+        if bottom.get_tile() != 0:
+            if self.on_ground:
+                self.vy = 0
             self.ay = 0
+            self.y = (bottom.get_row_col()['r'] - 2) * 80
             self.on_ground = True
-        if bottom.get_tile()[0] == 0:
+        if bottom.get_tile() == 0:
             self.ay = -1
-        if right.get_tile()[0] != 0:
+        if right.get_tile() != 0:
             self.vx = 0
             self.x -= 5
 
@@ -53,4 +55,9 @@ class Coordinate:
         col = math.floor(self.x/80)
         if row < 0 or row >= len(self.tilemap) or col < 0 or col >= len(self.tilemap[0]):
             return 1
-        return [self.tilemap[math.floor(self.y/80)][math.floor(self.x/80)],[row,col]]
+        return self.tilemap[int(self.y//80)][int(self.x//80)]
+    def get_row_col(self):
+        row = math.floor(self.y/80)
+        col = math.floor(self.x/80)
+        return {'r': row, 'c': col}
+        
