@@ -7,11 +7,11 @@ width, height = 1280, 720
 display = pygame.display.set_mode((width,height))
 
 tilesize = 80
-sky = pygame.Surface((tilesize, tilesize))
+sky = pygame.image.load("sky.png")
 grass_block = pygame.image.load("grass_block.png")
-sky.fill((125, 125, 235))
+dirt_block = pygame.image.load("dirt_block.png")
 
-textures = [sky, grass_block]
+textures = [sky, grass_block, dirt_block]
 tilemap = [[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
 [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
 [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
@@ -19,8 +19,8 @@ tilemap = [[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
 [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
 [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
 [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-[1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1]]
+[1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
+[2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2]]
 
 while 1:
     display.fill((255, 255, 255))
