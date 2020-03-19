@@ -19,30 +19,41 @@ class Player:
         self.x += self.vx
         self.y -= self.vy
         self.vy += self.ay
+        self.on_ground = False
         
-        top = Coordinate(self.x + self.w/2, self.y, self.tilemap)
-        left = Coordinate(self.x, self.y + self.h/2, self.tilemap)
-        right = Coordinate(self.x + self.w, self.y + self.h/2, self.tilemap)
-        bottom = Coordinate(self.x + self.w/2, self.y + self.h + 1, self.tilemap)
+        # Number of hitbox points on each side of the character
+        hitbox_points = 10
+        for i in range(1, hitbox_points):
+            # The coordinates that vary as i varies
+            x_variation_coord = self.x + i * self.w/hitbox_points
+            y_variation_coord = self.y + i * self.h/hitbox_points
+            
+            top = Coordinate(x_variation_coord, self.y, self.tilemap)
+            bottom = Coordinate(x_variation_coord, self.y + self.h, self.tilemap)
+            left = Coordinate(self.x, y_variation_coord, self.tilemap)
+            right = Coordinate(self.x + self.w, y_variation_coord, self.tilemap)
 
-        if top.get_tile() != 0:
-            self.vy = 0
-            self.y += player_speed
-        if left.get_tile() != 0:
-            self.vx = 0
-            self.x += player_speed
-        if bottom.get_tile() != 0:
-            if self.on_ground:
+            
+            
+            if top.get_tile() != 0:
                 self.vy = 0
-            self.on_ground = True
-            self.ay = 0
-            self.y = (bottom.get_row_col()['r'] - self.h/tilesize) * 80
-        if bottom.get_tile() == 0:
+                self.y += player_speed
+            if left.get_tile() != 0:
+                self.vx = 0
+                self.x += player_speed
+            if bottom.get_tile() != 0:
+                if self.on_ground:
+                    self.vy = 0
+                self.on_ground = True
+                self.ay = 0
+                self.y = (bottom.get_row_col()['r'] - self.h/tilesize) * tilesize
+            
+            if right.get_tile() != 0:
+                self.vx = 0
+                self.x -= player_speed
+
+        if not self.on_ground:
             self.ay = gravity
-            self.on_ground = False
-        if right.get_tile() != 0:
-            self.vx = 0
-            self.x -= player_speed
 
         
 
@@ -55,13 +66,13 @@ class Coordinate:
         self.y = y
         self.tilemap = tilemap
     def get_tile(self):
-        row = math.floor(self.y/tilesize)
-        col = math.floor(self.x/tilesize)
+        row = self.y//tilesize
+        col = self.x//tilesize
         if row < 0 or row >= len(self.tilemap) or col < 0 or col >= len(self.tilemap[0]):
             return 1
         return self.tilemap[int(self.y//tilesize)][int(self.x//tilesize)]
     def get_row_col(self):
-        row = math.floor(self.y/tilesize)
-        col = math.floor(self.x/tilesize)
+        row = self.y//tilesize
+        col = self.x//tilesize
         return {'r': row, 'c': col}
         

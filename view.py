@@ -17,24 +17,26 @@ player_model.fill((0, 0, 0))
 while 1:
     display.fill((255, 255, 255))
 
+    keys = pygame.key.get_pressed()
+    if keys[pygame.K_d]:
+        player.vx = player_speed
+    if keys[pygame.K_a]:
+        player.vx = -player_speed
+    if keys[pygame.K_SPACE] and player.on_ground:
+        player.on_ground = False
+        player.vy = player_jump_speed
+                
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             pygame.quit()
             sys.exit()
 
-        if event.type == pygame.KEYDOWN:
-            if event.key == pygame.K_d:
-                player.vx += player_speed
-            if event.key == pygame.K_a:
-                player.vx -= player_speed
-            if event.key == pygame.K_SPACE and player.on_ground == True:
-                player.on_ground = False
-                player.vy = player_jump_speed
+        
         if event.type == pygame.KEYUP:
-            if event.key == pygame.K_d:
-                player.vx -= player_speed
-            if event.key == pygame.K_a:
-                player.vx += player_speed
+            if event.key == pygame.K_d and player.vx > 0:
+                player.vx = 0
+            if event.key == pygame.K_a and player.vx < 0:
+                player.vx = 0
 
     for row in range(len(tilemap)):
         for column in range(len(tilemap[row])):
