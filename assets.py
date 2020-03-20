@@ -2,8 +2,7 @@ import pygame
 
 
 tilesize = 80
-sky = pygame.image.load("sky.png")
-sky = pygame.transform.scale(sky, (tilesize, tilesize))
+sky = pygame.Surface((tilesize, tilesize))
 grass_block = pygame.image.load("grass_block.png")
 grass_block = pygame.transform.scale(grass_block, (tilesize, tilesize))
 dirt_block = pygame.image.load("dirt_block.png")

@@ -15,7 +15,7 @@ player_model.fill((0, 0, 0))
 
 
 while 1:
-    display.fill((255, 255, 255))
+    display.fill((102, 204, 255))
 
     keys = pygame.key.get_pressed()
     if keys[pygame.K_d]:
@@ -40,9 +40,10 @@ while 1:
 
     for row in range(len(tilemap)):
         for column in range(len(tilemap[row])):
-            display.blit(player_model, (player.x, player.y))
-            display.blit(textures[tilemap[row][column]], (column * tilesize, row * tilesize))
+            if tilemap[row][column] != 0:
+                display.blit(textures[tilemap[row][column]], (column * tilesize, row * tilesize))
 
+    display.blit(player_model, (player.x, player.y))
     player.update_position()
     pygame.display.flip()
     clock.tick(fps)
