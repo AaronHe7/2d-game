@@ -17,8 +17,7 @@ player_model.fill((0, 0, 0))
 
 
 while 1:
-    print('x: ' + str(player.x) + ' ' + 'y: ' + str(player.y))
-    display.fill((255, 255, 255))
+    display.fill((102, 204, 255))
 
     keys = pygame.key.get_pressed()
     if keys[pygame.K_d]:
