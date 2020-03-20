@@ -1,8 +1,9 @@
 import sys, pygame
 from player import *
 from assets import *
+from gui import *
 from terrain_gen import *
-import random
+
 
 pygame.init()
 fps = 120
@@ -15,6 +16,7 @@ player = Player(0, -2, tilemap)
 player_model = pygame.Surface((player.w * tilesize, player.h * tilesize))
 player_model.fill((0, 0, 0))
 
+gui = Gui()
 
 while 1:
     display.fill((102, 204, 255))
@@ -53,16 +55,14 @@ while 1:
             if x not in tilemap:
                 tilemap[x] = {}
             if y not in tilemap[x]:
-                if y > 0:
-                    # Dirt
-                    tilemap[x][y] = 2
-                elif y == 0:
-                    # Grass
-                    tilemap[x][y] = 1
-                elif y < 0:
-                    tilemap[x][y] = 0
-            display.blit(textures[tilemap[x][y]], (player_x_display + tilesize * (x - player.x), player_y_display +  tilesize *(y - player.y)))
+                tilemap[x][y] = generate_terrain(x, y)
+            if tilemap[x][y] != 0:
+                display.blit(textures[tilemap[x][y]], (player_x_display + tilesize * (x - player.x), player_y_display +  tilesize *(y - player.y)))
     display.blit(player_model, (player_x_display, player_y_display))
+
+    bar = gui.return_bar(player.hp)
+    for icon in range(10):
+        display.blit(gui_elements[bar[icon]], (icon*21 + 5, 5))
 
     player.update_position()
     pygame.display.flip()

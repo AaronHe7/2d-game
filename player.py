@@ -1,13 +1,15 @@
 import math
-from terrain_gen import *
 from assets import *
+from terrain_gen import *
 
 class Player:
     def __init__(self, x, y, tilemap):
         self.tilemap = tilemap
         # height and width
-        self.h = 2
-        self.w = 1
+        self.hp = 20
+        self.maxhp = 20
+        self.h = 1.8
+        self.w = 0.75
         self.x = x
         self.y = y
         # Velocity
@@ -33,7 +35,7 @@ class Player:
             top = Coordinate(x_variation_coord, self.y, self.tilemap)
             bottom = Coordinate(x_variation_coord, self.y + self.h, self.tilemap)
             left = Coordinate(self.x, y_variation_coord, self.tilemap)
-            right = Coordinate(self.x + self.w - 1, y_variation_coord, self.tilemap)
+            right = Coordinate(self.x + self.w - 1/tilesize, y_variation_coord, self.tilemap)
             
             if top.get_tile() != 0:
                 self.vy = 0
@@ -58,6 +60,10 @@ class Player:
             self.on_ground = True
 
         
+
+
+
+# Helper class
 class Coordinate:
     def __init__(self, x, y, tilemap):
         self.x = x
