@@ -1,7 +1,7 @@
 import pygame
 
 
-tilesize = 80
+tilesize = 60
 guiscale = 20
 sky = pygame.Surface((tilesize, tilesize))
 grass_block = pygame.image.load("grass_block.png")

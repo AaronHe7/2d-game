@@ -6,7 +6,7 @@ from terrain_gen import *
 
 
 pygame.init()
-fps = 120
+fps = 60
 clock = pygame.time.Clock()
 width, height = 1280, 720
 display = pygame.display.set_mode((width,height))
@@ -21,7 +21,13 @@ gui = Gui()
 while 1:
     display.fill((102, 204, 255))
 
+    # Center player
+    player_x_display = width/2 - player.w/2
+    player_y_display = height/2 - player.h/2
+
     keys = pygame.key.get_pressed()
+    mouse = pygame.mouse.get_pressed()
+    
     if keys[pygame.K_d]:
         player.vx = player_speed
     if keys[pygame.K_a]:
@@ -29,6 +35,12 @@ while 1:
     if keys[pygame.K_SPACE] and player.on_ground:
         player.on_ground = False
         player.vy = player_jump_speed
+
+    if mouse[0]:
+        mouse_location = pygame.mouse.get_pos()
+        mousex = player.x + (mouse_location[0] - player_x_display)/tilesize
+        mousey = player.y + (mouse_location[1] - player_y_display)/tilesize
+        tilemap[int(mousex)][int(mousey)] = 0
                 
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
@@ -46,10 +58,7 @@ while 1:
     x_end = int(player.x + ((width/2)//tilesize)) + 10
     y_start = int(player.y - ((height/2)//tilesize)) - 10
     y_end = int(player.y + ((height/2)//tilesize)) + 10
-
-    # Center player
-    player_x_display = width/2 - player.w/2
-    player_y_display = height/2 - player.h/2
+    
     for x in range(x_start, x_end):
         for y in range(y_start, y_end):
             if x not in tilemap:
