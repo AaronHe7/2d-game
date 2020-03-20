@@ -1,6 +1,7 @@
 import sys, pygame
 from player import *
 from assets import *
+from gui import *
 
 pygame.init()
 fps = 120
@@ -13,6 +14,7 @@ player = Player(30, 300, tilemap)
 player_model = pygame.Surface((player.w, player.h))
 player_model.fill((0, 0, 0))
 
+gui = Gui()
 
 while 1:
     display.fill((102, 204, 255))
@@ -43,6 +45,9 @@ while 1:
             if tilemap[row][column] != 0:
                 display.blit(textures[tilemap[row][column]], (column * tilesize, row * tilesize))
 
+    bar = gui.return_bar(player.hp)
+    for icon in range(10):
+        display.blit(gui_elements[bar[icon]], (icon*21 + 5, 5))
     display.blit(player_model, (player.x, player.y))
     player.update_position()
     pygame.display.flip()

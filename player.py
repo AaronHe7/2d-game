@@ -5,6 +5,8 @@ class Player:
     def __init__(self, x, y, tilemap):
         self.tilemap = tilemap
         # height and width
+        self.hp = 20
+        self.maxhp = 20
         self.h = 160
         self.w = 80
         self.x = x
