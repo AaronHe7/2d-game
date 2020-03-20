@@ -1,12 +1,13 @@
 import math
+from terrain_gen import *
 from assets import *
 
 class Player:
     def __init__(self, x, y, tilemap):
         self.tilemap = tilemap
         # height and width
-        self.h = 160
-        self.w = 80
+        self.h = 2
+        self.w = 1
         self.x = x
         self.y = y
         # Velocity
@@ -51,29 +52,29 @@ class Player:
             
         # Player can jump again only if more than 1/5 of the player is touching the ground
         if points_touching_ground >= hitbox_points/5:
-            self.y = (bottom.get_row_col()['r'] - self.h/tilesize) * tilesize
+            self.y = bottom.get_x_y()['y'] - self.h
             self.ay = 0
             self.vy = 0
             self.on_ground = True
 
         
-
-
-
-# Helper class
 class Coordinate:
     def __init__(self, x, y, tilemap):
         self.x = x
         self.y = y
         self.tilemap = tilemap
     def get_tile(self):
-        row = self.y//tilesize
-        col = self.x//tilesize
-        if row < 0 or row >= len(self.tilemap) or col < 0 or col >= len(self.tilemap[0]):
-            return 1
-        return self.tilemap[int(self.y//tilesize)][int(self.x//tilesize)]
-    def get_row_col(self):
-        row = self.y//tilesize
-        col = self.x//tilesize
-        return {'r': row, 'c': col}
+        x = math.floor(self.x)
+        y = math.floor(self.y)
         
+        if x not in self.tilemap or y not in self.tilemap[x]:
+            return generate_terrain(x, y)
+        return self.tilemap[x][y]
+    def get_x_y(self):
+        x = math.floor(self.x)
+        y = math.floor(self.y)
+        
+        return {'x': x, 'y': y}
+
+
+

@@ -10,17 +10,9 @@ dirt_block = pygame.image.load("dirt_block.png")
 dirt_block = pygame.transform.scale(dirt_block, (tilesize, tilesize))
 
 textures = [sky, grass_block, dirt_block]
-tilemap = [[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-[0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0],
-[0,0,0,1,0,1,0,0,0,0,0,0,0,0,0,0],
-[1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
-[2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2]]
+tilemap = {}
 
 
-player_speed = 5
-player_jump_speed = 15
-gravity = -1
+player_speed = 8/tilesize
+player_jump_speed = 15/tilesize
+gravity = -1/tilesize
