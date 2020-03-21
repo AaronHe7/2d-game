@@ -6,8 +6,9 @@ clock = pygame.time.Clock()
 width, height = 1280, 720
 display = pygame.display.set_mode((width,height))
 pygame.display.set_caption("2D Game")
+frame = 0
 
-tilesize = 60
+tilesize = 40
 guiscale = 20
 sky = pygame.Surface((tilesize, tilesize))
 grass_block = pygame.image.load("grass_block.png").convert()
@@ -34,5 +35,5 @@ tilemap = {}
 
 
 player_speed = 5/tilesize
-player_jump_speed = 15/tilesize
+player_jump_speed = 10/tilesize
 gravity = -1/tilesize

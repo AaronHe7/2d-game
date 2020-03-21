@@ -11,6 +11,7 @@ player_model.fill((0, 0, 0))
 gui = Gui()
 
 while 1:
+
     display.fill((102, 204, 255))
 
     # Center player
@@ -27,7 +28,7 @@ while 1:
     if keys[pygame.K_LSHIFT] and tilemap[math.floor(player.x + player.vx + player.w/2)][math.floor(player.y + player.h)] == 0:
         player.vx = 0
     
-    if keys[pygame.K_SPACE] and player.on_ground:
+    if keys[pygame.K_SPACE] and player.on_ground and frame%25 == 0:
         player.on_ground = False
         player.vy = player_jump_speed
 
@@ -67,6 +68,9 @@ while 1:
     for icon in range(10):
         display.blit(gui_elements[bar[icon]], (icon*21 + 5, 5))
 
+    frame += 1
+    if frame > 10000:
+        frame = 0
     player.update_position()
     pygame.display.flip()
     clock.tick(fps)
