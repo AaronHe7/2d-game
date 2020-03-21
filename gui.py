@@ -5,11 +5,14 @@ class Gui:
         pass
     def return_bar(self, hp):
         bar = []
-        for i in range(1,11):
-            if hp >= i * 2:
+        current = 0
+        for i in range(1,12):
+            if hp >= current:
                 bar.append(2)
-            elif i < hp < i*2:
+            elif current - 2 < hp < current:
                 bar.append(1)
             else:
                 bar.append(0)
+            current += 2
+        bar.pop(0)
         return bar

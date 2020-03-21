@@ -5,12 +5,13 @@ from gui import *
 from terrain_gen import *
 
 player = Player(0, -2, tilemap)
-player_model = pygame.Surface((player.w * tilesize, player.h * tilesize))
-player_model.fill((0, 0, 0))
+player_model = player_animations[0]
 
 gui = Gui()
+cell = []
 
 while 1:
+    print(clock.get_fps())
     display.fill((102, 204, 255))
     # Center player
     player_x_display = width/2 - player.w/2
@@ -23,15 +24,6 @@ while 1:
         player.vx = player_speed
     if keys[pygame.K_a]:
         player.vx = -player_speed
-    if keys[pygame.K_SPACE] and player.on_ground and frame%25 == 0:
-        player.on_ground = False
-        player.vy = player_jump_speed
-
-    if mouse[0]:
-        mouse_location = pygame.mouse.get_pos()
-        mousex = player.x + (mouse_location[0] - player_x_display)/tilesize
-        mousey = player.y + (mouse_location[1] - player_y_display)/tilesize
-        tilemap[math.floor(mousex)][math.floor(mousey)] = 0
                 
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
@@ -44,6 +36,18 @@ while 1:
             if event.key == pygame.K_a and player.vx < 0:
                 player.vx = 0
 
+        if event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_SPACE and player.on_ground:
+                player.on_ground = False
+                player.vy = player_jump_speed
+
+        if event.type == pygame.MOUSEBUTTONDOWN:
+            if event.button == 1:
+                mouse_location = pygame.mouse.get_pos()
+                mousex = player.x + (mouse_location[0] - player_x_display)/tilesize
+                mousey = player.y + (mouse_location[1] - player_y_display)/tilesize
+                tilemap[math.floor(mousex)][math.floor(mousey)] = 0
+
     x_start = int(player.x - ((width/2)//tilesize)) - 2
     x_end = int(player.x + ((width/2)//tilesize)) + 2
     y_start = int(player.y - ((height/2)//tilesize)) - 2
@@ -54,7 +58,7 @@ while 1:
             if x not in tilemap:
                 tilemap[x] = {}
             if y not in tilemap[x]:
-                tilemap[x][y] = generate_terrain(x, y)
+                tilemap[x][y] = generate_terrain(x, y, cell)
             if tilemap[x][y] != 0:
                 display.blit(textures[tilemap[x][y]], (player_x_display + tilesize * (x - player.x), player_y_display +  tilesize *(y - player.y)))
     display.blit(player_model, (player_x_display, player_y_display))

@@ -9,7 +9,7 @@ class Player:
         self.hp = 20
         self.maxhp = 20
         self.h = 1.8
-        self.w = 0.75
+        self.w = 0.85
         self.x = x
         self.y = y
         # Velocity
@@ -27,22 +27,22 @@ class Player:
         
         # Number of hitbox points on each side of the character
         hitbox_points = 20
-        for i in range(1, hitbox_points):
+        for i in range(4, hitbox_points-4):
             # The coordinates that vary as i varies
             x_variation_coord = self.x + i * self.w/hitbox_points
             y_variation_coord = self.y + i * self.h/hitbox_points
             
             top = Coordinate(x_variation_coord, self.y, self.tilemap)
             bottom = Coordinate(x_variation_coord, self.y + self.h, self.tilemap)
-            left = Coordinate(self.x, y_variation_coord, self.tilemap)
+            left = Coordinate(self.x + 1/tilesize, y_variation_coord, self.tilemap)
             right = Coordinate(self.x + self.w - 1/tilesize, y_variation_coord, self.tilemap)
-            
-            if top.get_tile() != 0:
-                self.vy = 0
-                self.y += player_speed
+
             if left.get_tile() != 0:
                 self.vx = 0
                 self.x += player_speed
+            if top.get_tile() != 0:
+                self.vy = 0
+                self.y += player_speed
             if bottom.get_tile() != 0:                   
                 points_touching_ground += 1
             if right.get_tile() != 0:
