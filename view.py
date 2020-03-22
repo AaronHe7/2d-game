@@ -10,7 +10,6 @@ gui = Gui()
 cell = []
 
 while 1:
-    print(player.vy)
     if player.y > 2:
         display.fill((75,75,85))
     else:
@@ -82,7 +81,7 @@ while 1:
     elif player.vy < 0:
         player.direction[1] = -1
 
-    player_model = player_models[animations.checkframe(player.direction, player.handstate, frame, [player.vx, player.vy])]
+    player_model = player_models[animations.checkframe(player.direction, player.handstate, rframe, [player.vx, player.vy])]
     display.blit(player_model, (player_x_display, player_y_display))
 
     bar = gui.return_bar(player.hp)
@@ -90,8 +89,11 @@ while 1:
         display.blit(gui_elements[bar[icon]], (icon*21 + 5, 5))
 
     frame += 1
+    rframe += 1
     if frame > 60:
         frame = 0
+    if rframe > 15:
+        rframe = 0
     player.update_position()
     pygame.display.flip()
     clock.tick(fps)

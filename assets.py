@@ -7,6 +7,7 @@ width, height = 1280, 720
 display = pygame.display.set_mode((width,height), pygame.HWSURFACE | pygame.FULLSCREEN)
 pygame.display.set_caption("2D Game")
 frame = 0
+rframe = 0
 tilesize = 40
 guiscale = 20
 
