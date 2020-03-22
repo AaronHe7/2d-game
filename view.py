@@ -11,7 +11,7 @@ gui = Gui()
 cell = []
 
 while 1:
-    print(clock.get_fps())
+    print(player.vy)
     display.fill((102, 204, 255))
     # Center player
     player_x_display = width/2 - player.w/2
@@ -21,17 +21,16 @@ while 1:
     mouse = pygame.mouse.get_pressed()
     
     if keys[pygame.K_d]:
-        player.vx = player_speed
+        player.vx = player_speed * player.vxmultiplier
     if keys[pygame.K_a]:
-        player.vx = -player_speed
-    if keys[pygame.K_LSHIFT] and tilemap[math.floor(player.x + player.vx + player.w/2)][math.floor(player.y + player.h)] == 0:
-        player.vx = 0
-    
-    if keys[pygame.K_SPACE] and player.on_ground and frame%25 == 0:
-        player.on_ground = False
-        player.vy = player_jump_speed
-
-
+        player.vx = -player_speed * player.vxmultiplier
+        
+    if keys[pygame.K_LSHIFT]:
+        player.vxmultiplier = 0.5
+        if tilemap[math.floor(player.x + player.vx + player.w/2)][math.floor(player.y + player.h)] == 0:
+            player.vx = 0
+    else:
+        player.vxmultiplier = 1
                 
     for event in pygame.event.get():
         if event.type == pygame.QUIT:

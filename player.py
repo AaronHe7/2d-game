@@ -15,6 +15,7 @@ class Player:
         # Velocity
         self.vx = 0
         self.vy = 0
+        self.vxmultiplier = 0.5
         # Acceleration
         self.ay = 0
         self.on_ground = False
@@ -34,6 +35,10 @@ class Player:
             
             left = Coordinate(self.x + 1/tilesize, y_variation_coord, self.tilemap)
             right = Coordinate(self.x + self.w - 1/tilesize, y_variation_coord, self.tilemap)
+            x_variation_coord = self.x + i * self.w/hitbox_points
+            y_variation_coord = self.y + i * self.h/hitbox_points
+            top = Coordinate(x_variation_coord, self.y, self.tilemap)
+            bottom = Coordinate(x_variation_coord, self.y + self.h, self.tilemap)
             
             if top.get_tile() != 0:
                 self.vy = 0
@@ -45,13 +50,11 @@ class Player:
             if right.get_tile() != 0:
                 self.x -= player_speed
                 self.vx = 0
-            x_variation_coord = self.x + i * self.w/hitbox_points
-            y_variation_coord = self.y + i * self.h/hitbox_points
-            top = Coordinate(x_variation_coord, self.y, self.tilemap)
-            bottom = Coordinate(x_variation_coord, self.y + self.h, self.tilemap)
 
             if bottom.get_tile() != 0:                   
                 points_touching_ground += 1
+                if self.vy <= -0.5:
+                    self.hp -= math.floor(2 * (3 * (0.25*(self.vy**2))))/2
             if top.get_tile() != 0:
                 self.vy = 0
                 self.y += player_speed
