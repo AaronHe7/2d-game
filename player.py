@@ -19,39 +19,42 @@ class Player:
         # Acceleration
         self.ay = 0
         self.on_ground = False
+        # Other Variables for Animation
+        self.direction = [0, 0]
+        self.handstate = 0
     def update_position(self):
         self.x += self.vx
         self.y -= self.vy
         self.vy += self.ay
         self.on_ground = False
         points_touching_ground = 0
-        
+
         # Number of hitbox points on each side of the character
         hitbox_points = 20
-        for i in range(4, hitbox_points-4):
+        for i in range(2, hitbox_points-4):
             # The coordinates that vary as i varies
             x_variation_coord = self.x + i * self.w/hitbox_points
             y_variation_coord = self.y + i * self.h/hitbox_points
-            
+
             left = Coordinate(self.x + 1/tilesize, y_variation_coord, self.tilemap)
             right = Coordinate(self.x + self.w - 1/tilesize, y_variation_coord, self.tilemap)
             x_variation_coord = self.x + i * self.w/hitbox_points
             y_variation_coord = self.y + i * self.h/hitbox_points
             top = Coordinate(x_variation_coord, self.y, self.tilemap)
             bottom = Coordinate(x_variation_coord, self.y + self.h, self.tilemap)
-            
+
             if top.get_tile() != 0:
                 self.vy = 0
                 self.y += player_speed
             if left.get_tile() != 0:
-                self.x += player_speed
-                self.vx = 0
-                
-            if right.get_tile() != 0:
-                self.x -= player_speed
+                self.x += player_speed * self.vxmultiplier
                 self.vx = 0
 
-            if bottom.get_tile() != 0:                   
+            if right.get_tile() != 0:
+                self.x -= player_speed * self.vxmultiplier
+                self.vx = 0
+
+            if bottom.get_tile() != 0:
                 points_touching_ground += 1
                 if self.vy <= -0.5:
                     self.hp -= (math.floor(2 * (5 * (0.25*(self.vy**2)))))/2
@@ -61,7 +64,7 @@ class Player:
 
         if not self.on_ground:
             self.ay = gravity
-            
+
         # Player can jump again only if more than 1/10 of the player is touching the ground
         if points_touching_ground >= hitbox_points/10:
             self.y = bottom.get_x_y()['y'] - self.h
@@ -69,7 +72,7 @@ class Player:
             self.vy = 0
             self.on_ground = True
 
-        
+
 
 
 
@@ -82,15 +85,12 @@ class Coordinate:
     def get_tile(self):
         x = math.floor(self.x)
         y = math.floor(self.y)
-        
+
         if x not in self.tilemap or y not in self.tilemap[x]:
             return generate_terrain(x, y)
         return self.tilemap[x][y]
     def get_x_y(self):
         x = math.floor(self.x)
         y = math.floor(self.y)
-        
+
         return {'x': x, 'y': y}
-
-
-

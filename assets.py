@@ -9,6 +9,7 @@ pygame.display.set_caption("2D Game")
 frame = 0
 tilesize = 40
 guiscale = 20
+
 sky = pygame.Surface((tilesize, tilesize))
 grass_block = pygame.image.load("grass_block.png").convert()
 grass_block = pygame.transform.scale(grass_block, (tilesize, tilesize))
@@ -28,11 +29,26 @@ half_heart_icon = pygame.transform.scale(half_heart_icon, (guiscale, guiscale))
 empty_heart_icon = pygame.image.load("empty_heart.png").convert_alpha()
 empty_heart_icon = pygame.transform.scale(empty_heart_icon, (guiscale, guiscale))
 
-player_idle0 = pygame.image.load("player_idle0.png").convert_alpha()
-player_idle0 = pygame.transform.scale(player_idle0, (int(0.85 * tilesize), int(1.8 * tilesize)))
+player_idle0_right = pygame.image.load("player_idle0_right.png").convert_alpha()
+player_idle0_right = pygame.transform.scale(player_idle0_right, (int(0.85 * tilesize), int(1.8 * tilesize)))
+player_idle0_left = pygame.image.load("player_idle0_left.png").convert_alpha()
+player_idle0_left = pygame.transform.scale(player_idle0_left, (int(0.85 * tilesize), int(1.8 * tilesize)))
+player_run0_right = pygame.image.load("player_run0_right.png").convert_alpha()
+player_run0_right = pygame.transform.scale(player_run0_right, (int(0.85 * tilesize), int(1.8 * tilesize)))
+player_run0_left = pygame.image.load("player_run0_left.png").convert_alpha()
+player_run0_left = pygame.transform.scale(player_run0_left, (int(0.85 * tilesize), int(1.8 * tilesize)))
+player_falling_left = pygame.image.load("player_falling_left.png").convert_alpha()
+player_falling_left = pygame.transform.scale(player_falling_left, (int(0.85 * tilesize), int(1.8 * tilesize)))
+player_falling_right = pygame.image.load("player_falling_right.png").convert_alpha()
+player_falling_right = pygame.transform.scale(player_falling_right, (int(0.85 * tilesize), int(1.8 * tilesize)))
 
-player_animations = []
-player_animations.append(player_idle0)
+player_models = []
+player_models.append(player_idle0_left) # 0
+player_models.append(player_idle0_right) # 1
+player_models.append(player_run0_left) # 2
+player_models.append(player_run0_right) # 3
+player_models.append(player_falling_left) # 4
+player_models.append(player_falling_right) # 5
 
 textures = [sky, grass_block, dirt_block, wood_block, leaves_block, stone_block]
 gui_elements = [empty_heart_icon, half_heart_icon, heart_icon]
