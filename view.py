@@ -24,6 +24,14 @@ while 1:
         player.vx = player_speed
     if keys[pygame.K_a]:
         player.vx = -player_speed
+    if keys[pygame.K_LSHIFT] and tilemap[math.floor(player.x + player.vx + player.w/2)][math.floor(player.y + player.h)] == 0:
+        player.vx = 0
+    
+    if keys[pygame.K_SPACE] and player.on_ground and frame%25 == 0:
+        player.on_ground = False
+        player.vy = player_jump_speed
+
+
                 
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
