@@ -90,7 +90,7 @@ while 1:
         display.blit(gui_elements[bar[icon]], (icon*21 + 5, 5))
 
     frame += 1
-    if frame > 120:
+    if frame > 60:
         frame = 0
     player.update_position()
     pygame.display.flip()

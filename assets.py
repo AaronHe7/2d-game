@@ -41,6 +41,15 @@ player_falling_left = pygame.image.load("player_falling_left.png").convert_alpha
 player_falling_left = pygame.transform.scale(player_falling_left, (int(0.85 * tilesize), int(1.8 * tilesize)))
 player_falling_right = pygame.image.load("player_falling_right.png").convert_alpha()
 player_falling_right = pygame.transform.scale(player_falling_right, (int(0.85 * tilesize), int(1.8 * tilesize)))
+player_run1_right = pygame.image.load("player_run1_right.png").convert_alpha()
+player_run1_right = pygame.transform.scale(player_run1_right, (int(0.85 * tilesize), int(1.8 * tilesize)))
+player_run1_left = pygame.image.load("player_run1_left.png").convert_alpha()
+player_run1_left = pygame.transform.scale(player_run1_left, (int(0.85 * tilesize), int(1.8 * tilesize)))
+player_run2_right = pygame.image.load("player_run2_right.png").convert_alpha()
+player_run2_right = pygame.transform.scale(player_run2_right, (int(0.85 * tilesize), int(1.8 * tilesize)))
+player_run2_left = pygame.image.load("player_run2_left.png").convert_alpha()
+player_run2_left = pygame.transform.scale(player_run2_left, (int(0.85 * tilesize), int(1.8 * tilesize)))
+
 
 player_models = []
 player_models.append(player_idle0_left) # 0
@@ -49,6 +58,10 @@ player_models.append(player_run0_left) # 2
 player_models.append(player_run0_right) # 3
 player_models.append(player_falling_left) # 4
 player_models.append(player_falling_right) # 5
+player_models.append(player_run1_left) # 6
+player_models.append(player_run1_right) # 7
+player_models.append(player_run2_left) # 8
+player_models.append(player_run2_right) # 9
 
 textures = [sky, grass_block, dirt_block, wood_block, leaves_block, stone_block]
 gui_elements = [empty_heart_icon, half_heart_icon, heart_icon]
