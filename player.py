@@ -54,7 +54,7 @@ class Player:
             if bottom.get_tile() != 0:                   
                 points_touching_ground += 1
                 if self.vy <= -0.5:
-                    self.hp -= math.floor(2 * (3 * (0.25*(self.vy**2))))/2
+                    self.hp -= (math.floor(2 * (5 * (0.25*(self.vy**2)))))/2
             if top.get_tile() != 0:
                 self.vy = 0
                 self.y += player_speed
