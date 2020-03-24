@@ -22,7 +22,10 @@ class Player:
         # Other Variables for Animation
         self.direction = [0, 0]
         self.handstate = 0
+        # Possession
+        self.inventory = [[0,0,0,0,0],[0,0,0,0,0],[0,0,0,0,0],[0,0,0,0,0]]
     def update_position(self):
+        print(self.vy)
         self.x += self.vx
         self.y -= self.vy
         self.vy += self.ay
@@ -31,7 +34,7 @@ class Player:
 
         # Number of hitbox points on each side of the character
         hitbox_points = 20
-        for i in range(2, hitbox_points-4):
+        for i in range(3, hitbox_points-3):
             # The coordinates that vary as i varies
             x_variation_coord = self.x + i * self.w/hitbox_points
             y_variation_coord = self.y + i * self.h/hitbox_points
@@ -56,8 +59,6 @@ class Player:
 
             if bottom.get_tile() != 0:
                 points_touching_ground += 1
-                if self.vy <= -0.5:
-                    self.hp -= (math.floor(2 * (5 * (0.25*(self.vy**2)))))/2
             if top.get_tile() != 0:
                 self.vy = 0
                 self.y += player_speed
@@ -67,13 +68,13 @@ class Player:
 
         # Player can jump again only if more than 1/10 of the player is touching the ground
         if points_touching_ground >= hitbox_points/10:
+            if self.vy <= -0.5:
+                self.hp -= (math.floor(-12 * self.vy - 4))
+                self.vy = 0
             self.y = bottom.get_x_y()['y'] - self.h
             self.ay = 0
             self.vy = 0
             self.on_ground = True
-
-
-
 
 
 # Helper class

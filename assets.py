@@ -8,6 +8,7 @@ display = pygame.display.set_mode((width,height), pygame.HWSURFACE | pygame.FULL
 pygame.display.set_caption("2D Game")
 frame = 0
 rframe = 0
+maxrframe = 30
 tilesize = 40
 guiscale = 20
 
@@ -51,6 +52,8 @@ player_run2_right = pygame.transform.scale(player_run2_right, (int(0.85 * tilesi
 player_run2_left = pygame.image.load("player_run2_left.png").convert_alpha()
 player_run2_left = pygame.transform.scale(player_run2_left, (int(0.85 * tilesize), int(1.8 * tilesize)))
 
+wooden_pickaxe = pygame.image.load("wooden_pickaxe.png").convert_alpha()
+wooden_pickaxe = pygame.transform.scale(wooden_pickaxe, (tilesize, tilesize))
 
 player_models = []
 player_models.append(player_idle0_left) # 0
@@ -63,6 +66,9 @@ player_models.append(player_run1_left) # 6
 player_models.append(player_run1_right) # 7
 player_models.append(player_run2_left) # 8
 player_models.append(player_run2_right) # 9
+
+item_models = []
+item_models.append(wooden_pickaxe)
 
 textures = [sky, grass_block, dirt_block, wood_block, leaves_block, stone_block]
 gui_elements = [empty_heart_icon, half_heart_icon, heart_icon]
