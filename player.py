@@ -64,7 +64,7 @@ class Player:
         # Player can jump again only if more than 1/10 of the player is touching the ground
         if points_touching_ground >= hitbox_points/10:
             if self.vy <= -0.5:
-                self.hp -= (math.floor(-12 * self.vy - 4))
+                self.hp -= (math.floor(-12 * self.vy - 5))
                 self.vy = 0
             self.y = bottom[1] - self.h
             self.ay = 0

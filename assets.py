@@ -12,6 +12,8 @@ else:
 pygame.display.set_caption("2D Game")
 frame = 0
 rframe = 0
+iframe = 0
+last_jump_frame = 0
 maxrframe = 30
 tilesize = 40
 guiscale = 20

@@ -20,7 +20,7 @@ while 1:
 
     keys = pygame.key.get_pressed()
     mouse = pygame.mouse.get_pressed()
-
+    
     if keys[pygame.K_d]:
         player.vx = player_speed
     if keys[pygame.K_a]:
@@ -29,6 +29,11 @@ while 1:
         player.vxmultiplier = 0.5
         if tilemap[math.floor(player.x + player.vx + player.w/2)][math.floor(player.y + player.h)] == 0 and player.on_ground:
             player.vx = 0
+    if keys[pygame.K_SPACE] and player.on_ground and abs(frame - last_jump_frame) > 1/2 * fps:
+        last_jump_frame = frame
+        player.on_ground = False
+        player.vy = player_jump_speed
+             
     else:
         player.vxmultiplier = 1
 
@@ -53,9 +58,7 @@ while 1:
                 player.vx = 0
 
         if event.type == pygame.KEYDOWN:
-            if event.key == pygame.K_SPACE and player.on_ground:
-                player.on_ground = False
-                player.vy = player_jump_speed
+            pass
 
     x_start = int(player.x - ((width/2)//tilesize)) - 2
     x_end = int(player.x + ((width/2)//tilesize)) + 2
@@ -95,8 +98,10 @@ while 1:
 
     frame += 1
     rframe += 1
-    if frame > 60:
-        frame = 0
+    iframe +=1
+
+    if iframe > 60:
+        iframe = 0
     if rframe > maxrframe:
         rframe = 0
     player.update_position()
