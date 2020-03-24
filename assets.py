@@ -11,24 +11,21 @@ else:
     display = pygame.display.set_mode((width,height))
 pygame.display.set_caption("2D Game")
 frame = 0
-rframe = 0
-iframe = 0
 last_jump_frame = 0
 maxrframe = 30
 tilesize = 40
 guiscale = 20
 
+def load_block(block_name):
+    block = pygame.image.load('blocks/' + block_name + '.png').convert()
+    return pygame.transform.scale(block, (tilesize, tilesize))
+
 sky = pygame.Surface((tilesize, tilesize))
-grass_block = pygame.image.load("grass_block.png").convert()
-grass_block = pygame.transform.scale(grass_block, (tilesize, tilesize))
-dirt_block = pygame.image.load("dirt_block.png").convert()
-dirt_block = pygame.transform.scale(dirt_block, (tilesize, tilesize))
-wood_block = pygame.image.load("wood_block.png").convert()
-wood_block = pygame.transform.scale(wood_block, (tilesize, tilesize))
-leaves_block = pygame.image.load("leaves_block.png").convert()
-leaves_block = pygame.transform.scale(leaves_block, (tilesize, tilesize))
-stone_block = pygame.image.load("stone_block.png").convert()
-stone_block = pygame.transform.scale(stone_block, (tilesize, tilesize))
+grass_block = load_block('grass_block')
+dirt_block = load_block('dirt_block')
+wood_block = load_block('wood_block')
+leaves_block = load_block('leaves_block')
+stone_block = load_block('stone_block')
 
 heart_icon = pygame.image.load("heart.png").convert_alpha()
 heart_icon = pygame.transform.scale(heart_icon, (guiscale, guiscale))
@@ -65,38 +62,11 @@ player_idle1_left = pygame.transform.scale(player_idle1_left, (int(0.85 * tilesi
 wooden_pickaxe = pygame.image.load("wooden_pickaxe.png").convert_alpha()
 wooden_pickaxe = pygame.transform.scale(wooden_pickaxe, (tilesize, tilesize))
 
-breaking0 = pygame.image.load("breaking0.png").convert_alpha()
-breaking0 = pygame.transform.scale(breaking0, (tilesize, tilesize))
-breaking1 = pygame.image.load("breaking1.png").convert_alpha()
-breaking1 = pygame.transform.scale(breaking1, (tilesize, tilesize))
-breaking2 = pygame.image.load("breaking2.png").convert_alpha()
-breaking2 = pygame.transform.scale(breaking2, (tilesize, tilesize))
-breaking3 = pygame.image.load("breaking3.png").convert_alpha()
-breaking3 = pygame.transform.scale(breaking3, (tilesize, tilesize))
-breaking4 = pygame.image.load("breaking4.png").convert_alpha()
-breaking4 = pygame.transform.scale(breaking4, (tilesize, tilesize))
-breaking5 = pygame.image.load("breaking5.png").convert_alpha()
-breaking5 = pygame.transform.scale(breaking5, (tilesize, tilesize))
-breaking6 = pygame.image.load("breaking6.png").convert_alpha()
-breaking6 = pygame.transform.scale(breaking6, (tilesize, tilesize))
-breaking7 = pygame.image.load("breaking7.png").convert_alpha()
-breaking7 = pygame.transform.scale(breaking7, (tilesize, tilesize))
-breaking8 = pygame.image.load("breaking8.png").convert_alpha()
-breaking8 = pygame.transform.scale(breaking8, (tilesize, tilesize))
-breaking9 = pygame.image.load("breaking9.png").convert_alpha()
-breaking9 = pygame.transform.scale(breaking9, (tilesize, tilesize))
-
 breaking_models = []
-breaking_models.append(breaking0)
-breaking_models.append(breaking1)
-breaking_models.append(breaking2)
-breaking_models.append(breaking3)
-breaking_models.append(breaking4)
-breaking_models.append(breaking5)
-breaking_models.append(breaking6)
-breaking_models.append(breaking7)
-breaking_models.append(breaking8)
-breaking_models.append(breaking9)
+for i in range(10):
+    breaking_model = pygame.image.load("blocks/breaking" + str(i) + ".png").convert_alpha()
+    breaking_model = pygame.transform.scale(breaking_model, (tilesize, tilesize))
+    breaking_models.append(breaking_model)
 
 player_models = []
 player_models.append(player_idle0_left) # 0
@@ -127,9 +97,7 @@ textures.append(stone_block) # 5
 gui_elements = [empty_heart_icon, half_heart_icon, heart_icon]
 
 
-
 tilemap = {}
-
 
 player_speed = 5/tilesize
 player_jump_speed = 9/tilesize

@@ -89,7 +89,7 @@ while 1:
     elif player.vy < 0:
         player.direction[1] = -1
 
-    player_model = player_models[animations.checkframe(player.direction, player.handstate, rframe, [player.vx, player.vy], frame, maxrframe)]
+    player_model = player_models[animations.checkframe(player.direction, player.handstate, frame % maxrframe, [player.vx, player.vy], frame % 60, maxrframe)]
     display.blit(player_model, (int(player_x_display), int(player_y_display)))
 
     bar = gui.return_bar(player.hp)
@@ -97,13 +97,7 @@ while 1:
         display.blit(gui_elements[bar[icon]], (icon*21 + 5, 5))
 
     frame += 1
-    rframe += 1
-    iframe +=1
 
-    if iframe > 60:
-        iframe = 0
-    if rframe > maxrframe:
-        rframe = 0
     player.update_position()
     pygame.display.flip()
     clock.tick(fps)
