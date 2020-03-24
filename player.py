@@ -57,9 +57,6 @@ class Player:
 
             if tilemap[bottom[0]][bottom[1]] != 0:
                 points_touching_ground += 1
-            if top.get_tile() != 0:
-                self.vy = 0
-                self.y += player_speed
 
         if not self.on_ground:
             self.ay = gravity
@@ -67,9 +64,9 @@ class Player:
         # Player can jump again only if more than 1/10 of the player is touching the ground
         if points_touching_ground >= hitbox_points/10:
             if self.vy <= -0.5:
-                self.hp -= (math.floor(-12 * self.vy - 4))
+                self.hp -= (math.floor(-12 * self.vy - 5))
                 self.vy = 0
-            self.y = bottom.get_x_y()['y'] - self.h
+            self.y = bottom[1] - self.h
             self.ay = 0
             self.vy = 0
             self.on_ground = True
