@@ -27,7 +27,7 @@ while 1:
         player.vx = -player_speed
     if keys[pygame.K_LSHIFT] and player.on_ground:
         player.vxmultiplier = 0.5
-        if tilemap[math.floor(player.x + player.vx + player.w/2)][math.floor(player.y + player.h)] == 0:
+        if tilemap[math.floor(player.x + player.vx + player.w/2)][math.floor(player.y + player.h)] == 0 and player.on_ground:
             player.vx = 0
     else:
         player.vxmultiplier = 1
@@ -67,7 +67,7 @@ while 1:
             if y not in tilemap[x]:
                 tilemap[x][y] = generate_terrain(x, y, cell)
             if tilemap[x][y] != 0:
-                display.blit(textures[tilemap[x][y]], (player_x_display + tilesize * (x - player.x), player_y_display +  tilesize *(y - player.y)))
+                display.blit(textures[tilemap[x][y]], (int(player_x_display + tilesize * (x - player.x)), int(player_y_display +  tilesize *(y - player.y))))
 
     if player.vx > 0:
         player.direction[0] = 1
@@ -80,8 +80,8 @@ while 1:
     elif player.vy < 0:
         player.direction[1] = -1
 
-    player_model = player_models[animations.checkframe(player.direction, player.handstate, rframe, [player.vx, player.vy])]
-    display.blit(player_model, (player_x_display, player_y_display))
+    player_model = player_models[animations.checkframe(player.direction, player.handstate, rframe, [player.vx, player.vy], frame, maxrframe)]
+    display.blit(player_model, (int(player_x_display), int(player_y_display)))
 
     bar = gui.return_bar(player.hp)
     for icon in range(10):
@@ -91,7 +91,7 @@ while 1:
     rframe += 1
     if frame > 60:
         frame = 0
-    if rframe > 15:
+    if rframe > maxrframe:
         rframe = 0
     player.update_position()
     pygame.display.flip()
