@@ -32,6 +32,15 @@ while 1:
     else:
         player.vxmultiplier = 1
 
+    if mouse[0]:
+        mouse_location = pygame.mouse.get_pos()
+        mousex = player.x + (mouse_location[0] - player_x_display)/tilesize
+        mousey = player.y + (mouse_location[1] - player_y_display)/tilesize
+        if tilemap[math.floor(mousex)][math.floor(mousey)].durability > 0:
+            tilemap[math.floor(mousex)][math.floor(mousey)].durability -= 1
+        else:
+            tilemap[math.floor(mousex)][math.floor(mousey)] = generate_terrain(removal = 1)
+
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             pygame.quit()
@@ -48,13 +57,6 @@ while 1:
                 player.on_ground = False
                 player.vy = player_jump_speed
 
-        if event.type == pygame.MOUSEBUTTONDOWN:
-            if event.button == 1:
-                mouse_location = pygame.mouse.get_pos()
-                mousex = player.x + (mouse_location[0] - player_x_display)/tilesize
-                mousey = player.y + (mouse_location[1] - player_y_display)/tilesize
-                tilemap[math.floor(mousex)][math.floor(mousey)] = 0
-
     x_start = int(player.x - ((width/2)//tilesize)) - 2
     x_end = int(player.x + ((width/2)//tilesize)) + 2
     y_start = int(player.y - ((height/2)//tilesize)) - 2
@@ -66,8 +68,12 @@ while 1:
                 tilemap[x] = {}
             if y not in tilemap[x]:
                 tilemap[x][y] = generate_terrain(x, y, cell)
-            if tilemap[x][y] != 0:
-                display.blit(textures[tilemap[x][y]], (int(player_x_display + tilesize * (x - player.x)), int(player_y_display +  tilesize *(y - player.y))))
+            if tilemap[x][y].id != 0:
+                display.blit(textures[tilemap[x][y].id], (int(player_x_display + tilesize * (x - player.x)), int(player_y_display +  tilesize *(y - player.y))))
+                if tilemap[x][y].durability < tilemap[x][y].max_durability:
+                    durability_index = 9 - (9 * tilemap[x][y].durability // tilemap[x][y].max_durability)
+                    display.blit(breaking_models[durability_index], (int(player_x_display + tilesize * (x - player.x)), int(player_y_display +  tilesize *(y - player.y))))
+                    
 
     if player.vx > 0:
         player.direction[0] = 1

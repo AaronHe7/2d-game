@@ -55,9 +55,46 @@ player_run2_right = pygame.image.load("player_run2_right.png").convert_alpha()
 player_run2_right = pygame.transform.scale(player_run2_right, (int(0.85 * tilesize), int(1.8 * tilesize)))
 player_run2_left = pygame.image.load("player_run2_left.png").convert_alpha()
 player_run2_left = pygame.transform.scale(player_run2_left, (int(0.85 * tilesize), int(1.8 * tilesize)))
+player_idle1_right = pygame.image.load("player_idle1_right.png").convert_alpha()
+player_idle1_right = pygame.transform.scale(player_idle1_right, (int(0.85 * tilesize), int(1.8 * tilesize)))
+player_idle1_left = pygame.image.load("player_idle1_left.png").convert_alpha()
+player_idle1_left = pygame.transform.scale(player_idle1_left, (int(0.85 * tilesize), int(1.8 * tilesize)))
 
 wooden_pickaxe = pygame.image.load("wooden_pickaxe.png").convert_alpha()
 wooden_pickaxe = pygame.transform.scale(wooden_pickaxe, (tilesize, tilesize))
+
+breaking0 = pygame.image.load("breaking0.png").convert_alpha()
+breaking0 = pygame.transform.scale(breaking0, (tilesize, tilesize))
+breaking1 = pygame.image.load("breaking1.png").convert_alpha()
+breaking1 = pygame.transform.scale(breaking1, (tilesize, tilesize))
+breaking2 = pygame.image.load("breaking2.png").convert_alpha()
+breaking2 = pygame.transform.scale(breaking2, (tilesize, tilesize))
+breaking3 = pygame.image.load("breaking3.png").convert_alpha()
+breaking3 = pygame.transform.scale(breaking3, (tilesize, tilesize))
+breaking4 = pygame.image.load("breaking4.png").convert_alpha()
+breaking4 = pygame.transform.scale(breaking4, (tilesize, tilesize))
+breaking5 = pygame.image.load("breaking5.png").convert_alpha()
+breaking5 = pygame.transform.scale(breaking5, (tilesize, tilesize))
+breaking6 = pygame.image.load("breaking6.png").convert_alpha()
+breaking6 = pygame.transform.scale(breaking6, (tilesize, tilesize))
+breaking7 = pygame.image.load("breaking7.png").convert_alpha()
+breaking7 = pygame.transform.scale(breaking7, (tilesize, tilesize))
+breaking8 = pygame.image.load("breaking8.png").convert_alpha()
+breaking8 = pygame.transform.scale(breaking8, (tilesize, tilesize))
+breaking9 = pygame.image.load("breaking9.png").convert_alpha()
+breaking9 = pygame.transform.scale(breaking9, (tilesize, tilesize))
+
+breaking_models = []
+breaking_models.append(breaking0)
+breaking_models.append(breaking1)
+breaking_models.append(breaking2)
+breaking_models.append(breaking3)
+breaking_models.append(breaking4)
+breaking_models.append(breaking5)
+breaking_models.append(breaking6)
+breaking_models.append(breaking7)
+breaking_models.append(breaking8)
+breaking_models.append(breaking9)
 
 player_models = []
 player_models.append(player_idle0_left) # 0
@@ -70,11 +107,21 @@ player_models.append(player_run1_left) # 6
 player_models.append(player_run1_right) # 7
 player_models.append(player_run2_left) # 8
 player_models.append(player_run2_right) # 9
+player_models.append(player_idle1_left) # 10
+player_models.append(player_idle1_right) # 11
 
 item_models = []
 item_models.append(wooden_pickaxe)
 
-textures = [sky, grass_block, dirt_block, wood_block, leaves_block, stone_block]
+textures = []
+
+textures.append(sky) # 0
+textures.append(grass_block) # 1
+textures.append(dirt_block) # 2
+textures.append(wood_block) # 3
+textures.append(leaves_block) # 4
+textures.append(stone_block) # 5
+
 gui_elements = [empty_heart_icon, half_heart_icon, heart_icon]
 
 

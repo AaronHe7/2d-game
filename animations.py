@@ -13,12 +13,12 @@ def checkframe(direction, handstate, rframe, velocity, frame, maxrframe):
         return 0
     if direction[0] == 0 and direction[1] >= 0 and handstate == 0 and frame > 30 and velocity[0] == 0: #if the player is facing left, not falling, has no handstate, is not moving
         #placeholder, replace with idle animation state 1 facing left.
-        return 0
+        return 10
     if direction[0] == 1 and direction[1] >= 0 and handstate == 0 and frame <= 30 and velocity[0] == 0: #if the player is facing right not falling, has no handstate, is not moving
         return 1
     if direction[0] == 1 and direction[1] >= 0 and handstate == 0 and frame > 30 and velocity[0] == 0: #if the player is facing right, not falling, has no handstate, is not moving
         #placeholder, replace with idle animation state 1 facing right.
-        return 1
+        return 11
 
     if direction[1] == 0 and handstate == 0 and rframe <= (maxrframe/3) and velocity[0] > 0: #if the player is moving right and not falling and has no handstate
         return 3

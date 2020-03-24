@@ -44,22 +44,19 @@ class Player:
             top = [x_variation_coord, math.floor(self.y)]
             bottom = [x_variation_coord, math.floor(self.y + self.h)]
 
-            if tilemap[top[0]][top[1]] != 0:
+            if tilemap[top[0]][top[1]].id != 0:
                 self.vy = 0
                 self.y += player_speed
-            if tilemap[left[0]][left[1]] != 0:
+            if tilemap[left[0]][left[1]].id != 0:
                 self.x -= self.vx
                 self.vx = 0
 
-            if tilemap[right[0]][right[1]] != 0:
+            if tilemap[right[0]][right[1]].id != 0:
                 self.x -= self.vx
                 self.vx = 0
 
-            if tilemap[bottom[0]][bottom[1]] != 0:
+            if tilemap[bottom[0]][bottom[1]].id != 0:
                 points_touching_ground += 1
-            if top.get_tile() != 0:
-                self.vy = 0
-                self.y += player_speed
 
         if not self.on_ground:
             self.ay = gravity
@@ -69,7 +66,7 @@ class Player:
             if self.vy <= -0.5:
                 self.hp -= (math.floor(-12 * self.vy - 4))
                 self.vy = 0
-            self.y = bottom.get_x_y()['y'] - self.h
+            self.y = bottom[1] - self.h
             self.ay = 0
             self.vy = 0
             self.on_ground = True
