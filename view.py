@@ -89,7 +89,7 @@ while 1:
     elif player.vy < 0:
         player.direction[1] = -1
 
-    player_model = player_models[animations.checkframe(player.direction, player.handstate, frame % maxrframe, [player.vx, player.vy], frame % 60, maxrframe)]
+    player_model = player_models[animations.checkframe(player.direction, player.handstate, frame % maxrframe, [player.vx, player.vy], frame, maxrframe)]
     display.blit(player_model, (int(player_x_display), int(player_y_display)))
 
     bar = gui.return_bar(player.hp)
