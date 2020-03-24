@@ -22,11 +22,10 @@ while 1:
     mouse = pygame.mouse.get_pressed()
 
     if keys[pygame.K_d]:
-        player.vx = player_speed * player.vxmultiplier
+        player.vx = player_speed
     if keys[pygame.K_a]:
-        player.vx = -player_speed * player.vxmultiplier
-
-    if keys[pygame.K_LSHIFT]:
+        player.vx = -player_speed
+    if keys[pygame.K_LSHIFT] and player.on_ground:
         player.vxmultiplier = 0.5
         if tilemap[math.floor(player.x + player.vx + player.w/2)][math.floor(player.y + player.h)] == 0:
             player.vx = 0
