@@ -62,6 +62,9 @@ player_idle1_left = pygame.transform.scale(player_idle1_left, (int(0.85 * tilesi
 wooden_pickaxe = pygame.image.load("wooden_pickaxe.png").convert_alpha()
 wooden_pickaxe = pygame.transform.scale(wooden_pickaxe, (tilesize, tilesize))
 
+hotbar = pygame.image.load("hotbar.png").convert()
+inventory = pygame.image.load("inventory.png").convert_alpha()
+
 breaking_models = []
 for i in range(10):
     breaking_model = pygame.image.load("blocks/breaking" + str(i) + ".png").convert_alpha()

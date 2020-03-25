@@ -3,6 +3,7 @@ from player import *
 from assets import *
 from gui import *
 from terrain_gen import *
+from entities import *
 
 player = Player(0, -2, tilemap)
 
@@ -27,15 +28,14 @@ while 1:
         player.vx = -player_speed
     if keys[pygame.K_LSHIFT] and player.on_ground:
         player.vxmultiplier = 0.5
-        if tilemap[math.floor(player.x + player.vx + player.w/2)][math.floor(player.y + player.h)] == 0 and player.on_ground:
+        if tilemap[math.floor(player.x + player.vx + player.w/2)][math.floor(player.y + player.h)].id == 0:
             player.vx = 0
+    else:
+        player.vxmultiplier = 1
     if keys[pygame.K_SPACE] and player.on_ground and abs(frame - last_jump_frame) > 1/2 * fps:
         last_jump_frame = frame
         player.on_ground = False
         player.vy = player_jump_speed
-             
-    else:
-        player.vxmultiplier = 1
 
     if mouse[0]:
         mouse_location = pygame.mouse.get_pos()
@@ -43,8 +43,11 @@ while 1:
         mousey = player.y + (mouse_location[1] - player_y_display)/tilesize
         if tilemap[math.floor(mousex)][math.floor(mousey)].durability > 0:
             tilemap[math.floor(mousex)][math.floor(mousey)].durability -= 1
-        else:
+        elif tilemap[math.floor(mousex)][math.floor(mousey)].durability == 0 and tilemap[math.floor(mousex)][math.floor(mousey)].id > 0:
+            dropid = tilemap[math.floor(mousex)][math.floor(mousey)].id
             tilemap[math.floor(mousex)][math.floor(mousey)] = generate_terrain(removal = 1)
+            drop = Drop(dropid, [mouse_location[0], mouse_location[1]])
+            entities_group.append(drop)
 
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
@@ -91,10 +94,23 @@ while 1:
 
     player_model = player_models[animations.checkframe(player.direction, player.handstate, frame % maxrframe, [player.vx, player.vy], frame, maxrframe)]
     display.blit(player_model, (int(player_x_display), int(player_y_display)))
+    for drop in entities_group:
+        if width / 2 - player.w * tilesize <= drop.location[0] <= width / 2 + player.w * tilesize and height / 2 - player.h * tilesize <= drop.location[1] <= height / 2 + player.h * tilesize:
+            pass
+        else:
+            tvelx = -(drop.location[0] - 640) // 2
+            tvely = (drop.location[1] - 360) // 2
+            drop.location[0] += tvelx // 10
+            drop.location[1] -= tvely // 10
+            display.blit(textures[drop.id], (drop.location))
 
     bar = gui.return_bar(player.hp)
     for icon in range(10):
         display.blit(gui_elements[bar[icon]], (icon*21 + 5, 5))
+
+    display.blit(hotbar, (1070, 4))
+    if keys[pygame.K_TAB]:
+        display.blit(inventory, (1070, 4))
 
     frame += 1
 
