@@ -94,9 +94,18 @@ while 1:
 
     player_model = player_models[animations.checkframe(player.direction, player.handstate, frame % maxrframe, [player.vx, player.vy], frame, maxrframe)]
     display.blit(player_model, (int(player_x_display), int(player_y_display)))
+    
     for drop in entities_group:
         if width / 2 - player.w * tilesize <= drop.location[0] <= width / 2 + player.w * tilesize and height / 2 - player.h * tilesize <= drop.location[1] <= height / 2 + player.h * tilesize:
-            pass
+            for row in range(len(player.inventory)):
+                for column in range(len(player.inventory[row])):
+                    if player.inventory[row][column].id == 0:
+                        player.inventory[row][column] = drop
+                        break
+                    elif player.inventory[row][column].id == drop.id:
+                        player.inventory[row][column].amount += drop.amount
+                        break
+            entities_group.remove(drop)
         else:
             tvelx = -(drop.location[0] - 640) // 2
             tvely = (drop.location[1] - 360) // 2
@@ -107,10 +116,15 @@ while 1:
     bar = gui.return_bar(player.hp)
     for icon in range(10):
         display.blit(gui_elements[bar[icon]], (icon*21 + 5, 5))
-
-    display.blit(hotbar, (1070, 4))
+        
+    display.blit(hotbar, (1060, 4))
     if keys[pygame.K_TAB]:
-        display.blit(inventory, (1070, 4))
+        display.blit(inventory, (1060, 4))
+
+    for row in range(len(player.inventory)):
+        for column in range(len(player.inventory[row])):
+            if player.inventory[row][column].id != 0:
+                display.blit(textures[player.inventory[row][column].id], (1062 + column * 43, 6))
 
     frame += 1
 

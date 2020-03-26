@@ -1,6 +1,7 @@
 import math
 from assets import *
 from terrain_gen import *
+from entities import *
 
 class Player:
     def __init__(self, x, y, tilemap):
@@ -24,6 +25,10 @@ class Player:
         self.handstate = 0
         # Possession
         self.inventory = [[0,0,0,0,0],[0,0,0,0,0],[0,0,0,0,0],[0,0,0,0,0]]
+        for row in range(len(self.inventory)):
+            for column in range(len(self.inventory[row])):
+                empty = Drop(0, [-tilesize, -tilesize])
+                self.inventory[row][column] = empty
     def update_position(self):
         self.vx *= self.vxmultiplier
         self.x += self.vx
