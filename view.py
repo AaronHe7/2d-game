@@ -5,13 +5,13 @@ from gui import *
 from terrain_gen import *
 from entities import *
 
-player = Player(0, -2, tilemap)
+player = Player(0, 2, tilemap)
 
 gui = Gui()
 cell = []
 
 while 1:
-    if player.y > 2:
+    if player.y < -2:
         display.fill((75,75,85))
     else:
         display.fill((102, 204, 255))
@@ -28,7 +28,7 @@ while 1:
         player.vx = -player_speed
     if keys[pygame.K_LSHIFT] and player.on_ground:
         player.vxmultiplier = 0.5
-        if tilemap[math.floor(player.x + player.vx + player.w/2)][math.floor(player.y + player.h)].id == 0:
+        if tilemap[math.floor(player.x + player.vx + player.w/2)][math.ceil(player.y - player.h)].id == 0:
             player.vx = 0
     else:
         player.vxmultiplier = 1
@@ -40,11 +40,12 @@ while 1:
     if mouse[0]:
         mouse_location = pygame.mouse.get_pos()
         mousex = math.floor(player.x + (mouse_location[0] - player_x_display)/tilesize)
-        mousey = math.floor(player.y + (mouse_location[1] - player_y_display)/tilesize)
-        if tilemap[mousex][mousey].durability > 0:
-            tilemap[mousex][mousey].durability -= 1
-        elif tilemap[mousex][mousey].durability == 0 and tilemap[mousex][mousey].id > 0:
-            dropid = tilemap[mousex][mousey].id
+        mousey = math.ceil(player.y - (mouse_location[1] - player_y_display)/tilesize)
+        block = tilemap[mousex][mousey]
+        if block.durability > 0:
+            block.durability -= 1
+        elif block.durability == 0 and block.id > 0:
+            dropid = block.id
             # Set block to air when destroyed
             tilemap[mousex][mousey] = blocks[0]
             drop = Drop(dropid, [mouse_location[0], mouse_location[1]])
@@ -74,12 +75,12 @@ while 1:
             if x not in tilemap:
                 tilemap[x] = {}
             if y not in tilemap[x]:
-                tilemap[x][y] = generate_terrain(x, y, cell)
+                generate_terrain(x, y, cell)
             if tilemap[x][y].id != 0:
-                display.blit(textures[tilemap[x][y].id], (int(player_x_display + tilesize * (x - player.x)), int(player_y_display +  tilesize *(y - player.y))))
+                display.blit(textures[tilemap[x][y].id], (int(player_x_display + tilesize * (x - player.x)), int(player_y_display -  tilesize * (y - player.y))))
                 if tilemap[x][y].durability < tilemap[x][y].max_durability:
                     durability_index = 9 - (9 * tilemap[x][y].durability // tilemap[x][y].max_durability)
-                    display.blit(breaking_models[durability_index], (int(player_x_display + tilesize * (x - player.x)), int(player_y_display +  tilesize *(y - player.y))))
+                    display.blit(breaking_models[durability_index], (int(player_x_display + tilesize * (x - player.x)), int(player_y_display -  tilesize *(y - player.y))))
                     
 
     if player.vx > 0:

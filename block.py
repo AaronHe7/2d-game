@@ -1,4 +1,4 @@
-import pygame
+import pygame, copy
 
 class Block:
     def __init__(self, id, name):
@@ -9,3 +9,5 @@ class Block:
         self.max_durability = durabilities[id]
         self.durability = self.max_durability
         
+    def get_copy(self):
+        return copy.deepcopy(self)

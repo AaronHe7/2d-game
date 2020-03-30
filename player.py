@@ -32,7 +32,7 @@ class Player:
     def update_position(self):
         self.vx *= self.vxmultiplier
         self.x += self.vx
-        self.y -= self.vy
+        self.y += self.vy
         self.vy += self.ay
         self.on_ground = False
         points_touching_ground = 0
@@ -42,25 +42,25 @@ class Player:
         for i in range(3, hitbox_points-3):
             # The coordinates that vary as i varies
             x_variation_coord = math.floor(self.x + i * self.w/hitbox_points)
-            y_variation_coord = math.floor(self.y + i * self.h/hitbox_points)
+            y_variation_coord = math.ceil(self.y - i * self.h/hitbox_points)
 
             left = [math.floor(self.x + 1/tilesize), y_variation_coord]
             right = [math.floor(self.x + self.w - 1/tilesize), y_variation_coord]
-            top = [x_variation_coord, math.floor(self.y)]
-            bottom = [x_variation_coord, math.floor(self.y + self.h)]
+            top = [x_variation_coord, math.ceil(self.y)]
+            bottom = [x_variation_coord, math.ceil(self.y - self.h)]
 
-            if tilemap[top[0]][top[1]].id != 0:
+            if tilemap[top[0]][top[1]].pass_through == False:
                 self.vy = 0
-                self.y += player_speed
-            if tilemap[left[0]][left[1]].id != 0:
+                self.y -= player_speed
+            if tilemap[left[0]][left[1]].pass_through == False:
                 self.x -= self.vx
                 self.vx = 0
 
-            if tilemap[right[0]][right[1]].id != 0:
+            if tilemap[right[0]][right[1]].pass_through == False:
                 self.x -= self.vx
                 self.vx = 0
 
-            if tilemap[bottom[0]][bottom[1]].id != 0:
+            if tilemap[bottom[0]][bottom[1]].pass_through == False:
                 points_touching_ground += 1
 
         if not self.on_ground:
@@ -71,7 +71,7 @@ class Player:
             if self.vy <= -0.5:
                 self.hp -= (math.floor(-12 * self.vy - 5))
                 self.vy = 0
-            self.y = bottom[1] - self.h
+            self.y = bottom[1] + self.h
             self.ay = 0
             self.vy = 0
             self.on_ground = True
