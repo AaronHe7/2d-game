@@ -1,4 +1,4 @@
-import sys, pygame, animations
+import sys, pygame, animations, copy
 from player import *
 from assets import *
 from gui import *
@@ -54,21 +54,43 @@ while 1:
         mouse_location = pygame.mouse.get_pos()
         mousex = math.floor(player.x + (mouse_location[0] - player_x_display)/tilesize)
         mousey = math.ceil(player.y - (mouse_location[1] - player_y_display)/tilesize)
-        block = tilemap[mousex][mousey]
-        if block.durability > 0:
-            if block.required_tool == player.inhand.type:
-                block.durability -= round(player.inhand.hit_multiplier, 3)
-            else:
-                block.durability -= round(0.075, 3)
-            if block.durability < 0:
-                block.durability = 0
-        elif block.durability <= 0.1 and block.id > 0:
-            dropid = block.id
-            # Set block to air when destroyed
-            tilemap[mousex][mousey] = blocks[0]
-            drop = Item(dropid, [mouse_location[0], mouse_location[1]])
-            entities_group.append(drop)
+        temp_block = tilemap[mousex][mousey]
+        if 320 <= mouse_location[0] <= 960 and 180 <= mouse_location[1] <= 540:
+            if temp_block.durability > 0:
+                if temp_block.required_tool == player.inhand.type:
+                    temp_block.durability -= round(player.inhand.hit_multiplier, 3)
+                else:
+                    temp_block.durability -= round(0.075, 3)
+                if temp_block.durability < 0:
+                    temp_block.durability = 0
+            elif temp_block.durability <= 0.1 and temp_block.id > 0:
+                dropid = temp_block.id
+                # Set block to air when destroyed
+                tilemap[mousex][mousey] = blocks[0]
+                drop = Item(dropid, [mouse_location[0], mouse_location[1]])
+                entities_group.append(drop)
 
+    if mouse[2]:
+        mouse_location = pygame.mouse.get_pos()
+        mousex = math.floor(player.x + (mouse_location[0] - player_x_display)/tilesize)
+        mousey = math.ceil(player.y - (mouse_location[1] - player_y_display)/tilesize)
+        temp_block = tilemap[mousex][mousey]
+        able = 0
+        
+        if tilemap[mousex][mousey-1].id != 0:
+            able += 1
+        if tilemap[mousex-1][mousey].id != 0:
+            able += 1
+        if tilemap[mousex+1][mousey].id != 0:
+            able += 1
+        if tilemap[mousex][mousey+1].id != 0:
+            able += 1
+            
+        if 320 <= mouse_location[0] <= 960 and 180 <= mouse_location[1] <= 540 and able > 0:
+            if temp_block.id == 0 and player.inhand.id != 0 and player.inhand.amount > 0:
+                tilemap[mousex][mousey] = copy.deepcopy(blocks[player.inhand.id])
+                player.inhand.amount -= 1
+            
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             pygame.quit()
@@ -123,7 +145,7 @@ while 1:
                         player.inventory[row][column] = drop
                         break
                     elif player.inventory[row][column].id == drop.id:
-                        player.inventory[row][column].amount += drop.amount
+                        player.inventory[row][column].amount += drop.amount / 5
                         break
             entities_group.remove(drop)
         else:
@@ -144,6 +166,9 @@ while 1:
     for row in range(len(player.inventory)):
         for column in range(len(player.inventory[row])):
             if player.inventory[row][column].id != 0:
+                if player.inventory[row][column].amount <= 0:
+                    empty = Item(0, [-tilesize, -tilesize])
+                    player.inventory[row][column] = empty
                 display.blit(textures[player.inventory[row][column].id], (1062 + column * 43, 6))
 
     display.blit(highlighted, (1061 + (player.highlighted) * 43, 5))
