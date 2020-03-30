@@ -1,4 +1,5 @@
 import pygame
+from block import Block
 
 pygame.init()
 fps = 60
@@ -15,17 +16,31 @@ last_jump_frame = 0
 maxrframe = 30
 tilesize = 40
 guiscale = 20
+blocks = {}
+textures = {}
 
-def load_block(block_name):
-    block = pygame.image.load('blocks/' + block_name + '.png').convert()
-    return pygame.transform.scale(block, (tilesize, tilesize))
+def load_block(id, name):
+    block = Block(id, name)
+    blocks[id] = block
+    
+    block_img = pygame.image.load('blocks/' + name + '.png').convert()
+    block_img = pygame.transform.scale(block_img, (tilesize, tilesize)) 
+    textures[id] = block_img
+
+def load_tile_img(file_name):
+    file = pygame.image.load('player_sprites/' + file_name).convert_alpha()
+    return pygame.transform.scale(file, (int(0.85 * tilesize), int(1.8 * tilesize)))
 
 sky = pygame.Surface((tilesize, tilesize))
-grass_block = load_block('grass_block')
-dirt_block = load_block('dirt_block')
-wood_block = load_block('wood_block')
-leaves_block = load_block('leaves_block')
-stone_block = load_block('stone_block')
+textures[0] = sky
+blocks[0] = Block(0, 'sky')
+blocks[0].pass_through = True
+
+load_block(1, 'grass_block')
+load_block(2, 'dirt_block')
+load_block(3, 'wood_block')
+load_block(4, 'leaves_block')
+load_block(5, 'stone_block')
 
 heart_icon = pygame.image.load("heart.png").convert_alpha()
 heart_icon = pygame.transform.scale(heart_icon, (guiscale, guiscale))
@@ -34,30 +49,18 @@ half_heart_icon = pygame.transform.scale(half_heart_icon, (guiscale, guiscale))
 empty_heart_icon = pygame.image.load("empty_heart.png").convert_alpha()
 empty_heart_icon = pygame.transform.scale(empty_heart_icon, (guiscale, guiscale))
 
-player_idle0_right = pygame.image.load("player_idle0_right.png").convert_alpha()
-player_idle0_right = pygame.transform.scale(player_idle0_right, (int(0.85 * tilesize), int(1.8 * tilesize)))
-player_idle0_left = pygame.image.load("player_idle0_left.png").convert_alpha()
-player_idle0_left = pygame.transform.scale(player_idle0_left, (int(0.85 * tilesize), int(1.8 * tilesize)))
-player_run0_right = pygame.image.load("player_run0_right.png").convert_alpha()
-player_run0_right = pygame.transform.scale(player_run0_right, (int(0.85 * tilesize), int(1.8 * tilesize)))
-player_run0_left = pygame.image.load("player_run0_left.png").convert_alpha()
-player_run0_left = pygame.transform.scale(player_run0_left, (int(0.85 * tilesize), int(1.8 * tilesize)))
-player_falling_left = pygame.image.load("player_falling_left.png").convert_alpha()
-player_falling_left = pygame.transform.scale(player_falling_left, (int(0.85 * tilesize), int(1.8 * tilesize)))
-player_falling_right = pygame.image.load("player_falling_right.png").convert_alpha()
-player_falling_right = pygame.transform.scale(player_falling_right, (int(0.85 * tilesize), int(1.8 * tilesize)))
-player_run1_right = pygame.image.load("player_run1_right.png").convert_alpha()
-player_run1_right = pygame.transform.scale(player_run1_right, (int(0.85 * tilesize), int(1.8 * tilesize)))
-player_run1_left = pygame.image.load("player_run1_left.png").convert_alpha()
-player_run1_left = pygame.transform.scale(player_run1_left, (int(0.85 * tilesize), int(1.8 * tilesize)))
-player_run2_right = pygame.image.load("player_run2_right.png").convert_alpha()
-player_run2_right = pygame.transform.scale(player_run2_right, (int(0.85 * tilesize), int(1.8 * tilesize)))
-player_run2_left = pygame.image.load("player_run2_left.png").convert_alpha()
-player_run2_left = pygame.transform.scale(player_run2_left, (int(0.85 * tilesize), int(1.8 * tilesize)))
-player_idle1_right = pygame.image.load("player_idle1_right.png").convert_alpha()
-player_idle1_right = pygame.transform.scale(player_idle1_right, (int(0.85 * tilesize), int(1.8 * tilesize)))
-player_idle1_left = pygame.image.load("player_idle1_left.png").convert_alpha()
-player_idle1_left = pygame.transform.scale(player_idle1_left, (int(0.85 * tilesize), int(1.8 * tilesize)))
+player_idle0_right = load_tile_img("player_idle0_right.png")
+player_idle0_left = load_tile_img("player_idle0_left.png")
+player_run0_right = load_tile_img("player_run0_right.png")
+player_run0_left = load_tile_img("player_run0_left.png")
+player_falling_left = load_tile_img("player_falling_left.png")
+player_falling_right = load_tile_img("player_falling_right.png")
+player_run1_right = load_tile_img("player_run1_right.png")
+player_run1_left = load_tile_img("player_run1_left.png")
+player_run2_right = load_tile_img("player_run2_right.png")
+player_run2_left = load_tile_img("player_run2_left.png")
+player_idle1_right = load_tile_img("player_idle1_right.png")
+player_idle1_left = load_tile_img("player_idle1_left.png")
 
 wooden_pickaxe = pygame.image.load("wooden_pickaxe.png").convert_alpha()
 wooden_pickaxe = pygame.transform.scale(wooden_pickaxe, (tilesize, tilesize))
@@ -88,14 +91,6 @@ player_models.append(player_idle1_right) # 11
 item_models = []
 item_models.append(wooden_pickaxe)
 
-textures = []
-
-textures.append(sky) # 0
-textures.append(grass_block) # 1
-textures.append(dirt_block) # 2
-textures.append(wood_block) # 3
-textures.append(leaves_block) # 4
-textures.append(stone_block) # 5
 
 gui_elements = [empty_heart_icon, half_heart_icon, heart_icon]
 

@@ -39,13 +39,14 @@ while 1:
 
     if mouse[0]:
         mouse_location = pygame.mouse.get_pos()
-        mousex = player.x + (mouse_location[0] - player_x_display)/tilesize
-        mousey = player.y + (mouse_location[1] - player_y_display)/tilesize
-        if tilemap[math.floor(mousex)][math.floor(mousey)].durability > 0:
-            tilemap[math.floor(mousex)][math.floor(mousey)].durability -= 1
-        elif tilemap[math.floor(mousex)][math.floor(mousey)].durability == 0 and tilemap[math.floor(mousex)][math.floor(mousey)].id > 0:
-            dropid = tilemap[math.floor(mousex)][math.floor(mousey)].id
-            tilemap[math.floor(mousex)][math.floor(mousey)] = generate_terrain(removal = 1)
+        mousex = math.floor(player.x + (mouse_location[0] - player_x_display)/tilesize)
+        mousey = math.floor(player.y + (mouse_location[1] - player_y_display)/tilesize)
+        if tilemap[mousex][mousey].durability > 0:
+            tilemap[mousex][mousey].durability -= 1
+        elif tilemap[mousex][mousey].durability == 0 and tilemap[mousex][mousey].id > 0:
+            dropid = tilemap[mousex][mousey].id
+            # Set block to air when destroyed
+            tilemap[mousex][mousey] = blocks[0]
             drop = Drop(dropid, [mouse_location[0], mouse_location[1]])
             entities_group.append(drop)
 
