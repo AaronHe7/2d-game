@@ -21,13 +21,15 @@ class Player:
         self.ay = 0
         self.on_ground = False
         # Other Variables for Animation
-        self.direction = [0, 0]
+        self.direction = [1, 0]
         self.handstate = 0
         # Possession
         self.inventory = [[0,0,0,0,0],[0,0,0,0,0],[0,0,0,0,0],[0,0,0,0,0]]
+        self.inhand = 0
+        self.highlighted = 0
         for row in range(len(self.inventory)):
             for column in range(len(self.inventory[row])):
-                empty = Drop(0, [-tilesize, -tilesize])
+                empty = Item(0, [-tilesize, -tilesize])
                 self.inventory[row][column] = empty
     def update_position(self):
         self.vx *= self.vxmultiplier

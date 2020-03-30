@@ -37,18 +37,36 @@ while 1:
         player.on_ground = False
         player.vy = player_jump_speed
 
+    if keys[pygame.K_1]:
+        player.highlighted = 0
+    elif keys[pygame.K_2]:
+        player.highlighted = 1
+    elif keys[pygame.K_3]:
+        player.highlighted = 2
+    elif keys[pygame.K_4]:
+        player.highlighted = 3
+    elif keys[pygame.K_5]:
+        player.highlighted = 4
+
+    player.inhand = player.inventory[0][player.highlighted]
+
     if mouse[0]:
         mouse_location = pygame.mouse.get_pos()
         mousex = math.floor(player.x + (mouse_location[0] - player_x_display)/tilesize)
         mousey = math.ceil(player.y - (mouse_location[1] - player_y_display)/tilesize)
         block = tilemap[mousex][mousey]
         if block.durability > 0:
-            block.durability -= 1
-        elif block.durability == 0 and block.id > 0:
+            if block.required_tool == player.inhand.type:
+                block.durability -= round(player.inhand.hit_multiplier, 3)
+            else:
+                block.durability -= round(0.075, 3)
+            if block.durability < 0:
+                block.durability = 0
+        elif block.durability <= 0.1 and block.id > 0:
             dropid = block.id
             # Set block to air when destroyed
             tilemap[mousex][mousey] = blocks[0]
-            drop = Drop(dropid, [mouse_location[0], mouse_location[1]])
+            drop = Item(dropid, [mouse_location[0], mouse_location[1]])
             entities_group.append(drop)
 
     for event in pygame.event.get():
@@ -65,10 +83,10 @@ while 1:
         if event.type == pygame.KEYDOWN:
             pass
 
-    x_start = int(player.x - ((width/2)//tilesize)) - 2
-    x_end = int(player.x + ((width/2)//tilesize)) + 2
-    y_start = int(player.y - ((height/2)//tilesize)) - 2
-    y_end = int(player.y + ((height/2)//tilesize)) + 2
+    x_start = int(player.x - ((width/2)//tilesize)) - 5
+    x_end = int(player.x + ((width/2)//tilesize)) + 5
+    y_start = int(player.y - ((height/2)//tilesize)) - 5
+    y_end = int(player.y + ((height/2)//tilesize)) + 5
 
     for x in range(x_start, x_end):
         for y in range(y_start, y_end):
@@ -79,14 +97,14 @@ while 1:
             if tilemap[x][y].id != 0:
                 display.blit(textures[tilemap[x][y].id], (int(player_x_display + tilesize * (x - player.x)), int(player_y_display -  tilesize * (y - player.y))))
                 if tilemap[x][y].durability < tilemap[x][y].max_durability:
-                    durability_index = 9 - (9 * tilemap[x][y].durability // tilemap[x][y].max_durability)
+                    durability_index = int(9 - 9 * tilemap[x][y].durability // tilemap[x][y].max_durability)
                     display.blit(breaking_models[durability_index], (int(player_x_display + tilesize * (x - player.x)), int(player_y_display -  tilesize *(y - player.y))))
                     
 
     if player.vx > 0:
         player.direction[0] = 1
     elif player.vx < 0:
-        player.direction[0] = 0
+        player.direction[0] = -1
     if player.vy == 0:
         player.direction[1] = 0
     elif player.vy > 0:
@@ -127,6 +145,16 @@ while 1:
         for column in range(len(player.inventory[row])):
             if player.inventory[row][column].id != 0:
                 display.blit(textures[player.inventory[row][column].id], (1062 + column * 43, 6))
+
+    display.blit(highlighted, (1061 + (player.highlighted) * 43, 5))
+
+    if player.inhand.id <= 100 and player.inhand.id != 0:
+        display.blit(textures[player.inhand.id], (636 + (tilesize - 2) * player.direction[0], 380))
+    if player.inhand.id >= 100:
+        if player.direction[0] == 1:
+            display.blit(textures[player.inhand.id], (636 + (tilesize - 2) * player.direction[0], 380))
+        if player.direction[0] == -1:
+            display.blit(pygame.transform.flip(textures[player.inhand.id], False, True), (636 + (tilesize - 2) * player.direction[0], 380))
 
     frame += 1
 

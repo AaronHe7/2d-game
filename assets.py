@@ -42,6 +42,8 @@ load_block(3, 'wood_block')
 load_block(4, 'leaves_block')
 load_block(5, 'stone_block')
 
+item_hit_multipliers = [0.25, 0.25, 0.25, 0.25, 0.25]
+
 heart_icon = pygame.image.load("heart.png").convert_alpha()
 heart_icon = pygame.transform.scale(heart_icon, (guiscale, guiscale))
 half_heart_icon = pygame.image.load("half_heart.png").convert_alpha()
@@ -67,6 +69,7 @@ wooden_pickaxe = pygame.transform.scale(wooden_pickaxe, (tilesize, tilesize))
 
 hotbar = pygame.image.load("hotbar.png").convert()
 inventory = pygame.image.load("inventory.png").convert_alpha()
+highlighted = pygame.image.load("inhand.png").convert_alpha()
 
 breaking_models = []
 for i in range(10):
