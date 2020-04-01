@@ -9,6 +9,7 @@ class Player:
         # height and width
         self.hp = 20
         self.maxhp = 20
+        self.hunger = 20
         self.h = 1.8
         self.w = 0.85
         self.x = x

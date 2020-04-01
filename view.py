@@ -138,7 +138,7 @@ while 1:
     display.blit(player_model, (int(player_x_display), int(player_y_display)))
     
     for drop in entities_group:
-        if width / 2 - player.w * tilesize <= drop.location[0] <= width / 2 + player.w * tilesize and height / 2 - player.h * tilesize <= drop.location[1] <= height / 2 + player.h * tilesize:
+        if width / 2 - player.w * tilesize <= drop.location[0] <= width / 2 + player.w * tilesize and height / 2 - player.h / 2 * tilesize <= drop.location[1] <= height / 2 + player.h / 2 * tilesize:
             for row in range(len(player.inventory)):
                 for column in range(len(player.inventory[row])):
                     if player.inventory[row][column].id == 0:
@@ -156,12 +156,25 @@ while 1:
             display.blit(textures[drop.id], (drop.location))
 
     bar = gui.return_bar(player.hp)
+    
     for icon in range(10):
         display.blit(gui_elements[bar[icon]], (icon*21 + 5, 5))
-        
-    display.blit(hotbar, (1060, 4))
+
+    bar = gui.return_bar(player.hunger)
+
+    for icon in range(10):
+        display.blit(hunger_icons[bar[icon]], (icon*21 + 7, 35))
+    
     if keys[pygame.K_TAB]:
-        display.blit(inventory, (1060, 4))
+        display.blit(dimming_overlay, (0, 0))
+        display.blit(hotbar, (542, 150))
+        display.blit(inventory, (542, 150))
+        display.blit(crafting_menu, (385, 150))
+        display.blit(hotbar, (1060, 4))
+        if mouse[0]:
+            pass
+    else:
+        display.blit(hotbar, (1060, 4))
 
     for row in range(len(player.inventory)):
         for column in range(len(player.inventory[row])):

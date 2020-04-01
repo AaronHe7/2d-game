@@ -51,6 +51,13 @@ half_heart_icon = pygame.transform.scale(half_heart_icon, (guiscale, guiscale))
 empty_heart_icon = pygame.image.load("empty_heart.png").convert_alpha()
 empty_heart_icon = pygame.transform.scale(empty_heart_icon, (guiscale, guiscale))
 
+full_hunger_icon = pygame.image.load("full_hunger.png").convert_alpha()
+full_hunger_icon = pygame.transform.scale(full_hunger_icon, (guiscale, guiscale))
+half_hunger_icon = pygame.image.load("half_hunger.png").convert_alpha()
+half_hunger_icon = pygame.transform.scale(half_hunger_icon, (guiscale, guiscale))
+empty_hunger_icon = pygame.image.load("empty_hunger.png").convert_alpha()
+empty_hunger_icon = pygame.transform.scale(empty_hunger_icon, (guiscale, guiscale))
+
 player_idle0_right = load_tile_img("player_idle0_right.png")
 player_idle0_left = load_tile_img("player_idle0_left.png")
 player_run0_right = load_tile_img("player_run0_right.png")
@@ -70,6 +77,8 @@ wooden_pickaxe = pygame.transform.scale(wooden_pickaxe, (tilesize, tilesize))
 hotbar = pygame.image.load("hotbar.png").convert()
 inventory = pygame.image.load("inventory.png").convert_alpha()
 highlighted = pygame.image.load("inhand.png").convert_alpha()
+crafting_menu = pygame.image.load("crafting_menu.png").convert()
+dimming_overlay = pygame.image.load("dim.png").convert_alpha()
 
 breaking_models = []
 for i in range(10):
@@ -94,9 +103,9 @@ player_models.append(player_idle1_right) # 11
 item_models = []
 item_models.append(wooden_pickaxe)
 
-
 gui_elements = [empty_heart_icon, half_heart_icon, heart_icon]
 
+hunger_icons = [empty_hunger_icon, half_hunger_icon, full_hunger_icon]
 
 tilemap = {}
 
