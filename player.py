@@ -32,6 +32,12 @@ class Player:
             for column in range(len(self.inventory[row])):
                 empty = Item(0, [-tilesize, -tilesize])
                 self.inventory[row][column] = empty
+    def update_vitals(self, counter):
+        if self.hp < 20:
+            if self.hunger >= 18:
+                if counter%180 == 0:
+                    self.hunger -= 1
+                    self.hp += 2
     def update_position(self):
         self.vx *= self.vxmultiplier
         self.x += self.vx

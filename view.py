@@ -49,47 +49,6 @@ while 1:
         player.highlighted = 4
 
     player.inhand = player.inventory[0][player.highlighted]
-
-    if mouse[0]:
-        mouse_location = pygame.mouse.get_pos()
-        mousex = math.floor(player.x + (mouse_location[0] - player_x_display)/tilesize)
-        mousey = math.ceil(player.y - (mouse_location[1] - player_y_display)/tilesize)
-        temp_block = tilemap[mousex][mousey]
-        if 320 <= mouse_location[0] <= 960 and 180 <= mouse_location[1] <= 540:
-            if temp_block.durability > 0:
-                if temp_block.required_tool == player.inhand.type:
-                    temp_block.durability -= round(player.inhand.hit_multiplier, 3)
-                else:
-                    temp_block.durability -= round(0.075, 3)
-                if temp_block.durability < 0:
-                    temp_block.durability = 0
-            elif temp_block.durability <= 0.1 and temp_block.id > 0:
-                dropid = temp_block.id
-                # Set block to air when destroyed
-                tilemap[mousex][mousey] = blocks[0]
-                drop = Item(dropid, [mouse_location[0], mouse_location[1]])
-                entities_group.append(drop)
-
-    if mouse[2]:
-        mouse_location = pygame.mouse.get_pos()
-        mousex = math.floor(player.x + (mouse_location[0] - player_x_display)/tilesize)
-        mousey = math.ceil(player.y - (mouse_location[1] - player_y_display)/tilesize)
-        temp_block = tilemap[mousex][mousey]
-        able = 0
-        
-        if tilemap[mousex][mousey-1].id != 0:
-            able += 1
-        if tilemap[mousex-1][mousey].id != 0:
-            able += 1
-        if tilemap[mousex+1][mousey].id != 0:
-            able += 1
-        if tilemap[mousex][mousey+1].id != 0:
-            able += 1
-            
-        if 320 <= mouse_location[0] <= 960 and 180 <= mouse_location[1] <= 540 and able > 0:
-            if temp_block.id == 0 and player.inhand.id != 0 and player.inhand.amount > 0:
-                tilemap[mousex][mousey] = copy.deepcopy(blocks[player.inhand.id])
-                player.inhand.amount -= 1
             
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
@@ -121,7 +80,8 @@ while 1:
                 if tilemap[x][y].durability < tilemap[x][y].max_durability:
                     durability_index = int(9 - 9 * tilemap[x][y].durability // tilemap[x][y].max_durability)
                     display.blit(breaking_models[durability_index], (int(player_x_display + tilesize * (x - player.x)), int(player_y_display -  tilesize *(y - player.y))))
-                    
+
+    #check player direction                    
 
     if player.vx > 0:
         player.direction[0] = 1
@@ -134,8 +94,12 @@ while 1:
     elif player.vy < 0:
         player.direction[1] = -1
 
+    #draw player model
+
     player_model = player_models[animations.checkframe(player.direction, player.handstate, frame % maxrframe, [player.vx, player.vy], frame, maxrframe)]
     display.blit(player_model, (int(player_x_display), int(player_y_display)))
+
+    #draw dropped items and gravitate them towards the player
     
     for drop in entities_group:
         if width / 2 - player.w * tilesize <= drop.location[0] <= width / 2 + player.w * tilesize and height / 2 - player.h / 2 * tilesize <= drop.location[1] <= height / 2 + player.h / 2 * tilesize:
@@ -154,27 +118,73 @@ while 1:
             drop.location[0] += tvelx // 10
             drop.location[1] -= tvely // 10
             display.blit(textures[drop.id], (drop.location))
-
+            
+    #draw hunger and hp bars
+            
     bar = gui.return_bar(player.hp)
-    
     for icon in range(10):
-        display.blit(gui_elements[bar[icon]], (icon*21 + 5, 5))
-
+        display.blit(gui_elements[bar[icon]], (icon*(guiscale + 1) + 5, 5))
     bar = gui.return_bar(player.hunger)
-
     for icon in range(10):
-        display.blit(hunger_icons[bar[icon]], (icon*21 + 7, 35))
+        display.blit(hunger_icons[bar[icon]], (icon*(guiscale + 1) + 7, 10 + guiscale))
+
+    #draw inventory if tab is held
     
     if keys[pygame.K_TAB]:
         display.blit(dimming_overlay, (0, 0))
+        display.blit(inventory_background, (340, 100))
         display.blit(hotbar, (542, 150))
         display.blit(inventory, (542, 150))
         display.blit(crafting_menu, (385, 150))
         display.blit(hotbar, (1060, 4))
+        display.blit(player_model, (825, 175))
         if mouse[0]:
             pass
     else:
-        display.blit(hotbar, (1060, 4))
+            if mouse[0]:
+                mouse_location = pygame.mouse.get_pos()
+                mousex = math.floor(player.x + (mouse_location[0] - player_x_display)/tilesize)
+                mousey = math.ceil(player.y - (mouse_location[1] - player_y_display)/tilesize)
+                temp_block = tilemap[mousex][mousey]
+                if 320 <= mouse_location[0] <= 960 and 180 <= mouse_location[1] <= 540:
+                    if temp_block.durability > 0:
+                        if temp_block.required_tool == player.inhand.type:
+                            temp_block.durability -= round(player.inhand.hit_multiplier, 3)
+                        else:
+                            temp_block.durability -= round(0.075, 3)
+                        if temp_block.durability < 0:
+                            temp_block.durability = 0
+                    elif temp_block.durability <= 0.1 and temp_block.id > 0:
+                        dropid = temp_block.id
+                        # Set block to air when destroyed
+                        tilemap[mousex][mousey] = blocks[0]
+                        drop = Item(dropid, [mouse_location[0], mouse_location[1]])
+                        entities_group.append(drop)
+
+            if mouse[2]:
+                mouse_location = pygame.mouse.get_pos()
+                mousex = math.floor(player.x + (mouse_location[0] - player_x_display)/tilesize)
+                mousey = math.ceil(player.y - (mouse_location[1] - player_y_display)/tilesize)
+                temp_block = tilemap[mousex][mousey]
+                able = 0
+                
+                if tilemap[mousex][mousey-1].id != 0:
+                    able += 1
+                if tilemap[mousex-1][mousey].id != 0:
+                    able += 1
+                if tilemap[mousex+1][mousey].id != 0:
+                    able += 1
+                if tilemap[mousex][mousey+1].id != 0:
+                    able += 1
+                    
+                if 320 <= mouse_location[0] <= 960 and 180 <= mouse_location[1] <= 540 and able > 0:
+                    if temp_block.id == 0 and player.inhand.id != 0 and player.inhand.amount > 0:
+                        tilemap[mousex][mousey] = copy.deepcopy(blocks[player.inhand.id])
+                        player.inhand.amount -= 1
+                
+    #draw hotbar
+
+    display.blit(hotbar, (1060, 4))
 
     for row in range(len(player.inventory)):
         for column in range(len(player.inventory[row])):
@@ -184,7 +194,11 @@ while 1:
                     player.inventory[row][column] = empty
                 display.blit(textures[player.inventory[row][column].id], (1062 + column * 43, 6))
 
+    #draw hotbar selection
+
     display.blit(highlighted, (1061 + (player.highlighted) * 43, 5))
+
+    #draw object in player's hand
 
     if player.inhand.id <= 100 and player.inhand.id != 0:
         display.blit(textures[player.inhand.id], (636 + (tilesize - 2) * player.direction[0], 380))
@@ -197,5 +211,6 @@ while 1:
     frame += 1
 
     player.update_position()
+    player.update_vitals(frame)
     pygame.display.flip()
     clock.tick(fps)

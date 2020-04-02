@@ -15,7 +15,7 @@ frame = 0
 last_jump_frame = 0
 maxrframe = 30
 tilesize = 40
-guiscale = 20
+guiscale = 25
 blocks = {}
 textures = {}
 
@@ -70,6 +70,12 @@ player_run2_right = load_tile_img("player_run2_right.png")
 player_run2_left = load_tile_img("player_run2_left.png")
 player_idle1_right = load_tile_img("player_idle1_right.png")
 player_idle1_left = load_tile_img("player_idle1_left.png")
+player_hit0_left = 0
+player_hit1_left = 0
+player_hit2_left = 0
+player_hit0_right = 0
+player_hit1_right = 0
+player_hit2_right = 0
 
 wooden_pickaxe = pygame.image.load("wooden_pickaxe.png").convert_alpha()
 wooden_pickaxe = pygame.transform.scale(wooden_pickaxe, (tilesize, tilesize))
@@ -79,6 +85,8 @@ inventory = pygame.image.load("inventory.png").convert_alpha()
 highlighted = pygame.image.load("inhand.png").convert_alpha()
 crafting_menu = pygame.image.load("crafting_menu.png").convert()
 dimming_overlay = pygame.image.load("dim.png").convert_alpha()
+inventory_background = pygame.image.load("inventory_background.png").convert_alpha()
+inventory_background = pygame.transform.scale(inventory_background, (600, 400))
 
 breaking_models = []
 for i in range(10):
