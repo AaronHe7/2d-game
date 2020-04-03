@@ -11,6 +11,7 @@ class Block:
         self.max_durability = durabilities[id]
         self.durability = self.max_durability
         self.required_tool = required_tools[id]
+        self.frames_since_last_touched = 0
                 
     def get_copy(self):
         return copy.deepcopy(self)

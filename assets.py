@@ -18,18 +18,24 @@ tilesize = 40
 guiscale = 25
 blocks = {}
 textures = {}
+mini_textures = {}
+font = pygame.font.Font("font.ttf", 10)
 
 def load_block(id, name):
     block = Block(id, name)
     blocks[id] = block
     
     block_img = pygame.image.load('blocks/' + name + '.png').convert()
-    block_img = pygame.transform.scale(block_img, (tilesize, tilesize)) 
+    block_img = pygame.transform.scale(block_img, (tilesize, tilesize))
+    mini_block_img = pygame.transform.scale(block_img, (tilesize // 2, tilesize // 2))
+    
     textures[id] = block_img
+    mini_textures[id] = mini_block_img
 
 def load_tile_img(file_name):
     file = pygame.image.load('player_sprites/' + file_name).convert_alpha()
-    return pygame.transform.scale(file, (int(0.85 * tilesize), int(1.8 * tilesize)))
+    sprite = pygame.transform.scale(file, (int(0.85 * tilesize), int(1.8 * tilesize)))
+    return sprite
 
 sky = pygame.Surface((tilesize, tilesize))
 textures[0] = sky
@@ -58,24 +64,26 @@ half_hunger_icon = pygame.transform.scale(half_hunger_icon, (guiscale, guiscale)
 empty_hunger_icon = pygame.image.load("empty_hunger.png").convert_alpha()
 empty_hunger_icon = pygame.transform.scale(empty_hunger_icon, (guiscale, guiscale))
 
-player_idle0_right = load_tile_img("player_idle0_right.png")
-player_idle0_left = load_tile_img("player_idle0_left.png")
-player_run0_right = load_tile_img("player_run0_right.png")
-player_run0_left = load_tile_img("player_run0_left.png")
-player_falling_left = load_tile_img("player_falling_left.png")
-player_falling_right = load_tile_img("player_falling_right.png")
-player_run1_right = load_tile_img("player_run1_right.png")
-player_run1_left = load_tile_img("player_run1_left.png")
-player_run2_right = load_tile_img("player_run2_right.png")
-player_run2_left = load_tile_img("player_run2_left.png")
-player_idle1_right = load_tile_img("player_idle1_right.png")
-player_idle1_left = load_tile_img("player_idle1_left.png")
-player_hit0_left = 0
-player_hit1_left = 0
-player_hit2_left = 0
-player_hit0_right = 0
-player_hit1_right = 0
-player_hit2_right = 0
+player_models = []
+
+player_models.append(load_tile_img("player_idle0_left.png")) #0
+player_models.append(load_tile_img("player_idle0_right.png")) #1
+player_models.append(load_tile_img("player_run0_left.png")) #2
+player_models.append(load_tile_img("player_run0_right.png")) #3
+player_models.append(load_tile_img("player_falling_left.png")) #4
+player_models.append(load_tile_img("player_falling_right.png")) #5
+player_models.append(load_tile_img("player_run1_left.png")) #6
+player_models.append(load_tile_img("player_run1_right.png")) #7
+player_models.append(load_tile_img("player_run2_left.png")) #8
+player_models.append(load_tile_img("player_run2_right.png")) #9
+player_models.append(load_tile_img("player_idle1_left.png")) #10
+player_models.append(load_tile_img("player_idle1_right.png")) #11
+player_models.append(load_tile_img("player_hit0_left.png")) #12
+player_models.append(load_tile_img("player_hit1_left.png")) #13
+player_models.append(load_tile_img("player_hit2_left.png")) #14
+player_models.append(load_tile_img("player_hit0_right.png")) #15
+player_models.append(load_tile_img("player_hit1_right.png")) #16
+player_models.append(load_tile_img("player_hit2_right.png")) #17
 
 wooden_pickaxe = pygame.image.load("wooden_pickaxe.png").convert_alpha()
 wooden_pickaxe = pygame.transform.scale(wooden_pickaxe, (tilesize, tilesize))
@@ -93,20 +101,6 @@ for i in range(10):
     breaking_model = pygame.image.load("blocks/breaking" + str(i) + ".png").convert_alpha()
     breaking_model = pygame.transform.scale(breaking_model, (tilesize, tilesize))
     breaking_models.append(breaking_model)
-
-player_models = []
-player_models.append(player_idle0_left) # 0
-player_models.append(player_idle0_right) # 1
-player_models.append(player_run0_left) # 2
-player_models.append(player_run0_right) # 3
-player_models.append(player_falling_left) # 4
-player_models.append(player_falling_right) # 5
-player_models.append(player_run1_left) # 6
-player_models.append(player_run1_right) # 7
-player_models.append(player_run2_left) # 8
-player_models.append(player_run2_right) # 9
-player_models.append(player_idle1_left) # 10
-player_models.append(player_idle1_right) # 11
 
 item_models = []
 item_models.append(wooden_pickaxe)

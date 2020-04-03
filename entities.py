@@ -6,6 +6,8 @@ class Item:
         self.id = id
         self.location = location
         self.amount = 1
+        self.velx = 0
+        self.vely = 0
         types = ['pickaxe', 'pickaxe', 'pickaxe', 'pickaxe']
         if self.id <= 100:
             self.hit_multiplier = 0.075
