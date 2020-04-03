@@ -1,4 +1,4 @@
-import pygame
+import pygame, ast
 from block import Block
 
 pygame.init()
@@ -20,15 +20,20 @@ blocks = {}
 textures = {}
 mini_textures = {}
 font = pygame.font.Font("font.ttf", 10)
+recipes = []
+
+with open("crafting_recipes/recipes.txt") as recipes:
+    recipes = ast.literal_eval(recipes.read())
+    print(recipes)
 
 def load_block(id, name):
     block = Block(id, name)
     blocks[id] = block
-    
+
     block_img = pygame.image.load('blocks/' + name + '.png').convert()
     block_img = pygame.transform.scale(block_img, (tilesize, tilesize))
     mini_block_img = pygame.transform.scale(block_img, (tilesize // 2, tilesize // 2))
-    
+
     textures[id] = block_img
     mini_textures[id] = mini_block_img
 
@@ -47,6 +52,7 @@ load_block(2, 'dirt_block')
 load_block(3, 'wood_block')
 load_block(4, 'leaves_block')
 load_block(5, 'stone_block')
+load_block(6, 'wood_planks')
 
 item_hit_multipliers = [0.25, 0.25, 0.25, 0.25, 0.25]
 
