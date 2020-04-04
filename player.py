@@ -48,7 +48,7 @@ class Player:
 
         # Number of hitbox points on each side of the character
         hitbox_points = 20
-        for i in range(3, hitbox_points-3):
+        for i in range(3, hitbox_points):
             # The coordinates that vary as i varies
             x_variation_coord = math.floor(self.x + i * self.w/hitbox_points)
             y_variation_coord = math.ceil(self.y - i * self.h/hitbox_points)
@@ -61,6 +61,7 @@ class Player:
             if tilemap[top[0]][top[1]].pass_through == False:
                 self.vy = 0
                 self.y -= player_speed
+                
             if tilemap[left[0]][left[1]].pass_through == False:
                 self.x -= self.vx
                 self.vx = 0

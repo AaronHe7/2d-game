@@ -27,9 +27,9 @@ while 1:
     mouse = pygame.mouse.get_pressed()
 
     if keys[pygame.K_d]:
-        player.vx += player_speed/30
+        player.vx = player_speed
     if keys[pygame.K_a]:
-        player.vx += -player_speed/30
+        player.vx = -player_speed
     if player.vx > player_speed:
         player.vx = player_speed
     if player.vx < -player_speed:
@@ -128,42 +128,16 @@ while 1:
 
     #draw player model
     
-    if 4 > player.handstate > 0 and frame%8 == 0:
+    if 8 > player.handstate > 0 and frame%4 == 0:
         if mouse[0] == 1 or mouse[2] == 1:
-            if frame%8 == 0:
+            if frame%4 == 0:
                 player.handstate += 1
 
-    if player.handstate == 4:
+    if player.handstate == 8:
         player.handstate = 1
 
     player_model = player_models[animations.checkframe(player.direction, player.handstate, frame % maxrframe, [player.vx, player.vy], frame, maxrframe)]
     display.blit(player_model, (int(player_x_display), int(player_y_display)))
-
-    #draw object in player's hand
-
-    if player.vx == 0 and player.vy == 0 and player.on_ground == True:
-        if frame%120 < 60:
-            vertical_offset = 0
-        if frame%120 >= 60:
-            vertical_offset = 3
-
-    if player.direction[1] == -1 and player.inhand.id != 0:
-        display.blit(mini_textures[player.inhand.id],  (648 - (tilesize - 35) * player.direction[0], 350))
-    else:
-        if player.inhand.id <= 100 and player.inhand.id != 0:
-            if player.handstate == 0:
-                display.blit(mini_textures[player.inhand.id], (646 + (tilesize - 17) * player.direction[0], 393 + vertical_offset))
-            elif player.handstate == 1:
-                display.blit(mini_textures[player.inhand.id], (646 + (tilesize - 26) * player.direction[0], 383))
-            elif player.handstate == 2:
-                display.blit(mini_textures[player.inhand.id], (646 + (tilesize - 23) * player.direction[0], 385))
-            elif player.handstate == 3:
-                display.blit(mini_textures[player.inhand.id], (646 + (tilesize - 20) * player.direction[0], 395))
-        if player.inhand.id >= 100:
-            if player.direction[0] == 1:
-                display.blit(mini_textures[player.inhand.id], (646 + (tilesize - 20) * player.direction[0], 390))
-            if player.direction[0] == -1:
-                display.blit(pygame.transform.flip(textures[player.inhand.id], False, True), (636 + (tilesize - 2) * player.direction[0], 380))
 
     #draw particles
                 
@@ -214,6 +188,7 @@ while 1:
         #check if mouse 1 or mouse 2 is clicked, removing or building blocks.
         if mouse[0] or mouse[2]:
             if mouse[0]:
+                print(player.handstate)
                 temp_block = tilemap[mousex][mousey]
                 if 320 <= mouse_location[0] <= 960 and 180 <= mouse_location[1] <= 540 and temp_block.id != 0:
                     if player.handstate == 0:
@@ -258,9 +233,9 @@ while 1:
                         tilemap[mousex][mousey] = copy.deepcopy(blocks[player.inhand.id])
                         player.inhand.amount -= 1
         else:
-            if player.handstate > 0 and frame%8 == 1:
+            if player.handstate > 0 and frame%4 == 1:
                 player.handstate += 1
-            if player.handstate == 4:
+            if player.handstate > 7:
                 player.handstate = 0
 
     #draw hotbar

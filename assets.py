@@ -37,10 +37,12 @@ def load_block(id, name):
     textures[id] = block_img
     mini_textures[id] = mini_block_img
 
+player_models = []
+
 def load_tile_img(file_name):
     file = pygame.image.load('player_sprites/' + file_name).convert_alpha()
     sprite = pygame.transform.scale(file, (int(0.85 * tilesize), int(1.8 * tilesize)))
-    return sprite
+    player_models.append(sprite)
 
 sky = pygame.Surface((tilesize, tilesize))
 textures[0] = sky
@@ -70,26 +72,43 @@ half_hunger_icon = pygame.transform.scale(half_hunger_icon, (guiscale, guiscale)
 empty_hunger_icon = pygame.image.load("empty_hunger.png").convert_alpha()
 empty_hunger_icon = pygame.transform.scale(empty_hunger_icon, (guiscale, guiscale))
 
-player_models = []
-
-player_models.append(load_tile_img("player_idle0_left.png")) #0
-player_models.append(load_tile_img("player_idle0_right.png")) #1
-player_models.append(load_tile_img("player_run0_left.png")) #2
-player_models.append(load_tile_img("player_run0_right.png")) #3
-player_models.append(load_tile_img("player_falling_left.png")) #4
-player_models.append(load_tile_img("player_falling_right.png")) #5
-player_models.append(load_tile_img("player_run1_left.png")) #6
-player_models.append(load_tile_img("player_run1_right.png")) #7
-player_models.append(load_tile_img("player_run2_left.png")) #8
-player_models.append(load_tile_img("player_run2_right.png")) #9
-player_models.append(load_tile_img("player_idle1_left.png")) #10
-player_models.append(load_tile_img("player_idle1_right.png")) #11
-player_models.append(load_tile_img("player_hit0_left.png")) #12
-player_models.append(load_tile_img("player_hit1_left.png")) #13
-player_models.append(load_tile_img("player_hit2_left.png")) #14
-player_models.append(load_tile_img("player_hit0_right.png")) #15
-player_models.append(load_tile_img("player_hit1_right.png")) #16
-player_models.append(load_tile_img("player_hit2_right.png")) #17
+load_tile_img("player_idle0_left.png") #0
+load_tile_img("player_idle0_right.png") #1
+load_tile_img("player_run0_left.png") #2
+load_tile_img("player_run0_right.png") #3
+load_tile_img("player_falling_left.png") #4
+load_tile_img("player_falling_right.png") #5
+load_tile_img("player_run1_left.png") #6
+load_tile_img("player_run1_right.png") #7
+load_tile_img("player_run2_left.png") #8
+load_tile_img("player_run2_right.png") #9
+load_tile_img("player_idle1_left.png") #10
+load_tile_img("player_idle1_right.png") #11
+load_tile_img("player_hit0_left.png") #12
+load_tile_img("player_hit1_left.png") #13
+load_tile_img("player_hit2_left.png") #14
+load_tile_img("player_hit0_right.png") #15
+load_tile_img("player_hit1_right.png") #16
+load_tile_img("player_hit2_right.png") #17
+load_tile_img("player_run3_left.png") #18
+load_tile_img("player_run4_left.png") #19
+load_tile_img("player_run5_left.png") #20
+load_tile_img("player_run6_left.png") #21
+load_tile_img("player_run7_left.png") #22
+load_tile_img("player_run3_right.png") #23
+load_tile_img("player_run4_right.png") #24
+load_tile_img("player_run5_right.png") #25
+load_tile_img("player_run6_right.png") #26
+load_tile_img("player_run7_right.png") #27
+load_tile_img("player_hit3_left.png") #28
+load_tile_img("player_hit4_left.png") #29
+load_tile_img("player_hit5_left.png") #30
+load_tile_img("player_hit6_left.png") #31
+load_tile_img("player_hit3_right.png") #32
+load_tile_img("player_hit4_right.png") #33
+load_tile_img("player_hit5_right.png") #34
+load_tile_img("player_hit6_right.png") #35
+load_tile_img("error.png") #Error for no image returned
 
 wooden_pickaxe = pygame.image.load("wooden_pickaxe.png").convert_alpha()
 wooden_pickaxe = pygame.transform.scale(wooden_pickaxe, (tilesize, tilesize))
