@@ -18,6 +18,10 @@ while 1:
     # Center player
     player_x_display = width/2 - player.w/2
     player_y_display = height/2 - player.h/2
+    mouse_location = pygame.mouse.get_pos()
+    mousex = math.floor(player.x + (mouse_location[0] - player_x_display)/tilesize)
+    mousey = math.ceil(player.y - (mouse_location[1] - player_y_display)/tilesize)
+    #display.blit(background, (int(-player.x), int(player.y)))
 
     keys = pygame.key.get_pressed()
     mouse = pygame.mouse.get_pressed()
@@ -119,10 +123,11 @@ while 1:
                 display.blit(mini_textures[drop.id], (drop.location))
 
     #draw player model
-
-    if 4 > player.handstate > 0:
-        if frame%5 == 0:
-            player.handstate += 1
+    
+    if 4 > player.handstate > 0 and frame%8 == 0:
+        if mouse[0] == 1 or mouse[2] == 1:
+            if frame%8 == 0:
+                player.handstate += 1
 
     if player.handstate == 4:
         player.handstate = 1
@@ -162,7 +167,7 @@ while 1:
         particle[0][0] += particle[2][0]
         particle[0][1] += particle[2][1]
         particle[2][1] += 1
-        particle[3] -= 0.2
+        particle[3] -= 0.1
         for i in range(len(particle[1])):
             if particle[1][i] > 254:
                 particle[1][i] = 254
@@ -203,54 +208,56 @@ while 1:
             pass
     else:
         #check if mouse 1 or mouse 2 is clicked, removing or building blocks.
-        if mouse[0]:
-            if player.handstate == 0:
-                player.handstate = 1
-            mouse_location = pygame.mouse.get_pos()
-            mousex = math.floor(player.x + (mouse_location[0] - player_x_display)/tilesize)
-            mousey = math.ceil(player.y - (mouse_location[1] - player_y_display)/tilesize)
-            temp_block = tilemap[mousex][mousey]
-            if 320 <= mouse_location[0] <= 960 and 180 <= mouse_location[1] <= 540:
-                if temp_block.durability > 0:
-                    temp_block.frames_since_last_touched = 0
-                    if temp_block.required_tool == player.inhand.type:
-                        temp_block.durability -= round(player.inhand.hit_multiplier, 3)
-                    else:
-                        temp_block.durability -= round(0.075, 3)
-                    if temp_block.durability < 0:
-                        temp_block.durability = 0
-                    # ................location0.......................................colour1.........................................velocity2.........................radius3............
-                    temp_particle = [[mouse_location[0], mouse_location[1]], [display.get_at(pygame.mouse.get_pos())[0] + random.randint(-20, 20), display.get_at(pygame.mouse.get_pos())[1] + random.randint(-20, 20), display.get_at(pygame.mouse.get_pos())[2] + random.randint(-20, 20)], [random.randint(-3, 3), random.randint(-5, -2)], random.randint(3, 6)]
-                    particles.append(temp_particle)
-                elif temp_block.durability <= 0.1 and temp_block.id > 0:
-                    dropid = temp_block.id
-                    # Set block to air when destroyed
-                    drop = Item(dropid, [mouse_location[0], mouse_location[1]])
-                    tilemap[mousex][mousey] = blocks[0]
-                    entities_group.append(drop)
+        if mouse[0] or mouse[2]:
+            if mouse[0]:
+                temp_block = tilemap[mousex][mousey]
+                if 320 <= mouse_location[0] <= 960 and 180 <= mouse_location[1] <= 540 and temp_block.id != 0:
+                    if player.handstate == 0:
+                        player.handstate = 1
+                    if temp_block.durability > 0:
+                        temp_block.frames_since_last_touched = 0
+                        if temp_block.required_tool == player.inhand.type:
+                            temp_block.durability -= round(player.inhand.hit_multiplier, 3)
+                        else:
+                            temp_block.durability -= round(0.075, 3)
+                        if temp_block.durability < 0:
+                            temp_block.durability = 0
+                        # ................location0.......................................colour1.........................................velocity2.........................radius3............
+                        temp_particle = [[mouse_location[0], mouse_location[1]], [display.get_at(pygame.mouse.get_pos())[0] + random.randint(-20, 20), display.get_at(pygame.mouse.get_pos())[1] + random.randint(-20, 20), display.get_at(pygame.mouse.get_pos())[2] + random.randint(-20, 20)], [random.randint(-3, 3), random.randint(-5, -2)], random.randint(3, 6)]
+                        particles.append(temp_particle)
+                    elif temp_block.durability <= 0.1 and temp_block.id > 0:
+                        dropid = temp_block.id
+                        # Set block to air when destroyed
+                        drop = Item(dropid, [mouse_location[0], mouse_location[1]])
+                        tilemap[mousex][mousey] = blocks[0]
+                        entities_group.append(drop)
+            if mouse[2]:
+                temp_block = tilemap[mousex][mousey]
+                able = 0
+
+                if tilemap[mousex][mousey-1].id != 0:
+                    able += 1
+                if tilemap[mousex-1][mousey].id != 0:
+                    able += 1
+                if tilemap[mousex+1][mousey].id != 0:
+                    able += 1
+                if tilemap[mousex][mousey+1].id != 0:
+                    able += 1
+
+                if 320 <= mouse_location[0] <= 960 and 180 <= mouse_location[1] <= 540 and able > 0:
+                    if player.handstate == 0:
+                        player.handstate = 1
+                    if temp_block.id == 0 and player.inhand.id != 0 and player.inhand.amount > 0:
+                        for i in range(20):
+                            temp_particle = [[mouse_location[0], mouse_location[1]], [textures[player.inhand.id].get_at([20, 20])[0] + random.randint(-20, 20), textures[player.inhand.id].get_at([20, 20])[1] + random.randint(-20, 20), textures[player.inhand.id].get_at([20, 20])[2] + random.randint(-20, 20)], [random.randint(-3, 3), random.randint(-5, -2)], random.randint(3, 6)]
+                            particles.append(temp_particle)
+                        tilemap[mousex][mousey] = copy.deepcopy(blocks[player.inhand.id])
+                        player.inhand.amount -= 1
         else:
-            player.handstate = 0
-
-        if mouse[2]:
-            mouse_location = pygame.mouse.get_pos()
-            mousex = math.floor(player.x + (mouse_location[0] - player_x_display)/tilesize)
-            mousey = math.ceil(player.y - (mouse_location[1] - player_y_display)/tilesize)
-            temp_block = tilemap[mousex][mousey]
-            able = 0
-
-            if tilemap[mousex][mousey-1].id != 0:
-                able += 1
-            if tilemap[mousex-1][mousey].id != 0:
-                able += 1
-            if tilemap[mousex+1][mousey].id != 0:
-                able += 1
-            if tilemap[mousex][mousey+1].id != 0:
-                able += 1
-
-            if 320 <= mouse_location[0] <= 960 and 180 <= mouse_location[1] <= 540 and able > 0:
-                if temp_block.id == 0 and player.inhand.id != 0 and player.inhand.amount > 0:
-                    tilemap[mousex][mousey] = copy.deepcopy(blocks[player.inhand.id])
-                    player.inhand.amount -= 1
+            if player.handstate > 0 and frame%8 == 1:
+                player.handstate += 1
+            if player.handstate == 4:
+                player.handstate = 0
 
     #draw hotbar
 

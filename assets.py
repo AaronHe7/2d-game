@@ -25,7 +25,6 @@ particles = []
 
 with open("crafting_recipes/recipes.txt") as recipes:
     recipes = ast.literal_eval(recipes.read())
-    print(recipes)
 
 def load_block(id, name):
     block = Block(id, name)

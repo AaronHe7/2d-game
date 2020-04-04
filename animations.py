@@ -1,19 +1,5 @@
 def checkframe(direction, handstate, rframe, velocity, frame, maxrframe):
 
-    if handstate == 1 and direction[0] == -1: #mining
-        return 12
-    if handstate == 2 and direction[0] == -1:
-        return 13
-    if handstate == 3 and direction[0] == -1:
-        return 14
-    if handstate == 1 and direction[0] == 1:
-        return 15
-    if handstate == 2 and direction[0] == 1:
-        return 16
-    if handstate == 3 and direction[0] == 1:
-        return 17
-
-
     if direction[1] == 1 and direction[0] == -1:
         return 0
     if direction[1] == 1 and direction[0] == 1:
@@ -46,5 +32,18 @@ def checkframe(direction, handstate, rframe, velocity, frame, maxrframe):
         return 9 #placeholder, replace with running animation state n facing right
     if direction[1] == 0 and handstate == 0 and rframe > (maxrframe*2/3) and velocity[0] < 0: #etc
         return 8 #placeholder, replace with running animation state n facing left
+
+    if handstate == 1 and direction[0] == -1: #mining
+        return 12
+    if handstate == 2 and direction[0] == -1:
+        return 13
+    if handstate == 3 and direction[0] == -1:
+        return 14
+    if handstate == 1 and direction[0] == 1:
+        return 15
+    if handstate == 2 and direction[0] == 1:
+        return 16
+    if handstate == 3 and direction[0] == 1:
+        return 17
 
     return 1
