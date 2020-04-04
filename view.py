@@ -1,4 +1,4 @@
-import sys, pygame, animations, copy
+import sys, pygame, animations, copy, random
 from player import *
 from assets import *
 from gui import *
@@ -156,6 +156,22 @@ while 1:
             if player.direction[0] == -1:
                 display.blit(pygame.transform.flip(textures[player.inhand.id], False, True), (636 + (tilesize - 2) * player.direction[0], 380))
 
+    #draw particles
+                
+    for particle in particles:
+        particle[0][0] += particle[2][0]
+        particle[0][1] += particle[2][1]
+        particle[2][1] += 1
+        particle[3] -= 0.2
+        for i in range(len(particle[1])):
+            if particle[1][i] > 254:
+                particle[1][i] = 254
+            if particle[1][i] < 1:
+                particle[1][i] = 1
+        if particle[3] <= 0:
+            particles.remove(particle)
+        pygame.draw.circle(display, particle[1], particle[0], int(particle[3]))
+    
     #draw hunger and hp bars
 
     bar = gui.return_bar(player.hp)
@@ -203,6 +219,9 @@ while 1:
                         temp_block.durability -= round(0.075, 3)
                     if temp_block.durability < 0:
                         temp_block.durability = 0
+                    # ................location0.......................................colour1.........................................velocity2.........................radius3............
+                    temp_particle = [[mouse_location[0], mouse_location[1]], [display.get_at(pygame.mouse.get_pos())[0] + random.randint(-20, 20), display.get_at(pygame.mouse.get_pos())[1] + random.randint(-20, 20), display.get_at(pygame.mouse.get_pos())[2] + random.randint(-20, 20)], [random.randint(-3, 3), random.randint(-5, -2)], random.randint(3, 6)]
+                    particles.append(temp_particle)
                 elif temp_block.durability <= 0.1 and temp_block.id > 0:
                     dropid = temp_block.id
                     # Set block to air when destroyed

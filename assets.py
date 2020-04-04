@@ -21,6 +21,7 @@ textures = {}
 mini_textures = {}
 font = pygame.font.Font("font.ttf", 10)
 recipes = []
+particles = []
 
 with open("crafting_recipes/recipes.txt") as recipes:
     recipes = ast.literal_eval(recipes.read())
