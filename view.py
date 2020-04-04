@@ -27,8 +27,12 @@ while 1:
     mouse = pygame.mouse.get_pressed()
 
     if keys[pygame.K_d]:
-        player.vx = player_speed
+        player.vx += player_speed/30
     if keys[pygame.K_a]:
+        player.vx += -player_speed/30
+    if player.vx > player_speed:
+        player.vx = player_speed
+    if player.vx < -player_speed:
         player.vx = -player_speed
     if keys[pygame.K_LSHIFT] and player.on_ground:
         player.vxmultiplier = 0.5
@@ -245,9 +249,9 @@ while 1:
                     able += 1
 
                 if 320 <= mouse_location[0] <= 960 and 180 <= mouse_location[1] <= 540 and able > 0:
-                    if player.handstate == 0:
-                        player.handstate = 1
                     if temp_block.id == 0 and player.inhand.id != 0 and player.inhand.amount > 0:
+                        if player.handstate == 0:
+                            player.handstate = 1
                         for i in range(20):
                             temp_particle = [[mouse_location[0], mouse_location[1]], [textures[player.inhand.id].get_at([20, 20])[0] + random.randint(-20, 20), textures[player.inhand.id].get_at([20, 20])[1] + random.randint(-20, 20), textures[player.inhand.id].get_at([20, 20])[2] + random.randint(-20, 20)], [random.randint(-3, 3), random.randint(-5, -2)], random.randint(3, 6)]
                             particles.append(temp_particle)

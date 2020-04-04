@@ -117,6 +117,6 @@ hunger_icons = [empty_hunger_icon, half_hunger_icon, full_hunger_icon]
 
 tilemap = {}
 
-player_speed = 5/tilesize
-player_jump_speed = 9/tilesize
-gravity = -1/tilesize
+player_speed = 4.5/tilesize
+player_jump_speed = 10/tilesize
+gravity = -0.75/tilesize
