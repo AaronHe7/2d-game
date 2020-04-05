@@ -30,9 +30,10 @@ with open("crafting_recipes/recipes.txt") as recipes:
 def load_block(id, name, durability):
     block = Block(id, name, durability)
     blocks[id] = block
+    blocks[name] = block
 
     block_img = pygame.image.load('blocks/' + name + '.png').convert()
-    block_img = pygame.transform.scale(block_img, (tilesize, tilesize))
+    block_img = pygame.transform.scale(block_img, (tilesize + 1, tilesize + 1))
     mini_block_img = pygame.transform.scale(block_img, (tilesize // 2, tilesize // 2))
 
     textures[id] = block_img
