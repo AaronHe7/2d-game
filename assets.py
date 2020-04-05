@@ -25,9 +25,6 @@ font = pygame.font.Font("font.ttf", 10)
 recipes = []
 particles = []
 
-with open("crafting_recipes/recipes.txt") as recipes:
-    recipes = ast.literal_eval(recipes.read())
-
 def load_block(id, name, durability):
     block = Block(id, name, durability)
     blocks[id] = block

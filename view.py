@@ -4,9 +4,11 @@ from assets import *
 from gui import *
 from terrain_gen import *
 from entities import *
+from crafting import *
 
 player = Player(0, 4, tilemap)
-
+crafting = Crafting()
+print(crafting.recipes)
 gui = Gui()
 
 while 1:
@@ -162,6 +164,7 @@ while 1:
     if keys[pygame.K_TAB]:
         #draw inventory aspects
         inventory_mouse_location = [(mouse_location[0] - 544) // 43, (mouse_location[1] - 152) // 43]
+        crafting_mouse_location = [(mouse_location[0])]
         display.blit(dimming_overlay, (0, 0))
         display.blit(inventory_background, (340, 100))
         display.blit(hotbar, (542, 150))
