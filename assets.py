@@ -20,6 +20,7 @@ break_radius = 5
 blocks = {}
 textures = {}
 mini_textures = {}
+cursor = {'carrying':''}
 font = pygame.font.Font("font.ttf", 10)
 recipes = []
 particles = []

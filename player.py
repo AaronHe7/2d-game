@@ -28,16 +28,28 @@ class Player:
         self.inventory = [[0,0,0,0,0],[0,0,0,0,0],[0,0,0,0,0],[0,0,0,0,0]]
         self.inhand = 0
         self.highlighted = 0
+        self.empty = Item(0, [-tilesize, -tilesize])
         for row in range(len(self.inventory)):
             for column in range(len(self.inventory[row])):
-                empty = Item(0, [-tilesize, -tilesize])
-                self.inventory[row][column] = empty
+                self.inventory[row][column] = self.empty
+        cursor['carrying'] = self.empty
     def update_vitals(self, counter):
         if self.hp < 20:
             if self.hunger >= 18:
                 if counter%180 == 0:
                     self.hunger -= 1
                     self.hp += 2
+    def check_inventory(self, drop):
+        for row in range(len(self.inventory)):
+            for column in range(len(self.inventory[row])):
+                if self.inventory[row][column].id == drop.id and self.inventory[row][column].amount < 64:
+                    locator = [row, column, drop.amount, True]
+                    return locator
+        for row in range(len(self.inventory)):
+            for column in range(len(self.inventory[row])):
+                if self.inventory[row][column].id == 0:
+                    locator = [row, column, 'null', False]
+                    return locator
     def update_position(self):
         self.vx *= self.vxmultiplier
         self.x += self.vx

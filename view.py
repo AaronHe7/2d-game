@@ -10,6 +10,7 @@ terrain = Terrain()
 gui = Gui()
 
 while 1:
+    pygame_events = pygame.event.get()
     if player.y < -2:
         display.fill((75,75,85))
     else:
@@ -22,7 +23,6 @@ while 1:
     mousey = math.ceil(player.y - (mouse_location[1] - player_y_display)/tilesize)
 
     player_mouse_dist = math.sqrt((player.x - mousex)**2 + (player.y - mousey)**2)
-    print(player_mouse_dist)
 
     keys = pygame.key.get_pressed()
     mouse = pygame.mouse.get_pressed()
@@ -59,7 +59,7 @@ while 1:
 
     player.inhand = player.inventory[0][player.highlighted]
 
-    for event in pygame.event.get():
+    for event in pygame_events:
         if event.type == pygame.QUIT:
             pygame.quit()
             sys.exit()
@@ -112,15 +112,12 @@ while 1:
     for drop in entities_group:
         if drop.type == 'item' or drop.type == 'block':
             if width / 2 - player.w / 2 - tilesize < drop.location[0] < width / 2 + player.w / 2 + tilesize and height / 2 - player.h /2 - tilesize < drop.location[1] < height / 2 + player.h / 2 + tilesize * 1.5:
-                for row in range(len(player.inventory)):
-                    for column in range(len(player.inventory[row])):
-                        if player.inventory[row][column].id == drop.id and player.inventory[row][column].amount < 64:
-                            player.inventory[row][column].amount += drop.amount / 4
-                            break
-                        elif player.inventory[row][column].id == 0:
-                            player.inventory[row][column] = drop
-                            break
+                locator = player.check_inventory(drop)
                 entities_group.remove(drop)
+                if locator[-1] == True:
+                    player.inventory[locator[0]][locator[1]].amount += locator[2]
+                elif locator[-1] == False:
+                    player.inventory[locator[0]][locator[1]] = drop
             else:
                 drop.velx = -(drop.location[0] - 640 - tilesize // 20)
                 drop.vely = (drop.location[1] - 360)
@@ -129,9 +126,6 @@ while 1:
                 display.blit(mini_textures[drop.id], (drop.location))
 
     #draw player model
-    if (mouse[0] == 1 or mouse[2] == 1) and frame % 4 == 0:
-        player.handstate %= 7
-        player.handstate += 1
 
     player_model = player_models[animations.checkframe(player.direction, player.handstate, frame % maxrframe, [player.vx, player.vy], frame, maxrframe)]
     legs_model = player_models[animations.checkframe(player.direction, player.handstate, frame % maxrframe, [player.vx, player.vy], frame, maxrframe, legs = True)]
@@ -167,6 +161,7 @@ while 1:
 
     if keys[pygame.K_TAB]:
         #draw inventory aspects
+        inventory_mouse_location = [(mouse_location[0] - 544) // 43, (mouse_location[1] - 152) // 43]
         display.blit(dimming_overlay, (0, 0))
         display.blit(inventory_background, (340, 100))
         display.blit(hotbar, (542, 150))
@@ -178,26 +173,50 @@ while 1:
         for row in range(len(player.inventory)):
             for column in range(len(player.inventory[row])):
                 if player.inventory[row][column].id != 0:
-                    if player.inventory[row][column].amount <= 0:
+                    if player.inventory[row][column].amount < 1:
                         empty = Item(0, [-tilesize, -tilesize])
                         player.inventory[row][column] = empty
-                    display.blit(textures[player.inventory[row][column].id], (544 + column * 43, 152))
-        if mouse[0]:
-            pass
+                    display.blit(textures[player.inventory[row][column].id], (544 + column * 43, 152 + row * 43))
+                    text = font.render(str(math.floor(player.inventory[row][column].amount)), True, (255, 255, 255))
+                    if math.floor(player.inventory[row][column].amount < 10):
+                        display.blit(text, (575 + column * 43, 179 + row * 43))
+                    elif math.floor(player.inventory[row][column].amount > 10):
+                        display.blit(text, (571 + column * 43, 179 + row * 43))
+        if cursor['carrying'].id != 0:
+            display.blit(textures[cursor['carrying'].id], (mouse_location[0] - tilesize // 2, mouse_location[1] - tilesize // 2))
+        for event in pygame_events:
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                if event.button == 1:
+                    hovered_inventory_space = player.inventory[inventory_mouse_location[1]][inventory_mouse_location[0]]
+                    if 0 <= inventory_mouse_location[0] <= 4 and 0 <= inventory_mouse_location[1] <= 3:
+                        if cursor['carrying'].id == 0:
+                            if hovered_inventory_space.id != 0:
+                                cursor['carrying'] = hovered_inventory_space
+                                player.inventory[inventory_mouse_location[1]][inventory_mouse_location[0]] = copy.deepcopy(player.empty)
+                        elif cursor['carrying'].id >= 0:
+                            if hovered_inventory_space.id == cursor['carrying'].id and hovered_inventory_space.amount + cursor['carrying'].amount <= 64:
+                                player.inventory[inventory_mouse_location[1]][inventory_mouse_location[0]].amount += cursor['carrying'].amount
+                                cursor['carrying'] = copy.deepcopy(player.empty)
+                            else:
+                                player.inventory[inventory_mouse_location[1]][inventory_mouse_location[0]], cursor['carrying'] = cursor['carrying'], player.inventory[inventory_mouse_location[1]][inventory_mouse_location[0]]
+                    
     else:
         #check if mouse 1 or mouse 2 is clicked, removing or building blocks.
         if mouse[0] or mouse[2]:
+            if frame % 4 == 0:
+                player.handstate %= 7
+                player.handstate += 1
             if mouse[0]:
                 block = tilemap[mousex][mousey]
                 if player_mouse_dist <= break_radius and block.id != 0:
+                    if block.required_tool == player.inhand.type:
+                        block.reduce_durability(player.inhand.hit_multiplier)
+                    else:
+                        block.reduce_durability()
                     if block.durability > 0:
                         block.frames_since_last_touched = 0
                         # for playtesting: instantly destroy block
                         #block.durability -=100
-                        if block.required_tool == player.inhand.type:
-                            block.reduce_durability(player.inhand.hit_multiplier)
-                        else:
-                            block.reduce_durability()
                         # ................location0.......................................colour1.........................................velocity2.........................radius3............
                         temp_particle = [[mouse_location[0], mouse_location[1]], [display.get_at(pygame.mouse.get_pos())[0] + random.randint(-20, 20), display.get_at(pygame.mouse.get_pos())[1] + random.randint(-20, 20), display.get_at(pygame.mouse.get_pos())[2] + random.randint(-20, 20)], [random.randint(-3, 3), random.randint(-5, -2)], random.randint(3, 6)]
                         particles.append(temp_particle)
@@ -237,18 +256,17 @@ while 1:
 
     display.blit(hotbar, (1060, 4))
 
-    for row in range(len(player.inventory)):
-        for column in range(len(player.inventory[row])):
-            if player.inventory[row][column].id != 0:
-                if player.inventory[row][column].amount <= 0:
-                    empty = Item(0, [-tilesize, -tilesize])
-                    player.inventory[row][column] = empty
-                display.blit(textures[player.inventory[row][column].id], (1062 + column * 43, 6))
-                text = font.render(str(math.floor(player.inventory[row][column].amount)), True, (255, 255, 255))
-                if math.floor(player.inventory[row][column].amount < 10):
-                    display.blit(text, (1093 + column * 43, 33))
-                else:
-                    display.blit(text, (1089 + column * 43, 33))
+    for column in range(len(player.inventory[0])):
+        if player.inventory[0][column].id != 0:
+            if player.inventory[0][column].amount < 1:
+                empty = Item(0, [-tilesize, -tilesize])
+                player.inventory[0][column] = empty
+            display.blit(textures[player.inventory[0][column].id], (1062 + column * 43, 6))
+            text = font.render(str(math.floor(player.inventory[0][column].amount)), True, (255, 255, 255))
+            if math.floor(player.inventory[0][column].amount < 10):
+                display.blit(text, (1093 + column * 43, 33))
+            else:
+                display.blit(text, (1089 + column * 43, 33))
 
     #draw hotbar selection
 
