@@ -1,4 +1,49 @@
-def checkframe(direction, handstate, rframe, velocity, frame, maxrframe):
+def checkframe(direction, handstate, rframe, velocity, frame, maxrframe, legs = False):
+
+    if legs == True:
+        if direction[0] == -1:
+            if direction[1] != 0:
+                return -102
+            if velocity[0] == 0:
+                return -100
+            if rframe <= (maxrframe/8) and velocity[0] < 0:
+                return -104
+            if (maxrframe*2/8) >= rframe > (maxrframe/8) and velocity[0] < 0:
+                return -106
+            if (maxrframe*3/8) >= rframe > (maxrframe*2/8) and velocity[0] < 0:
+                return -108
+            if (maxrframe*4/8) >= rframe > (maxrframe*3/8) and velocity[0] < 0:
+                return -110
+            if (maxrframe*5/8) >= rframe > (maxrframe*4/8) and velocity[0] < 0:
+                return -112
+            if (maxrframe*6/8) >= rframe > (maxrframe*5/8) and velocity[0] < 0:
+                return -114
+            if (maxrframe*7/8) >= rframe > (maxrframe*6/8) and velocity[0] < 0:
+                return -116
+            if rframe > (maxrframe*7/8) and velocity[0] < 0:
+                return -118
+        if direction[0] == 1:
+            if direction[1] != 0:
+                return -103
+            if velocity[0] == 0:
+                return -101
+            if rframe <= (maxrframe/8) and velocity[0] > 0:
+                return -105
+            if (maxrframe*2/8) >= rframe > (maxrframe/8) and velocity[0] > 0:
+                return -107
+            if (maxrframe*3/8) >= rframe > (maxrframe*2/8) and velocity[0] > 0:
+                return -109
+            if (maxrframe*4/8) >= rframe > (maxrframe*3/8) and velocity[0] > 0:
+                return -111
+            if (maxrframe*5/8) >= rframe > (maxrframe*4/8) and velocity[0] > 0:
+                return -113
+            if (maxrframe*6/8) >= rframe > (maxrframe*5/8) and velocity[0] > 0:
+                return -115
+            if (maxrframe*7/8) >= rframe > (maxrframe*6/8) and velocity[0] > 0:
+                return -117
+            if rframe > (maxrframe*7/8) and velocity[0] > 0:
+                return -119
+        
 
     if direction[1] == 1 and direction[0] == -1:
         return 4
@@ -24,7 +69,7 @@ def checkframe(direction, handstate, rframe, velocity, frame, maxrframe):
         return 3
     if direction[1] == 0 and handstate == 0 and rframe <= (maxrframe/8) and velocity[0] < 0: #if the player is moving left and not falling and has no handstate
         return 2
-    if direction[1] == 0 and handstate == 0 and (maxrframe*2/8) >= rframe > (maxrframe/8) and velocity[0] > 0: #etc
+    if direction[1] == 0 and handstate == 0 and (maxrframe*2/8) >= rframe > (maxrframe/8) and velocity[0] > 0: #2
         return 7 #placeholder, replace with running animation state n facing right
     if direction[1] == 0 and handstate == 0 and (maxrframe*2/8) >= rframe > (maxrframe/8) and velocity[0] < 0: #etc
         return 6 #placeholder, replace with running animation state n facing left

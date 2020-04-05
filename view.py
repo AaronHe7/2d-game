@@ -132,6 +132,8 @@ while 1:
         player.handstate += 1
 
     player_model = player_models[animations.checkframe(player.direction, player.handstate, frame % maxrframe, [player.vx, player.vy], frame, maxrframe)]
+    legs_model = player_models[animations.checkframe(player.direction, player.handstate, frame % maxrframe, [player.vx, player.vy], frame, maxrframe, legs = True)]
+    display.blit(legs_model, (int(player_x_display), int(player_y_display)))
     display.blit(player_model, (int(player_x_display), int(player_y_display)))
 
     #draw particles
