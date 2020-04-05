@@ -27,7 +27,13 @@ def generate_terrain(x = 0, y = 0, cell = 0):
             for y in tree[x]:
                 tilemap[x][y] = tree[x][y].get_copy()
                 tilemap[x][y].pass_through = True
-    
+
+def generate_cave(x, y, size):
+    cave = {}
+    for i in range(size):
+        if x not in cave:
+            tree[x] = {}
+
 def generate_tree(x, y, height):
     tree = {}
     for i in range(height):

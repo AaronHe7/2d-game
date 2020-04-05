@@ -188,7 +188,6 @@ while 1:
         #check if mouse 1 or mouse 2 is clicked, removing or building blocks.
         if mouse[0] or mouse[2]:
             if mouse[0]:
-                print(player.handstate)
                 temp_block = tilemap[mousex][mousey]
                 if 320 <= mouse_location[0] <= 960 and 180 <= mouse_location[1] <= 540 and temp_block.id != 0:
                     if player.handstate == 0:
