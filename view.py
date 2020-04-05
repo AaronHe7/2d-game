@@ -6,7 +6,7 @@ from terrain_gen import *
 from entities import *
 
 player = Player(0, 4, tilemap)
-terrain = Terrain()
+
 gui = Gui()
 
 while 1:

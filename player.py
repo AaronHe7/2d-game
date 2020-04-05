@@ -58,7 +58,7 @@ class Player:
         self.on_ground = False
         points_touching_ground = 0
 
-        if (self.y < -100):
+        if (self.y < terrain.bedrock_level - 50):
             # placeholder; player is meant to lose health and die
             self.y = 5
             self.vy = 0
