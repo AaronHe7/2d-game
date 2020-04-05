@@ -29,7 +29,6 @@ class Terrain:
 
         # Generate tree at random
         if y == surface_level and random.randint(0, 15) == 0:
-            print(y)
             tree = self.generate_tree(x, y + 1, random.randint(6, 11))
             for x in tree:
                 if x not in tilemap:

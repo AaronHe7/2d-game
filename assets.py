@@ -1,4 +1,4 @@
-import pygame, ast
+import pygame, ast, math
 from block import Block
 
 pygame.init()
@@ -32,7 +32,7 @@ def load_block(id, name, durability):
     blocks[id] = block
 
     block_img = pygame.image.load('blocks/' + name + '.png').convert()
-    block_img = pygame.transform.scale(block_img, (tilesize, tilesize))
+    block_img = pygame.transform.scale(block_img, (tilesize + 1, tilesize + 1))
     mini_block_img = pygame.transform.scale(block_img, (tilesize // 2, tilesize // 2))
 
     textures[id] = block_img
@@ -42,7 +42,7 @@ player_models = {}
 
 def load_tile_img(index, file_name):
     file = pygame.image.load('player_sprites/' + file_name).convert_alpha()
-    sprite = pygame.transform.scale(file, (int(0.85 * tilesize), int(1.8 * tilesize)))
+    sprite = pygame.transform.scale(file, (math.floor(0.85 * tilesize), math.floor(1.8 * tilesize)))
     player_models[index] = sprite
 
 sky = pygame.Surface((tilesize, tilesize))
