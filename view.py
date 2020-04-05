@@ -5,10 +5,9 @@ from gui import *
 from terrain_gen import *
 from entities import *
 
-player = Player(0, 2, tilemap)
+player = Player(0, 4, tilemap)
 
 gui = Gui()
-cell = []
 
 while 1:
     if player.y < -2:
@@ -82,8 +81,9 @@ while 1:
             if x not in tilemap:
                 tilemap[x] = {}
             if y not in tilemap[x]:
-                generate_terrain(x, y, cell)
+                generate_terrain(x, y)
             if tilemap[x][y].id != 0:
+                # Display block relative to player
                 display.blit(textures[tilemap[x][y].id], (int(player_x_display + tilesize * (x - player.x)), int(player_y_display -  tilesize * (y - player.y))))
                 if tilemap[x][y].durability < tilemap[x][y].max_durability:
                     if tilemap[x][y].frames_since_last_touched > 60:
@@ -122,19 +122,14 @@ while 1:
             else:
                 drop.velx = -(drop.location[0] - 640 - tilesize // 20)
                 drop.vely = (drop.location[1] - 360)
-                drop.location[0] += drop.velx // 20
-                drop.location[1] -= drop.vely // 20
+                drop.location[0] += drop.velx / 20
+                drop.location[1] -= drop.vely / 20
                 display.blit(mini_textures[drop.id], (drop.location))
 
     #draw player model
-    
-    if 8 > player.handstate > 0 and frame%4 == 0:
-        if mouse[0] == 1 or mouse[2] == 1:
-            if frame%4 == 0:
-                player.handstate += 1
-
-    if player.handstate == 8:
-        player.handstate = 1
+    if (mouse[0] == 1 or mouse[2] == 1) and frame % 4 == 0:
+        player.handstate %= 8
+        player.handstate += 1
 
     player_model = player_models[animations.checkframe(player.direction, player.handstate, frame % maxrframe, [player.vx, player.vy], frame, maxrframe)]
     display.blit(player_model, (int(player_x_display), int(player_y_display)))
@@ -188,13 +183,14 @@ while 1:
         #check if mouse 1 or mouse 2 is clicked, removing or building blocks.
         if mouse[0] or mouse[2]:
             if mouse[0]:
-                print(player.handstate)
                 temp_block = tilemap[mousex][mousey]
                 if 320 <= mouse_location[0] <= 960 and 180 <= mouse_location[1] <= 540 and temp_block.id != 0:
                     if player.handstate == 0:
                         player.handstate = 1
                     if temp_block.durability > 0:
                         temp_block.frames_since_last_touched = 0
+                        # for playtesting: instantly destroy block
+                        temp_block.durability -=100
                         if temp_block.required_tool == player.inhand.type:
                             temp_block.durability -= round(player.inhand.hit_multiplier, 3)
                         else:
@@ -230,7 +226,7 @@ while 1:
                         for i in range(20):
                             temp_particle = [[mouse_location[0], mouse_location[1]], [textures[player.inhand.id].get_at([20, 20])[0] + random.randint(-20, 20), textures[player.inhand.id].get_at([20, 20])[1] + random.randint(-20, 20), textures[player.inhand.id].get_at([20, 20])[2] + random.randint(-20, 20)], [random.randint(-3, 3), random.randint(-5, -2)], random.randint(3, 6)]
                             particles.append(temp_particle)
-                        tilemap[mousex][mousey] = copy.deepcopy(blocks[player.inhand.id])
+                        tilemap[mousex][mousey] = blocks[player.inhand.id].get_copy()
                         player.inhand.amount -= 1
         else:
             if player.handstate > 0 and frame%4 == 1:

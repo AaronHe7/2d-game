@@ -2,31 +2,42 @@ import random, math
 from block import *
 from assets import *
 
-def generate_terrain(x = 0, y = 0, cell = 0):
-    """if cell[6] == 1 or cell[6] == 4:
-        if y > -5:
-            return 4
-    """
-    if y > 0:
+surface_level = 0
+def generate_terrain(x, y):
+    global surface_level
+    if y > surface_level: # air above surface level
         block = blocks[0]
-    elif y == 0:
+    elif y == surface_level: # grass at surface level
         block = blocks[1]
-    elif y <= -5:
-        block = blocks[5]
-    elif -5 < y < 0:
+    elif surface_level - 3 < y < surface_level: # dirt below suface level
         block = blocks[2]
+    elif y <= surface_level - 3:
+        p = (-y + surface_level - 3)/10 + 0.3
+        if random.uniform(0, 1) < p:
+            block = blocks[5]
+        else:
+            block = blocks[2]
+
 
     tilemap[x][y] = block.get_copy()
 
     # Generate tree at random
-    if y == 1 and random.randint(0, 15) == 0:
-        tree = generate_tree(x, y, random.randint(6, 11))
+    if y == surface_level and random.randint(0, 15) == 0:
+        print(y)
+        tree = generate_tree(x, y + 1, random.randint(6, 11))
         for x in tree:
             if x not in tilemap:
                 tilemap[x] = {}
             for y in tree[x]:
                 tilemap[x][y] = tree[x][y].get_copy()
                 tilemap[x][y].pass_through = True
+
+    # Increase or decrease surface level at random
+    if y == surface_level + 1 and random.randint(0, 20) == 0:
+        if random.randint(0, 1) == 1:
+            surface_level += 1
+        else:
+            surface_level -= 1
     
 def generate_tree(x, y, height):
     tree = {}
@@ -59,3 +70,5 @@ def generate_tree(x, y, height):
                 return {}
     return tree
 
+def generate_cave(x, y, blocks_removed):
+        pass
