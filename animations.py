@@ -83,4 +83,4 @@ def checkframe(direction, handstate, rframe, velocity, frame, maxrframe):
     if handstate == 7 and direction[0] == 1:
         return 35
 
-    return 35
+    return -1
