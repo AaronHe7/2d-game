@@ -46,6 +46,12 @@ class Player:
         self.on_ground = False
         points_touching_ground = 0
 
+        if (self.y < -100):
+            # placeholder; player is meant to lose health and die
+            self.y = 5
+            self.vy = 0
+            self.x = 0
+            self.vx = 0
         # Number of hitbox points on each side of the character
         hitbox_points = 20
         for i in range(3, hitbox_points):

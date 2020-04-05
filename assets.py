@@ -16,6 +16,7 @@ last_jump_frame = 0
 maxrframe = 30
 tilesize = 40
 guiscale = 25
+break_radius = 5
 blocks = {}
 textures = {}
 mini_textures = {}
@@ -26,8 +27,8 @@ particles = []
 with open("crafting_recipes/recipes.txt") as recipes:
     recipes = ast.literal_eval(recipes.read())
 
-def load_block(id, name):
-    block = Block(id, name)
+def load_block(id, name, durability):
+    block = Block(id, name, durability)
     blocks[id] = block
 
     block_img = pygame.image.load('blocks/' + name + '.png').convert()
@@ -46,15 +47,16 @@ def load_tile_img(file_name):
 
 sky = pygame.Surface((tilesize, tilesize))
 textures[0] = sky
-blocks[0] = Block(0, 'sky')
+blocks[0] = Block(0, 'sky', 0)
 blocks[0].pass_through = True
 
-load_block(1, 'grass_block')
-load_block(2, 'dirt_block')
-load_block(3, 'wood_block')
-load_block(4, 'leaves_block')
-load_block(5, 'stone_block')
-load_block(6, 'wood_planks')
+load_block(1, 'grass', 5)
+load_block(2, 'dirt', 5)
+load_block(3, 'wood', 10)
+load_block(4, 'leaves', 3)
+load_block(5, 'stone', 20)
+load_block(6, 'wood_planks', 20)
+load_block(7, 'bedrock', float('inf'))
 
 item_hit_multipliers = [0.25, 0.25, 0.25, 0.25, 0.25]
 
