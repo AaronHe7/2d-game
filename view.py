@@ -7,8 +7,7 @@ from entities import *
 from crafting import *
 
 player = Player(0, 4, tilemap)
-crafting = Crafting()
-print(crafting.recipes)
+crafting = Crafting(player.empty)
 gui = Gui()
 
 while 1:
@@ -163,8 +162,10 @@ while 1:
 
     if keys[pygame.K_TAB]:
         #draw inventory aspects
+        
         inventory_mouse_location = [(mouse_location[0] - 544) // 43, (mouse_location[1] - 152) // 43]
-        crafting_mouse_location = [(mouse_location[0])]
+        crafting_mouse_location = [(mouse_location[0] - 387) // 43, (mouse_location[1] - 152) // 43]
+        
         display.blit(dimming_overlay, (0, 0))
         display.blit(inventory_background, (340, 100))
         display.blit(hotbar, (542, 150))
@@ -173,6 +174,17 @@ while 1:
         display.blit(hotbar, (1060, 4))
         display.blit(player_model, (825, 175))
         display.blit(legs_model, (825, 175))
+        
+        for row in range(len(crafting.crafting_grid)):
+            for column in range(len(crafting.crafting_grid[row])):
+                if crafting.crafting_grid[row][column].id != 0:
+                    display.blit(textures[crafting.crafting_grid[row][column].id], (387 + column * 43, 152 + row * 43))
+                    text = font.render(str(math.floor(crafting.crafting_grid[row][column].amount)), True, (255, 255, 255))
+                    if math.floor(crafting.crafting_grid[row][column].amount < 10):
+                        display.blit(text, (418 + column * 43, 179 + row * 43))
+                    elif math.floor(crafting.crafting_grid[row][column].amount > 10):
+                        display.blit(text, (414 + column * 43, 179 + row * 43))
+                    
         for row in range(len(player.inventory)):
             for column in range(len(player.inventory[row])):
                 if player.inventory[row][column].id != 0:
@@ -185,13 +197,19 @@ while 1:
                         display.blit(text, (575 + column * 43, 179 + row * 43))
                     elif math.floor(player.inventory[row][column].amount > 10):
                         display.blit(text, (571 + column * 43, 179 + row * 43))
+
+        if crafting.check_recipes() != 0:
+            crafting.resultant = crafting.check_recipes()
+            display.blit(textures[crafting.resultant[0]], (430, 354))
+            
         if cursor['carrying'].id != 0:
             display.blit(textures[cursor['carrying'].id], (mouse_location[0] - tilesize // 2, mouse_location[1] - tilesize // 2))
         for event in pygame_events:
             if event.type == pygame.MOUSEBUTTONDOWN:
                 if event.button == 1:
-                    hovered_inventory_space = player.inventory[inventory_mouse_location[1]][inventory_mouse_location[0]]
+                    
                     if 0 <= inventory_mouse_location[0] <= 4 and 0 <= inventory_mouse_location[1] <= 3:
+                        hovered_inventory_space = player.inventory[inventory_mouse_location[1]][inventory_mouse_location[0]]
                         if cursor['carrying'].id == 0:
                             if hovered_inventory_space.id != 0:
                                 cursor['carrying'] = hovered_inventory_space
@@ -202,7 +220,20 @@ while 1:
                                 cursor['carrying'] = copy.deepcopy(player.empty)
                             else:
                                 player.inventory[inventory_mouse_location[1]][inventory_mouse_location[0]], cursor['carrying'] = cursor['carrying'], player.inventory[inventory_mouse_location[1]][inventory_mouse_location[0]]
-                    
+                                
+                    elif 0 <= crafting_mouse_location[0] <= 2 and 0 <= crafting_mouse_location[1] <= 2:
+                        hovered_crafting_space = crafting.crafting_grid[crafting_mouse_location[1]][crafting_mouse_location[0]]
+                        if cursor['carrying'].id == 0:
+                            if hovered_crafting_space.id != 0:
+                                cursor['carrying'] = hovered_crafting_space
+                                crafting.crafting_grid[crafting_mouse_location[1]][crafting_mouse_location[0]] = copy.deepcopy(player.empty)
+                        elif cursor['carrying'].id >= 0:
+                            if hovered_crafting_space.id == cursor['carrying'].id and hovered_crafting_space.amount + cursor['carrying'].amount <= 64:
+                                crafting.crafting_grid[crafting_mouse_location[1]][crafting_mouse_location[0]].amount += cursor['carrying'].amount
+                                cursor['carrying'] = copy.deepcopy(player.empty)
+                            else:
+                                crafting.crafting_grid[crafting_mouse_location[1]][crafting_mouse_location[0]], cursor['carrying'] = cursor['carrying'], crafting.crafting_grid[crafting_mouse_location[1]][crafting_mouse_location[0]]
+
     else:
         #check if mouse 1 or mouse 2 is clicked, removing or building blocks.
         if mouse[0] or mouse[2]:
