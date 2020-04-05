@@ -22,7 +22,7 @@ while 1:
     mousey = math.ceil(player.y - (mouse_location[1] - player_y_display)/tilesize)
 
     player_mouse_dist = math.sqrt((player.x - mousex)**2 + (player.y - mousey)**2)
-    #display.blit(background, (int(-player.x), int(player.y)))
+    print(player_mouse_dist)
 
     keys = pygame.key.get_pressed()
     mouse = pygame.mouse.get_pressed()
@@ -73,10 +73,10 @@ while 1:
         if event.type == pygame.KEYDOWN:
             pass
 
-    x_start = int(player.x - ((width/2)//tilesize)) - 5
-    x_end = int(player.x + ((width/2)//tilesize)) + 5
-    y_start = int(player.y - ((height/2)//tilesize)) - 5
-    y_end = int(player.y + ((height/2)//tilesize)) + 5
+    x_start = math.floor(player.x - ((width/2)//tilesize)) - 5
+    x_end = math.floor(player.x + ((width/2)//tilesize)) + 5
+    y_start = math.floor(player.y - ((height/2)//tilesize)) - 5
+    y_end = math.floor(player.y + ((height/2)//tilesize)) + 5
 
     for x in range(x_start, x_end):
         for y in range(y_start, y_end):
@@ -86,12 +86,12 @@ while 1:
                 terrain.generate(x, y)
             if tilemap[x][y].id != 0:
                 # Display block relative to player
-                display.blit(textures[tilemap[x][y].id], (int(player_x_display + tilesize * (x - player.x)), int(player_y_display -  tilesize * (y - player.y))))
+                display.blit(textures[tilemap[x][y].id], (math.floor(player_x_display + tilesize * (x - player.x)), math.floor(player_y_display -  tilesize * (y - player.y))))
                 if tilemap[x][y].durability < tilemap[x][y].max_durability:
                     if tilemap[x][y].frames_since_last_touched > 60:
                         tilemap[x][y].durability += 0.1
-                    durability_index = int(9 - 9 * tilemap[x][y].durability // tilemap[x][y].max_durability)
-                    display.blit(breaking_models[durability_index], (int(player_x_display + tilesize * (x - player.x)), int(player_y_display -  tilesize *(y - player.y))))
+                    durability_index = math.floor(9 - 9 * tilemap[x][y].durability // tilemap[x][y].max_durability)
+                    display.blit(breaking_models[durability_index], (math.floor(player_x_display + tilesize * (x - player.x)), math.floor(player_y_display -  tilesize *(y - player.y))))
                 tilemap[x][y].frames_since_last_touched += 1
 
     #check player direction
@@ -124,8 +124,8 @@ while 1:
             else:
                 drop.velx = -(drop.location[0] - 640 - tilesize // 20)
                 drop.vely = (drop.location[1] - 360)
-                drop.location[0] += drop.velx / 20
-                drop.location[1] -= drop.vely / 20
+                drop.location[0] += math.floor(drop.velx / 20)
+                drop.location[1] -= math.floor(drop.vely / 20)
                 display.blit(mini_textures[drop.id], (drop.location))
 
     #draw player model
@@ -134,7 +134,9 @@ while 1:
         player.handstate += 1
 
     player_model = player_models[animations.checkframe(player.direction, player.handstate, frame % maxrframe, [player.vx, player.vy], frame, maxrframe)]
-    display.blit(player_model, (int(player_x_display), int(player_y_display)))
+    legs_model = player_models[animations.checkframe(player.direction, player.handstate, frame % maxrframe, [player.vx, player.vy], frame, maxrframe, legs = True)]
+    display.blit(legs_model, (math.floor(player_x_display), math.floor(player_y_display)))
+    display.blit(player_model, (math.floor(player_x_display), math.floor(player_y_display)))
 
     #draw particles
                 
@@ -172,6 +174,7 @@ while 1:
         display.blit(crafting_menu, (385, 150))
         display.blit(hotbar, (1060, 4))
         display.blit(player_model, (825, 175))
+        display.blit(legs_model, (825, 175))
         for row in range(len(player.inventory)):
             for column in range(len(player.inventory[row])):
                 if player.inventory[row][column].id != 0:
