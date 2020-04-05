@@ -128,7 +128,7 @@ while 1:
 
     #draw player model
     if (mouse[0] == 1 or mouse[2] == 1) and frame % 4 == 0:
-        player.handstate %= 8
+        player.handstate %= 7
         player.handstate += 1
 
     player_model = player_models[animations.checkframe(player.direction, player.handstate, frame % maxrframe, [player.vx, player.vy], frame, maxrframe)]
@@ -185,8 +185,6 @@ while 1:
             if mouse[0]:
                 temp_block = tilemap[mousex][mousey]
                 if 320 <= mouse_location[0] <= 960 and 180 <= mouse_location[1] <= 540 and temp_block.id != 0:
-                    if player.handstate == 0:
-                        player.handstate = 1
                     if temp_block.durability > 0:
                         temp_block.frames_since_last_touched = 0
                         # for playtesting: instantly destroy block
@@ -221,8 +219,6 @@ while 1:
 
                 if 320 <= mouse_location[0] <= 960 and 180 <= mouse_location[1] <= 540 and able > 0:
                     if temp_block.id == 0 and player.inhand.id != 0 and player.inhand.amount > 0:
-                        if player.handstate == 0:
-                            player.handstate = 1
                         for i in range(20):
                             temp_particle = [[mouse_location[0], mouse_location[1]], [textures[player.inhand.id].get_at([20, 20])[0] + random.randint(-20, 20), textures[player.inhand.id].get_at([20, 20])[1] + random.randint(-20, 20), textures[player.inhand.id].get_at([20, 20])[2] + random.randint(-20, 20)], [random.randint(-3, 3), random.randint(-5, -2)], random.randint(3, 6)]
                             particles.append(temp_particle)
