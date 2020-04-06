@@ -1,16 +1,17 @@
 import pygame, copy 
 
 class Block:
-    def __init__(self, id, name, durability, required_tool):
+    def __init__(self, id, name, durability, required_tool, exact_tool_required = False, pass_through = False):
         self.id = id
-        self.pass_through = False
+        self.pass_through = pass_through
         self.name = name
         # 0 is none, 1 is pickaxe, 2 is axe, 3 is shovel, 4 is sword, 5 is hammer
         self.max_durability = durability
         self.durability = self.max_durability
         self.required_tool = required_tool
         self.frames_since_last_touched = 0
-        self.destroy_rate = 10000.075
+        self.destroy_rate = 0.075
+        self.exact_tool_required = exact_tool_required
     def reduce_durability(self, multiplier = 1):
         self.durability -= self.destroy_rate * multiplier
         self.durability = max(self.durability, 0)

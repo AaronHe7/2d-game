@@ -73,7 +73,9 @@ while 1:
 
         if event.type == pygame.MOUSEBUTTONDOWN:
             if event.button == 1:
-                mouse_down = 1
+                mouse_down[0] = 1
+            if event.button == 3:
+                mouse_down[1] = 1
 
     x_start = math.floor(player.x - ((width/2)//tilesize)) - 5
     x_end = math.floor(player.x + ((width/2)//tilesize)) + 5
@@ -186,7 +188,7 @@ while 1:
                     text = font.render(str(math.floor(crafting.crafting_grid[row][column].amount)), True, (255, 255, 255))
                     if math.floor(crafting.crafting_grid[row][column].amount < 10):
                         display.blit(text, (418 + column * 43, 179 + row * 43))
-                    elif math.floor(crafting.crafting_grid[row][column].amount > 10):
+                    elif math.floor(crafting.crafting_grid[row][column].amount >= 10):
                         display.blit(text, (414 + column * 43, 179 + row * 43))
 
         #draw the items in the player's inventory     
@@ -201,7 +203,7 @@ while 1:
                     text = font.render(str(math.floor(player.inventory[row][column].amount)), True, (255, 255, 255))
                     if math.floor(player.inventory[row][column].amount < 10):
                         display.blit(text, (575 + column * 43, 179 + row * 43))
-                    elif math.floor(player.inventory[row][column].amount > 10):
+                    elif math.floor(player.inventory[row][column].amount >= 10):
                         display.blit(text, (571 + column * 43, 179 + row * 43))
 
         # check if the crafting grid matches a recipe
@@ -214,7 +216,7 @@ while 1:
             else:
                 display.blit(text, (459, 381))
             if 432 <= mouse_location[0] <= 472 and 354 <= mouse_location[1] <= 394:
-                if mouse_down == 1:
+                if mouse_down[0] == 1:
                     cursor['carrying'] = Item(crafting.resultant[0], amount = crafting.resultant[1])
                     for row in range(len(crafting.crafting_grid)):
                         for column in range(len(crafting.crafting_grid[row])):
@@ -228,7 +230,7 @@ while 1:
             
         #allow inventory items to be moved
             
-        if mouse_down == 1:
+        if mouse_down[0] == 1:
             if 0 <= inventory_mouse_location[0] <= 4 and 0 <= inventory_mouse_location[1] <= 3:
                 hovered_inventory_space = player.inventory[inventory_mouse_location[1]][inventory_mouse_location[0]]
                 if cursor['carrying'].id == 0:
@@ -254,6 +256,35 @@ while 1:
                         cursor['carrying'] = copy.deepcopy(player.empty)
                     else:
                         crafting.crafting_grid[crafting_mouse_location[1]][crafting_mouse_location[0]], cursor['carrying'] = cursor['carrying'], crafting.crafting_grid[crafting_mouse_location[1]][crafting_mouse_location[0]]
+
+        # allow inventory and crafting items to be split
+        
+        if mouse_down[1] == 1:
+            if 0 <= inventory_mouse_location[0] <= 4 and 0 <= inventory_mouse_location[1] <= 3:
+                hovered_inventory_space = player.inventory[inventory_mouse_location[1]][inventory_mouse_location[0]]
+                if cursor['carrying'].id == 0 and hovered_inventory_space.id != 0 and hovered_inventory_space.amount > 1:
+                    if hovered_inventory_space.amount%2 == 0:
+                        player.inventory[inventory_mouse_location[1]][inventory_mouse_location[0]].amount /= 2
+                        player.inventory[inventory_mouse_location[1]][inventory_mouse_location[0]].amount = math.floor(player.inventory[inventory_mouse_location[1]][inventory_mouse_location[0]].amount)
+                        cursor['carrying'] = copy.deepcopy(player.inventory[inventory_mouse_location[1]][inventory_mouse_location[0]])
+                    elif hovered_inventory_space.amount%2 == 1:
+                        player.inventory[inventory_mouse_location[1]][inventory_mouse_location[0]].amount /= 2
+                        player.inventory[inventory_mouse_location[1]][inventory_mouse_location[0]].amount = math.floor(player.inventory[inventory_mouse_location[1]][inventory_mouse_location[0]].amount)
+                        cursor['carrying'] = copy.deepcopy(player.inventory[inventory_mouse_location[1]][inventory_mouse_location[0]])
+                        player.inventory[inventory_mouse_location[1]][inventory_mouse_location[0]].amount += 1
+                        
+            elif 0 <= crafting_mouse_location[0] <= 2 and 0 <= crafting_mouse_location[1] <= 2:
+                hovered_crafting_space = crafting.crafting_grid[crafting_mouse_location[1]][crafting_mouse_location[0]]
+                if cursor['carrying'].id == 0 and hovered_crafting_space.id != 0 and hovered_crafting_space.amount > 1:
+                    if hovered_crafting_space.amount%2 == 0:
+                        crafting.crafting_grid[crafting_mouse_location[1]][crafting_mouse_location[0]].amount /= 2
+                        crafting.crafting_grid[crafting_mouse_location[1]][crafting_mouse_location[0]].amount = math.floor(crafting.crafting_grid[crafting_mouse_location[1]][crafting_mouse_location[0]].amount)
+                        cursor['carrying'] = copy.deepcopy(crafting.crafting_grid[crafting_mouse_location[1]][crafting_mouse_location[0]])
+                    elif hovered_crafting_space.amount%2 == 1:
+                        crafting.crafting_grid[crafting_mouse_location[1]][crafting_mouse_location[0]].amount /= 2
+                        crafting.crafting_grid[crafting_mouse_location[1]][crafting_mouse_location[0]].amount = math.floor(crafting.crafting_grid[crafting_mouse_location[1]][crafting_mouse_location[0]].amount)
+                        cursor['carrying'] = copy.deepcopy(crafting.crafting_grid[crafting_mouse_location[1]][crafting_mouse_location[0]])
+                        crafting.crafting_grid[crafting_mouse_location[1]][crafting_mouse_location[0]].amount += 1
     else:
         #check if mouse 1 or mouse 2 is clicked, removing or building blocks.
         if mouse[0] or mouse[2]:
@@ -263,7 +294,7 @@ while 1:
             if mouse[0]:
                 block = tilemap[mousex][mousey]
                 if player_mouse_dist <= break_radius and block.id != 0:
-                    if block.required_tool == player.inhand.type:
+                    if block.required_tool[0] == player.inhand.tooltype[0] and block.required_tool[1] <= player.inhand.tooltype[1]:
                         block.reduce_durability(player.inhand.hit_multiplier)
                     else:
                         block.reduce_durability()
@@ -275,11 +306,18 @@ while 1:
                         temp_particle = [[mouse_location[0], mouse_location[1]], [display.get_at(pygame.mouse.get_pos())[0] + random.randint(-20, 20), display.get_at(pygame.mouse.get_pos())[1] + random.randint(-20, 20), display.get_at(pygame.mouse.get_pos())[2] + random.randint(-20, 20)], [random.randint(-3, 3), random.randint(-5, -2)], random.randint(3, 6)]
                         particles.append(temp_particle)
                     elif block.durability <= 0.1 and block.id > 0:
-                        dropid = block.id
                         # Set block to air when destroyed
-                        drop = Item(dropid, [mouse_location[0], mouse_location[1]])
+                        dropid = block.id
                         tilemap[mousex][mousey] = blocks[0]
-                        entities_group.append(drop)
+                        if block.exact_tool_required == False:
+                            drop = Item(dropid, [mouse_location[0], mouse_location[1]])
+                            entities_group.append(drop)
+                        else:
+                            if block.required_tool[0] == player.inhand.tooltype[0] and block.required_tool[1] <= player.inhand.tooltype[1]:
+                                drop = Item(dropid, [mouse_location[0], mouse_location[1]])
+                                entities_group.append(drop)
+
+            # if the player clicks right click and is holding a block then check if it can be placed           
             if mouse[2] and player.inhand.id < 200:
                 block = tilemap[mousex][mousey]
                 able = 0
@@ -330,6 +368,6 @@ while 1:
 
     player.update_position()
     player.update_vitals(frame)
-    mouse_down = 0
+    mouse_down = [0, 0]
     pygame.display.flip()
     clock.tick(fps)

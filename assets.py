@@ -24,12 +24,13 @@ cursor = {'carrying':''}
 font = pygame.font.Font("font.ttf", 10)
 recipes = []
 particles = []
-mouse_down = 0
+mouse_down = [0, 0]
 
 item_hit_multipliers = {}
+item_tooltypes = {}
 
-def load_block(id, name, durability, required_tool, transparency = False):
-    block = Block(id, name, durability, required_tool)
+def load_block(id, name, durability, required_tool, transparency = False, exact_tool_required = False, pass_through = False):
+    block = Block(id, name, durability, required_tool, exact_tool_required = exact_tool_required, pass_through = pass_through)
     blocks[id] = block
     blocks[name] = block
 
@@ -41,16 +42,23 @@ def load_block(id, name, durability, required_tool, transparency = False):
     mini_block_img = pygame.transform.scale(block_img, (tilesize // 2, tilesize // 2))
 
     textures[id] = block_img
+    textures[name] = block_img
     mini_textures[id] = mini_block_img
+    mini_textures[name] = mini_block_img
 
-def load_item(id, name, hit_multiplier = 0.075):
+def load_item(id, name, hit_multiplier = 1, tooltype = 'none'):
     item_img = pygame.image.load('items/' + name + '.png').convert_alpha()
     item_img = pygame.transform.scale(item_img, (tilesize, tilesize))
     mini_item_img = pygame.transform.scale(item_img, (tilesize // 2, tilesize // 2))
 
     textures[id] = item_img
+    textures[name] = item_img
     mini_textures[id] = mini_item_img
+    mini_textures[name] = mini_item_img
     item_hit_multipliers[id] = hit_multiplier
+    item_hit_multipliers[name] = hit_multiplier
+    item_tooltypes[id] = tooltype
+    item_tooltypes[name] = tooltype
 
 player_models = {}
 
@@ -64,20 +72,27 @@ textures[0] = sky
 blocks[0] = Block(0, 'sky', 0, 0)
 blocks[0].pass_through = True
 
-load_block(1, 'grass', 5, 3)
-load_block(2, 'dirt', 5, 3)
-load_block(3, 'wood', 10, 2)
-load_block(4, 'leaves', 3, 0, transparency = True)
-load_block(5, 'stone', 20, 1)
-load_block(6, 'wood_planks', 10, 2)
-load_block(7, 'bedrock', float('inf'), 0)
-load_block(8, 'iron_ore', 20, 1)
-load_block(9, 'coal_ore', 20, 1)
-load_block(10, 'diamond_ore', 30, 1)
-load_block(11, 'bloodstone_ore', 50, 1)
+load_block(1, 'grass', 5, ['shovel', 0])
+load_block(2, 'dirt', 5, ['shovel', 0])
+load_block(3, 'wood', 10, ['axe', 0])
+load_block(4, 'leaves', 3, ['none', 0], transparency = True)
+load_block(5, 'stone', 20, ['pickaxe', 0], exact_tool_required = True)
+load_block(6, 'wood_planks', 10, ['axe', 0])
+load_block(7, 'bedrock', float('inf'), ['none', 0])
+load_block(8, 'iron_ore', 20, ['pickaxe', 1], exact_tool_required = True)
+load_block(9, 'coal_ore', 20, ['pickaxe', 0], exact_tool_required = True)
+load_block(10, 'diamond_ore', 30, ['pickaxe', 2], exact_tool_required = True)
+load_block(11, 'bloodstone_ore', 50, ['pickaxe', 3], exact_tool_required = True)
+load_block(12, 'furnace', 20, ['pickaxe', 0], exact_tool_required = True)
+load_block(13, 'wood_wall', 10, ['axe', 0], pass_through = True)
 
 load_item(200, 'stick')
-load_item(256, 'wooden_pickaxe', 0.010)
+load_item(256, 'wooden_pickaxe', 2, tooltype = ['pickaxe', 0])
+load_item(257, 'stone_pickaxe', 3, tooltype = ['pickaxe', 1])
+load_item(258, 'iron_pickaxe', 5, tooltype = ['pickaxe', 2])
+load_item(259, 'diamond_pickaxe', 6, tooltype = ['pickaxe', 3])
+load_item(260, 'wooden_shovel', 2, tooltype = ['shovel', 0])
+load_item(264, 'wooden_axe', 2, tooltype = ['axe', 0])
 
 heart_icon = pygame.image.load("heart.png").convert_alpha()
 heart_icon = pygame.transform.scale(heart_icon, (guiscale, guiscale))

@@ -11,6 +11,8 @@ class Item:
         if self.id <= 100:
             self.hit_multiplier = 0.075
             self.type = 'block'
+            self.tooltype = 'none'
         else:
             self.hit_multiplier = item_hit_multipliers[id]
+            self.tooltype = item_tooltypes[id]
             self.type = 'item'
