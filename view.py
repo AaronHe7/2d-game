@@ -227,13 +227,18 @@ while 1:
                             if hovered_crafting_space.id != 0:
                                 cursor['carrying'] = hovered_crafting_space
                                 crafting.crafting_grid[crafting_mouse_location[1]][crafting_mouse_location[0]] = copy.deepcopy(player.empty)
-                        elif cursor['carrying'].id >= 0:
+                        elif cursor['carrying'].id > 0:
                             if hovered_crafting_space.id == cursor['carrying'].id and hovered_crafting_space.amount + cursor['carrying'].amount <= 64:
                                 crafting.crafting_grid[crafting_mouse_location[1]][crafting_mouse_location[0]].amount += cursor['carrying'].amount
                                 cursor['carrying'] = copy.deepcopy(player.empty)
                             else:
                                 crafting.crafting_grid[crafting_mouse_location[1]][crafting_mouse_location[0]], cursor['carrying'] = cursor['carrying'], crafting.crafting_grid[crafting_mouse_location[1]][crafting_mouse_location[0]]
-
+                    # take item out of crafting table
+                    if mouse_location[0] >= 430 and mouse_location[1] >= 354 and mouse_location[0] <= 470 and mouse_location[1] <= 394:
+                        if cursor['carrying'].id == 0:
+                            cursor['carrying'] = blocks[crafting.resultant[0]]
+                            player.inhand.amount = crafting.resultant[1]
+                            crafting.resultant = 0
     else:
         #check if mouse 1 or mouse 2 is clicked, removing or building blocks.
         if mouse[0] or mouse[2]:

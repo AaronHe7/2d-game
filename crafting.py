@@ -20,5 +20,6 @@ class Crafting:
                 for column in range(len(self.crafting_grid[row])):
                     converted_grid[row][column] = self.crafting_grid[row][column].id
             if converted_grid == recipe[0]:
+                # [id, amount]
                 return [recipe[1], recipe[2]]
         return 0
