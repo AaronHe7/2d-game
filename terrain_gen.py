@@ -19,8 +19,24 @@ class Terrain:
             block = blocks['dirt']
         elif self.bedrock_level < y <= surface_level - 3: # stone starts at 3 below surface
             p = (-y + surface_level - 3)/10 + 0.3
+            block = blocks['stone']
             if random.uniform(0, 1) < p:
-                block = blocks['stone']
+                if 3 < y <= -10:
+                    block = blocks['stone']
+                elif -80 <= y < -10:
+                    if random.randint(0, 50) == 1:
+                        block = blocks['coal_ore']
+                    elif random.randint(0, 150) == 1:
+                        block = blocks['iron_ore']
+                    else:
+                        block = blocks['stone']
+                elif -99 <= y < -80:
+                    if random.randint(0, 250) == 1:
+                        block = blocks['bloodstone_ore']
+                    elif random.randint(0, 300) == 1:
+                        block = blocks['diamond_ore']
+                    else:
+                        block = blocks['stone']
             else:
                 block = blocks['dirt']
         elif y == self.bedrock_level: # bedrock

@@ -3,6 +3,9 @@ from player import *
 
 class Crafting:
     def __init__(self, empty):
+        self.empty_crafting_grid = [[empty, empty, empty],
+                              [empty, empty, empty],
+                              [empty, empty, empty]]
         self.crafting_grid = [[empty, empty, empty],
                               [empty, empty, empty],
                               [empty, empty, empty]]
@@ -22,3 +25,7 @@ class Crafting:
             if converted_grid == recipe[0]:
                 return [recipe[1], recipe[2]]
         return 0
+    def clear_crafting_grid(self, empty):
+        self.crafting_grid = [[empty, empty, empty],
+                              [empty, empty, empty],
+                              [empty, empty, empty]]

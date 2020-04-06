@@ -25,8 +25,10 @@ font = pygame.font.Font("font.ttf", 10)
 recipes = []
 particles = []
 
-def load_block(id, name, durability):
-    block = Block(id, name, durability)
+item_hit_multipliers = {}
+
+def load_block(id, name, durability, required_tool):
+    block = Block(id, name, durability, required_tool)
     blocks[id] = block
     blocks[name] = block
 
@@ -37,6 +39,15 @@ def load_block(id, name, durability):
     textures[id] = block_img
     mini_textures[id] = mini_block_img
 
+def load_item(id, name, hit_multiplier = 0.075):
+    item_img = pygame.image.load('items/' + name + '.png').convert_alpha()
+    item_img = pygame.transform.scale(item_img, (tilesize, tilesize))
+    mini_item_img = pygame.transform.scale(item_img, (tilesize // 2, tilesize // 2))
+
+    textures[id] = item_img
+    mini_textures[id] = mini_item_img
+    item_hit_multipliers[id] = hit_multiplier
+
 player_models = {}
 
 def load_tile_img(index, file_name):
@@ -46,18 +57,23 @@ def load_tile_img(index, file_name):
 
 sky = pygame.Surface((tilesize, tilesize))
 textures[0] = sky
-blocks[0] = Block(0, 'sky', 0)
+blocks[0] = Block(0, 'sky', 0, 0)
 blocks[0].pass_through = True
 
-load_block(1, 'grass', 5)
-load_block(2, 'dirt', 5)
-load_block(3, 'wood', 10)
-load_block(4, 'leaves', 3)
-load_block(5, 'stone', 20)
-load_block(6, 'wood_planks', 20)
-load_block(7, 'bedrock', float('inf'))
+load_block(1, 'grass', 5, 3)
+load_block(2, 'dirt', 5, 3)
+load_block(3, 'wood', 10, 2)
+load_block(4, 'leaves', 3, 0)
+load_block(5, 'stone', 20, 1)
+load_block(6, 'wood_planks', 10, 2)
+load_block(7, 'bedrock', float('inf'), 0)
+load_block(8, 'iron_ore', 20, 1)
+load_block(9, 'coal_ore', 20, 1)
+load_block(10, 'diamond_ore', 30, 1)
+load_block(11, 'bloodstone_ore', 50, 1)
 
-item_hit_multipliers = [0.25, 0.25, 0.25, 0.25, 0.25]
+load_item(200, 'stick')
+load_item(256, 'wooden_pickaxe', 0.010)
 
 heart_icon = pygame.image.load("heart.png").convert_alpha()
 heart_icon = pygame.transform.scale(heart_icon, (guiscale, guiscale))
@@ -133,9 +149,6 @@ load_tile_img(-119, "legs_run7_right.png")
 
 load_tile_img(-1, "error.png") #Error for no image returned
 
-wooden_pickaxe = pygame.image.load("wooden_pickaxe.png").convert_alpha()
-wooden_pickaxe = pygame.transform.scale(wooden_pickaxe, (tilesize, tilesize))
-
 hotbar = pygame.image.load("hotbar.png").convert()
 inventory = pygame.image.load("inventory.png").convert_alpha()
 highlighted = pygame.image.load("inhand.png").convert_alpha()
@@ -144,15 +157,14 @@ dimming_overlay = pygame.image.load("dim.png").convert_alpha()
 dimming_overlay = pygame.transform.scale(dimming_overlay, (1280, 720))
 inventory_background = pygame.image.load("inventory_background.png").convert_alpha()
 inventory_background = pygame.transform.scale(inventory_background, (600, 400))
+inventory_square = pygame.image.load("inventory_square.png").convert()
 
 breaking_models = []
+
 for i in range(10):
     breaking_model = pygame.image.load("blocks/breaking" + str(i) + ".png").convert_alpha()
     breaking_model = pygame.transform.scale(breaking_model, (tilesize, tilesize))
     breaking_models.append(breaking_model)
-
-item_models = []
-item_models.append(wooden_pickaxe)
 
 gui_elements = [empty_heart_icon, half_heart_icon, heart_icon]
 
