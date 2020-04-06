@@ -24,15 +24,19 @@ cursor = {'carrying':''}
 font = pygame.font.Font("font.ttf", 10)
 recipes = []
 particles = []
+mouse_down = 0
 
 item_hit_multipliers = {}
 
-def load_block(id, name, durability, required_tool):
+def load_block(id, name, durability, required_tool, transparency = False):
     block = Block(id, name, durability, required_tool)
     blocks[id] = block
     blocks[name] = block
 
-    block_img = pygame.image.load('blocks/' + name + '.png').convert()
+    if transparency == True:
+        block_img = pygame.image.load('blocks/' + name + '.png').convert_alpha()
+    else:
+        block_img = pygame.image.load('blocks/' + name + '.png').convert()
     block_img = pygame.transform.scale(block_img, (tilesize + 1, tilesize + 1))
     mini_block_img = pygame.transform.scale(block_img, (tilesize // 2, tilesize // 2))
 
@@ -63,7 +67,7 @@ blocks[0].pass_through = True
 load_block(1, 'grass', 5, 3)
 load_block(2, 'dirt', 5, 3)
 load_block(3, 'wood', 10, 2)
-load_block(4, 'leaves', 3, 0)
+load_block(4, 'leaves', 3, 0, transparency = True)
 load_block(5, 'stone', 20, 1)
 load_block(6, 'wood_planks', 10, 2)
 load_block(7, 'bedrock', float('inf'), 0)
