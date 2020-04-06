@@ -217,13 +217,25 @@ while 1:
                 display.blit(text, (459, 381))
             if 432 <= mouse_location[0] <= 472 and 354 <= mouse_location[1] <= 394:
                 if mouse_down[0] == 1:
-                    cursor['carrying'] = Item(crafting.resultant[0], amount = crafting.resultant[1])
-                    for row in range(len(crafting.crafting_grid)):
-                        for column in range(len(crafting.crafting_grid[row])):
-                            if crafting.crafting_grid[row][column].id != 0:
-                                crafting.crafting_grid[row][column].amount -= 1
-                                if crafting.crafting_grid[row][column].amount < 1:
-                                    crafting.crafting_grid[row][column] = player.empty
+                    if keys[pygame.K_LSHIFT] == 1:
+                        pass
+                    else:
+                        if cursor['carrying'].id == 0:
+                            cursor['carrying'] = Item(crafting.resultant[0], amount = crafting.resultant[1])
+                            for row in range(len(crafting.crafting_grid)):
+                                for column in range(len(crafting.crafting_grid[row])):
+                                    if crafting.crafting_grid[row][column].id != 0:
+                                        crafting.crafting_grid[row][column].amount -= 1
+                                        if crafting.crafting_grid[row][column].amount < 1:
+                                            crafting.crafting_grid[row][column] = player.empty
+                        else:
+                            cursor['carrying'].amount += crafting.resultant[1]
+                            for row in range(len(crafting.crafting_grid)):
+                                for column in range(len(crafting.crafting_grid[row])):
+                                    if crafting.crafting_grid[row][column].id != 0:
+                                        crafting.crafting_grid[row][column].amount -= 1
+                                        if crafting.crafting_grid[row][column].amount < 1:
+                                            crafting.crafting_grid[row][column] = player.empty
             
         if cursor['carrying'].id != 0:
             display.blit(mini_textures[cursor['carrying'].id], (mouse_location[0] + tilesize // 3, mouse_location[1] + tilesize // 3))
