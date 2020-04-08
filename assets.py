@@ -21,7 +21,7 @@ blocks = {} #collection of copyable block objects
 textures = {} #collection of item and block textures
 mini_textures = {} #mini item and block textures
 cursor = {'carrying':''} #used for inventory management, 'carrying' key shows the object that the cursor is carrying
-font = pygame.font.Font("font.ttf", 10) #font used 
+font = pygame.font.Font("gui/font.ttf", 10) #font used 
 particles = [] #the particles list
 mouse_down = [0, 0] #list used to determine if left or right click was pressed in that frame. mouse_down[0] is left and mouse_down[1] is right click.
 
@@ -104,18 +104,18 @@ load_item(264, 'wooden_axe', 2, tooltype = ['axe', 0])
 
 #load gui hunger and heart elements
 
-heart_icon = pygame.image.load("heart.png").convert_alpha()
+heart_icon = pygame.image.load("gui/heart.png").convert_alpha()
 heart_icon = pygame.transform.scale(heart_icon, (guiscale, guiscale))
-half_heart_icon = pygame.image.load("half_heart.png").convert_alpha()
+half_heart_icon = pygame.image.load("gui/half_heart.png").convert_alpha()
 half_heart_icon = pygame.transform.scale(half_heart_icon, (guiscale, guiscale))
-empty_heart_icon = pygame.image.load("empty_heart.png").convert_alpha()
+empty_heart_icon = pygame.image.load("gui/empty_heart.png").convert_alpha()
 empty_heart_icon = pygame.transform.scale(empty_heart_icon, (guiscale, guiscale))
 
-full_hunger_icon = pygame.image.load("full_hunger.png").convert_alpha()
+full_hunger_icon = pygame.image.load("gui/full_hunger.png").convert_alpha()
 full_hunger_icon = pygame.transform.scale(full_hunger_icon, (guiscale, guiscale))
-half_hunger_icon = pygame.image.load("half_hunger.png").convert_alpha()
+half_hunger_icon = pygame.image.load("gui/half_hunger.png").convert_alpha()
 half_hunger_icon = pygame.transform.scale(half_hunger_icon, (guiscale, guiscale))
-empty_hunger_icon = pygame.image.load("empty_hunger.png").convert_alpha()
+empty_hunger_icon = pygame.image.load("gui/empty_hunger.png").convert_alpha()
 empty_hunger_icon = pygame.transform.scale(empty_hunger_icon, (guiscale, guiscale))
 
 #load player elements
@@ -182,15 +182,15 @@ load_tile_img(-1, "error.png") #Error for no image returned
 
 #load inventory elements
 
-hotbar = pygame.image.load("hotbar.png").convert()
-inventory = pygame.image.load("inventory.png").convert_alpha()
-highlighted = pygame.image.load("inhand.png").convert_alpha()
-crafting_menu = pygame.image.load("crafting_menu.png").convert()
-dimming_overlay = pygame.image.load("dim.png").convert_alpha()
+hotbar = pygame.image.load("gui/hotbar.png").convert()
+inventory = pygame.image.load("gui/inventory.png").convert_alpha()
+highlighted = pygame.image.load("gui/inhand.png").convert_alpha()
+crafting_menu = pygame.image.load("gui/crafting_menu.png").convert()
+dimming_overlay = pygame.image.load("gui/dim.png").convert_alpha()
 dimming_overlay = pygame.transform.scale(dimming_overlay, (1280, 720))
-inventory_background = pygame.image.load("inventory_background.png").convert_alpha()
+inventory_background = pygame.image.load("gui/inventory_background.png").convert_alpha()
 inventory_background = pygame.transform.scale(inventory_background, (600, 400))
-inventory_square = pygame.image.load("inventory_square.png").convert()
+inventory_square = pygame.image.load("gui/inventory_square.png").convert()
 
 #load breaking models
 

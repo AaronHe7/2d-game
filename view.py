@@ -179,6 +179,11 @@ while 1:
         display.blit(legs_model, (825, 175))
         display.blit(inventory_square, (430, 352))
 
+        #make sure the player is not stuck in a swinging animation when tab is pressed
+
+        if player.handstate > 0:
+            player.handstate = 0
+
         #draw the items in the crafting grid
         
         for row in range(len(crafting.crafting_grid)):
@@ -329,26 +334,32 @@ while 1:
                                 entities_group.append(drop)
 
             # if the player clicks right click and is holding a block then check if it can be placed           
-            if mouse[2] and player.inhand.id < 200:
-                block = tilemap[mousex][mousey]
-                able = 0
+            if mouse[2]:
+                if tilemap[mousex][mousey].id != 0: #if the tile right clicked is a block
+                    if tilemap[mousex][mousey].id == 12:
+                        #ability to open furnace here
+                        pass
+                else:
+                    if player.inhand.id < 200:
+                        block = tilemap[mousex][mousey]
+                        able = 0
 
-                if tilemap[mousex][mousey-1].id != 0:
-                    able += 1
-                if tilemap[mousex-1][mousey].id != 0:
-                    able += 1
-                if tilemap[mousex+1][mousey].id != 0:
-                    able += 1
-                if tilemap[mousex][mousey+1].id != 0:
-                    able += 1
+                        if tilemap[mousex][mousey-1].id != 0:
+                            able += 1
+                        if tilemap[mousex-1][mousey].id != 0:
+                            able += 1
+                        if tilemap[mousex+1][mousey].id != 0:
+                            able += 1
+                        if tilemap[mousex][mousey+1].id != 0:
+                            able += 1
 
-                if player_mouse_dist <= break_radius and able > 0:
-                    if block.id == 0 and player.inhand.id != 0 and player.inhand.amount > 0:
-                        for i in range(20):
-                            temp_particle = [[mouse_location[0], mouse_location[1]], [textures[player.inhand.id].get_at([20, 20])[0] + random.randint(-20, 20), textures[player.inhand.id].get_at([20, 20])[1] + random.randint(-20, 20), textures[player.inhand.id].get_at([20, 20])[2] + random.randint(-20, 20)], [random.randint(-3, 3), random.randint(-5, -2)], random.randint(3, 6)]
-                            particles.append(temp_particle)
-                        tilemap[mousex][mousey] = blocks[player.inhand.id].get_copy()
-                        player.inhand.amount -= 1
+                        if player_mouse_dist <= break_radius and able > 0:
+                            if block.id == 0 and player.inhand.id != 0 and player.inhand.amount > 0:
+                                for i in range(20):
+                                    temp_particle = [[mouse_location[0], mouse_location[1]], [textures[player.inhand.id].get_at([20, 20])[0] + random.randint(-20, 20), textures[player.inhand.id].get_at([20, 20])[1] + random.randint(-20, 20), textures[player.inhand.id].get_at([20, 20])[2] + random.randint(-20, 20)], [random.randint(-3, 3), random.randint(-5, -2)], random.randint(3, 6)]
+                                    particles.append(temp_particle)
+                                tilemap[mousex][mousey] = blocks[player.inhand.id].get_copy()
+                                player.inhand.amount -= 1
         else:
             if player.handstate > 0 and frame%4 == 1:
                 player.handstate += 1
@@ -380,5 +391,5 @@ while 1:
     player.update_position()
     player.update_vitals(frame)
     mouse_down = [0, 0]
-    pygame.display.flip()
+    pygame.display.update()
     clock.tick(fps)

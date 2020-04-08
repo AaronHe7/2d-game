@@ -91,7 +91,7 @@ class Player:
             if tilemap[bottom[0]][bottom[1]].pass_through == False:
                 points_touching_ground += 1
 
-        if not self.on_ground:
+        if points_touching_ground < 1:
             self.ay = gravity
 
         # Player can jump again only if more than 1/10 of the player is touching the ground

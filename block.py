@@ -1,7 +1,7 @@
 import pygame, copy 
 
 class Block:
-    def __init__(self, id, name, durability, required_tool, exact_tool_required = False, pass_through = False, dropid = 'self'):
+    def __init__(self, id, name, durability, required_tool, exact_tool_required = False, pass_through = False, dropid = 'self', use = None):
         self.id = id
         if dropid == 'self':
             self.dropid = id
