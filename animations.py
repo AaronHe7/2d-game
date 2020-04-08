@@ -1,6 +1,6 @@
 def checkframe(direction, handstate, rframe, velocity, frame, maxrframe, legs = False):
 
-    if legs == True:
+    if legs == True: #drawing the legs of the player
         if direction[0] == -1:
             if direction[1] != 0:
                 return -102

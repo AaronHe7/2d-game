@@ -317,16 +317,15 @@ while 1:
                         # ................location0.......................................colour1.........................................velocity2.........................radius3............
                         temp_particle = [[mouse_location[0], mouse_location[1]], [display.get_at(pygame.mouse.get_pos())[0] + random.randint(-20, 20), display.get_at(pygame.mouse.get_pos())[1] + random.randint(-20, 20), display.get_at(pygame.mouse.get_pos())[2] + random.randint(-20, 20)], [random.randint(-3, 3), random.randint(-5, -2)], random.randint(3, 6)]
                         particles.append(temp_particle)
-                    elif block.durability <= 0.1 and block.id > 0:
+                    elif block.durability < 1 and block.id > 0:
                         # Set block to air when destroyed
-                        dropid = block.id
                         tilemap[mousex][mousey] = blocks[0]
                         if block.exact_tool_required == False:
-                            drop = Item(dropid, [mouse_location[0], mouse_location[1]])
+                            drop = Item(block.dropid, [mouse_location[0], mouse_location[1]])
                             entities_group.append(drop)
                         else:
                             if block.required_tool[0] == player.inhand.tooltype[0] and block.required_tool[1] <= player.inhand.tooltype[1]:
-                                drop = Item(dropid, [mouse_location[0], mouse_location[1]])
+                                drop = Item(block.dropid, [mouse_location[0], mouse_location[1]])
                                 entities_group.append(drop)
 
             # if the player clicks right click and is holding a block then check if it can be placed           

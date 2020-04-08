@@ -2,7 +2,7 @@ import pygame, ast, math
 from block import Block
 
 pygame.init()
-fps = 60
+fps = 60 #determines the frames per second
 clock = pygame.time.Clock()
 width, height = 1280, 720
 fullscreen = False
@@ -11,26 +11,25 @@ if fullscreen:
 else:
     display = pygame.display.set_mode((width,height))
 pygame.display.set_caption("2D Game")
-frame = 0
-last_jump_frame = 0
-maxrframe = 30
-tilesize = 40
-guiscale = 25
-break_radius = 5
-blocks = {}
-textures = {}
-mini_textures = {}
-cursor = {'carrying':''}
-font = pygame.font.Font("font.ttf", 10)
-recipes = []
-particles = []
-mouse_down = [0, 0]
+frame = 0 #frame used for tick count
+last_jump_frame = 0 #frame used to determine difference in last jump by ticks
+maxrframe = 30 #used for animating player
+tilesize = 40 #the tilesize used to determine block size and player size
+guiscale = 25 #the tilesize used to determine size of gui elements
+break_radius = 5 #the radius of the circle that the player is able to break
+blocks = {} #collection of copyable block objects
+textures = {} #collection of item and block textures
+mini_textures = {} #mini item and block textures
+cursor = {'carrying':''} #used for inventory management, 'carrying' key shows the object that the cursor is carrying
+font = pygame.font.Font("font.ttf", 10) #font used 
+particles = [] #the particles list
+mouse_down = [0, 0] #list used to determine if left or right click was pressed in that frame. mouse_down[0] is left and mouse_down[1] is right click.
 
-item_hit_multipliers = {}
-item_tooltypes = {}
+item_hit_multipliers = {} #a dictionary of all the item hit multipliers used to determine the mine speed of tools
+item_tooltypes = {} #a dictionary of all the item tooltypes to determine the type of tool an item could be
 
-def load_block(id, name, durability, required_tool, transparency = False, exact_tool_required = False, pass_through = False):
-    block = Block(id, name, durability, required_tool, exact_tool_required = exact_tool_required, pass_through = pass_through)
+def load_block(id, name, durability, required_tool, transparency = False, exact_tool_required = False, pass_through = False, dropid = 'self'):
+    block = Block(id, name, durability, required_tool, exact_tool_required = exact_tool_required, pass_through = pass_through, dropid = dropid)
     blocks[id] = block
     blocks[name] = block
 
@@ -60,7 +59,7 @@ def load_item(id, name, hit_multiplier = 1, tooltype = 'none'):
     item_tooltypes[id] = tooltype
     item_tooltypes[name] = tooltype
 
-player_models = {}
+player_models = {} #dictionary of all the player images.
 
 def load_tile_img(index, file_name):
     file = pygame.image.load('player_sprites/' + file_name).convert_alpha()
@@ -72,10 +71,16 @@ textures[0] = sky
 blocks[0] = Block(0, 'sky', 0, 0)
 blocks[0].pass_through = True
 
+#dropid : the id of item that the block drops when destroyed, if unspecified it will drop itself
+#['shovel', 0] : the tool required to speed up the breaking and the TIER of the item required (for example, you need at least a stone pickaxe to break iron ore, yielding a tier of 1
+#transparency : whether or not the block has transparency
+#exact_tool_required : if this is true, the block will not drop the dropid item unless the correct tool is used. if unspecified it will always drop the item even if the wrong tool is used
+#pass_through : if the block can be passed through by the player.
+
 load_block(1, 'grass', 5, ['shovel', 0])
 load_block(2, 'dirt', 5, ['shovel', 0])
 load_block(3, 'wood', 10, ['axe', 0])
-load_block(4, 'leaves', 3, ['none', 0], transparency = True)
+load_block(4, 'leaves', 3, ['none', 0], transparency = True, exact_tool_required = True)
 load_block(5, 'stone', 20, ['pickaxe', 0], exact_tool_required = True)
 load_block(6, 'wood_planks', 10, ['axe', 0])
 load_block(7, 'bedrock', float('inf'), ['none', 0])
@@ -86,6 +91,9 @@ load_block(11, 'bloodstone_ore', 50, ['pickaxe', 3], exact_tool_required = True)
 load_block(12, 'furnace', 20, ['pickaxe', 0], exact_tool_required = True)
 load_block(13, 'wood_wall', 10, ['axe', 0], pass_through = True)
 
+#tooltype : the type of tool and the tier it is
+#number after name : the hit multiplier of the item when hitting the correct type of block
+
 load_item(200, 'stick')
 load_item(256, 'wooden_pickaxe', 2, tooltype = ['pickaxe', 0])
 load_item(257, 'stone_pickaxe', 3, tooltype = ['pickaxe', 1])
@@ -93,6 +101,8 @@ load_item(258, 'iron_pickaxe', 5, tooltype = ['pickaxe', 2])
 load_item(259, 'diamond_pickaxe', 6, tooltype = ['pickaxe', 3])
 load_item(260, 'wooden_shovel', 2, tooltype = ['shovel', 0])
 load_item(264, 'wooden_axe', 2, tooltype = ['axe', 0])
+
+#load gui hunger and heart elements
 
 heart_icon = pygame.image.load("heart.png").convert_alpha()
 heart_icon = pygame.transform.scale(heart_icon, (guiscale, guiscale))
@@ -107,6 +117,8 @@ half_hunger_icon = pygame.image.load("half_hunger.png").convert_alpha()
 half_hunger_icon = pygame.transform.scale(half_hunger_icon, (guiscale, guiscale))
 empty_hunger_icon = pygame.image.load("empty_hunger.png").convert_alpha()
 empty_hunger_icon = pygame.transform.scale(empty_hunger_icon, (guiscale, guiscale))
+
+#load player elements
 
 load_tile_img(0, "player_idle0_left.png")
 load_tile_img(1, "player_idle0_right.png")
@@ -168,6 +180,8 @@ load_tile_img(-119, "legs_run7_right.png")
 
 load_tile_img(-1, "error.png") #Error for no image returned
 
+#load inventory elements
+
 hotbar = pygame.image.load("hotbar.png").convert()
 inventory = pygame.image.load("inventory.png").convert_alpha()
 highlighted = pygame.image.load("inhand.png").convert_alpha()
@@ -177,6 +191,8 @@ dimming_overlay = pygame.transform.scale(dimming_overlay, (1280, 720))
 inventory_background = pygame.image.load("inventory_background.png").convert_alpha()
 inventory_background = pygame.transform.scale(inventory_background, (600, 400))
 inventory_square = pygame.image.load("inventory_square.png").convert()
+
+#load breaking models
 
 breaking_models = []
 

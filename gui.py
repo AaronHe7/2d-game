@@ -3,7 +3,7 @@ from assets import *
 class Gui:
     def __init__(self):
         pass
-    def return_bar(self, hp):
+    def return_bar(self, hp): #based on the hp of the player, return a list of the hp bar with 0 1 2 meaning empty half or full.
         bar = []
         current = 0
         for i in range(1,12):

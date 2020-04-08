@@ -33,13 +33,13 @@ class Player:
             for column in range(len(self.inventory[row])):
                 self.inventory[row][column] = self.empty
         cursor['carrying'] = self.empty
-    def update_vitals(self, counter):
+    def update_vitals(self, counter): #update the player's hunger and hp
         if self.hp < 20:
             if self.hunger >= 18:
                 if counter%180 == 0:
                     self.hunger -= 1
                     self.hp += 2
-    def check_inventory(self, drop):
+    def check_inventory(self, drop): #check the inventory to see where the dropped item can be placed
         for row in range(len(self.inventory)):
             for column in range(len(self.inventory[row])):
                 if self.inventory[row][column].id == drop.id and self.inventory[row][column].amount < 64:
