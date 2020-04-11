@@ -121,6 +121,7 @@ load_item(201, 'iron_ingot')
 load_item(202, 'gold_ingot')
 load_item(203, 'bloodstone_ingot')
 load_item(204, 'ash')
+load_item(205, 'diamond')
 
 load_item(256, 'wooden_pickaxe', 2, tooltype = ['pickaxe', 0])
 load_item(257, 'stone_pickaxe', 3, tooltype = ['pickaxe', 1])
