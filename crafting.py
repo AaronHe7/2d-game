@@ -1,5 +1,6 @@
-import pygame, copy, ast
+import copy, ast
 from player import *
+from assets import item_name_to_id, block_name_to_id
 
 class Crafting:
     def __init__(self, empty):
@@ -53,3 +54,35 @@ class Crafting:
         self.crafting_grid = [[empty, empty, empty],
                               [empty, empty, empty],
                               [empty, empty, empty]]
+
+def name_to_id(name):
+  if name.isnumeric():
+    return int(name)
+  if name in block_name_to_id: # convert block/item name to id
+    return block_name_to_id[name]
+  if id in item_name_to_id:
+    return item_name_to_id[name]
+
+def compile_recipes():
+  result = []
+  with open("crafting_recipes/recipes.txt", "r") as f:
+    lines = f.read().split('\n')
+    for line in lines:
+      if len(line) < 12:
+        continue
+      line = line.split()
+      #print(line)
+      recipe = [[], [], []]
+      for i in range(9):
+        word = line[i]
+        recipe[i//3].append(name_to_id(word))
+      if (line[10].isnumeric()):
+        recipe.append(name_to_id(line[11]))
+        recipe.append(int(line[10]))
+      else:
+        recipe.append(name_to_id(line[10]))
+        recipe.append(1)
+      result.append(recipe)
+  return result
+
+print(compile_recipes())
