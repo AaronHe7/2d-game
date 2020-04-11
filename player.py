@@ -4,6 +4,7 @@ from terrain_gen import *
 from entities import *
 
 class Player:
+    
     def __init__(self, x, y, tilemap):
         self.tilemap = tilemap
         # height and width
@@ -33,12 +34,14 @@ class Player:
             for column in range(len(self.inventory[row])):
                 self.inventory[row][column] = self.empty
         cursor['carrying'] = self.empty
+        
     def update_vitals(self, counter): #update the player's hunger and hp
         if self.hp < 20:
             if self.hunger >= 18:
                 if counter%180 == 0:
                     self.hunger -= 1
                     self.hp += 2
+                    
     def check_inventory(self, drop): #check the inventory to see where the dropped item can be placed
         for row in range(len(self.inventory)):
             for column in range(len(self.inventory[row])):
@@ -50,6 +53,7 @@ class Player:
                 if self.inventory[row][column].id == 0:
                     locator = [row, column, 'null', False]
                     return locator
+                
     def update_position(self):
         self.vx *= self.vxmultiplier
         self.x += self.vx

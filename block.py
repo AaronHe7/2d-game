@@ -14,7 +14,7 @@ class Block:
         self.durability = self.max_durability
         self.required_tool = required_tool
         self.frames_since_last_touched = 0 #the number of frames since the player has tried to break this block
-        self.destroy_rate = 0.075
+        self.destroy_rate = 100000.075
         self.exact_tool_required = exact_tool_required
     def reduce_durability(self, multiplier = 1):
         self.durability -= self.destroy_rate * multiplier

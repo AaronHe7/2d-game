@@ -9,11 +9,17 @@ class Crafting:
         self.crafting_grid = [[empty, empty, empty], #declare the crafting grid, which is empty
                               [empty, empty, empty],
                               [empty, empty, empty]]
+        self.furnace_grid = [empty, empty]
         self.recipes = []
+        self.furnace_recipes = []
         self.resultant = empty #the resultant from the crafting table
-        with open("crafting_recipes/recipes.txt") as recipes: #open crafting recipes from text file
+        self.furnace_resultant = empty #the resultant from the furnace
+        with open("crafting_recipes/crafting_recipes.txt") as recipes: #open crafting recipes from text file
             recipes = ast.literal_eval(recipes.read())
             self.recipes = recipes
+        with open("crafting_recipes/furnace_recipes.txt") as recipes:
+            recipes = ast.literal_eval(recipes.read())
+            self.furnace_recipes = recipes
     def check_recipes(self): #convert the grid into a list of ids instead of objects, then compare it to the list and return the id of the resultant and the amount.
         for recipe in self.recipes:
             converted_grid = [[0, 0, 0,],

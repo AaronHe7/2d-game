@@ -5,28 +5,39 @@ pygame.init()
 fps = 60 #determines the frames per second
 clock = pygame.time.Clock()
 width, height = 1280, 720
+
 fullscreen = False
 if fullscreen:
     display = pygame.display.set_mode((width,height), pygame.HWSURFACE | pygame.FULLSCREEN)
 else:
     display = pygame.display.set_mode((width,height))
 pygame.display.set_caption("2D Game")
+
 frame = 0 #frame used for tick count
 last_jump_frame = 0 #frame used to determine difference in last jump by ticks
 maxrframe = 30 #used for animating player
+
 tilesize = 40 #the tilesize used to determine block size and player size
 guiscale = 25 #the tilesize used to determine size of gui elements
+minitilesize = 30 #mini tilesize used for size of inventory items
+
 break_radius = 5 #the radius of the circle that the player is able to break
+
 blocks = {} #collection of copyable block objects
 textures = {} #collection of item and block textures
 mini_textures = {} #mini item and block textures
+
 cursor = {'carrying':''} #used for inventory management, 'carrying' key shows the object that the cursor is carrying
-font = pygame.font.Font("gui/font.ttf", 10) #font used 
+font = pygame.font.Font("gui/font.ttf", 10) #font used
+
 particles = [] #the particles list
-mouse_down = [0, 0] #list used to determine if left or right click was pressed in that frame. mouse_down[0] is left and mouse_down[1] is right click.
 
 item_hit_multipliers = {} #a dictionary of all the item hit multipliers used to determine the mine speed of tools
 item_tooltypes = {} #a dictionary of all the item tooltypes to determine the type of tool an item could be
+
+current_menu = None #current menu the player has open
+
+fog_of_war_textures = {}
 
 def load_block(id, name, durability, required_tool, transparency = False, exact_tool_required = False, pass_through = False, dropid = 'self'):
     block = Block(id, name, durability, required_tool, exact_tool_required = exact_tool_required, pass_through = pass_through, dropid = dropid)
@@ -38,7 +49,7 @@ def load_block(id, name, durability, required_tool, transparency = False, exact_
     else:
         block_img = pygame.image.load('blocks/' + name + '.png').convert()
     block_img = pygame.transform.scale(block_img, (tilesize + 1, tilesize + 1))
-    mini_block_img = pygame.transform.scale(block_img, (tilesize // 2, tilesize // 2))
+    mini_block_img = pygame.transform.scale(block_img, (minitilesize, minitilesize))
 
     textures[id] = block_img
     textures[name] = block_img
@@ -48,7 +59,7 @@ def load_block(id, name, durability, required_tool, transparency = False, exact_
 def load_item(id, name, hit_multiplier = 1, tooltype = 'none'):
     item_img = pygame.image.load('items/' + name + '.png').convert_alpha()
     item_img = pygame.transform.scale(item_img, (tilesize, tilesize))
-    mini_item_img = pygame.transform.scale(item_img, (tilesize // 2, tilesize // 2))
+    mini_item_img = pygame.transform.scale(item_img, (minitilesize, minitilesize))
 
     textures[id] = item_img
     textures[name] = item_img
@@ -68,6 +79,7 @@ def load_tile_img(index, file_name):
 
 sky = pygame.Surface((tilesize, tilesize))
 textures[0] = sky
+mini_textures[0] = sky
 blocks[0] = Block(0, 'sky', 0, 0)
 blocks[0].pass_through = True
 
@@ -76,6 +88,8 @@ blocks[0].pass_through = True
 #transparency : whether or not the block has transparency
 #exact_tool_required : if this is true, the block will not drop the dropid item unless the correct tool is used. if unspecified it will always drop the item even if the wrong tool is used
 #pass_through : if the block can be passed through by the player.
+
+#required parameters are ID, NAME, DURABILITY, and REQUIRED_TOOL
 
 load_block(1, 'grass', 5, ['shovel', 0])
 load_block(2, 'dirt', 5, ['shovel', 0])
@@ -95,6 +109,7 @@ load_block(13, 'wood_wall', 10, ['axe', 0], pass_through = True)
 #number after name : the hit multiplier of the item when hitting the correct type of block
 
 load_item(200, 'stick')
+load_item(201, 'iron_ingot')
 load_item(256, 'wooden_pickaxe', 2, tooltype = ['pickaxe', 0])
 load_item(257, 'stone_pickaxe', 3, tooltype = ['pickaxe', 1])
 load_item(258, 'iron_pickaxe', 5, tooltype = ['pickaxe', 2])
@@ -188,9 +203,17 @@ highlighted = pygame.image.load("gui/inhand.png").convert_alpha()
 crafting_menu = pygame.image.load("gui/crafting_menu.png").convert()
 dimming_overlay = pygame.image.load("gui/dim.png").convert_alpha()
 dimming_overlay = pygame.transform.scale(dimming_overlay, (1280, 720))
-inventory_background = pygame.image.load("gui/inventory_background.png").convert_alpha()
+inventory_background = pygame.image.load("gui/inventory_background.png").convert()
 inventory_background = pygame.transform.scale(inventory_background, (600, 400))
 inventory_square = pygame.image.load("gui/inventory_square.png").convert()
+furnace_background = pygame.image.load("gui/furnace_background.png").convert()
+
+#load fog of war models
+
+for alpha in range(255):
+    fog_of_war = pygame.Surface((tilesize, tilesize)).convert_alpha()
+    fog_of_war.fill((0, 0, 0, alpha))
+    fog_of_war_textures[alpha] = fog_of_war
 
 #load breaking models
 

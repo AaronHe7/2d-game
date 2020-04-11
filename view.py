@@ -9,6 +9,7 @@ from crafting import *
 player = Player(0, 4, tilemap)
 crafting = Crafting(player.empty)
 gui = Gui()
+player.inventory[0][0] = Item(12)
 
 while 1:
     pygame_events = pygame.event.get()
@@ -27,6 +28,9 @@ while 1:
 
     keys = pygame.key.get_pressed()
     mouse = pygame.mouse.get_pressed()
+
+    mouse_down = [0, 0]
+    keys_down = {pygame.K_TAB : 0}
 
     if keys[pygame.K_d]:
         player.vx = player_speed
@@ -77,6 +81,11 @@ while 1:
             if event.button == 3:
                 mouse_down[1] = 1
 
+        if event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_TAB:
+                keys_down[pygame.K_TAB] = 1
+            
+
     x_start = math.floor(player.x - ((width/2)//tilesize)) - 5
     x_end = math.floor(player.x + ((width/2)//tilesize)) + 5
     y_start = math.floor(player.y - ((height/2)//tilesize)) - 5
@@ -91,6 +100,11 @@ while 1:
             if tilemap[x][y].id != 0:
                 # Display block relative to player
                 display.blit(textures[tilemap[x][y].id], (math.floor(player_x_display + tilesize * (x - player.x)), math.floor(player_y_display -  tilesize * (y - player.y))))
+                # Fog of War for Blocks not directly visible to player or near visible
+                if 1==1:
+                    pass
+                    
+                #durability and breaking of blocks
                 if tilemap[x][y].durability < tilemap[x][y].max_durability:
                     if tilemap[x][y].frames_since_last_touched > 60:
                         tilemap[x][y].durability += 0.1
@@ -142,7 +156,7 @@ while 1:
         particle[0][0] += particle[2][0]
         particle[0][1] += particle[2][1]
         particle[2][1] += 1
-        particle[3] -= 0.1
+        particle[3] -= 0.15
         for i in range(len(particle[1])):
             if particle[1][i] > 254:
                 particle[1][i] = 254
@@ -163,7 +177,26 @@ while 1:
 
     #draw inventory if tab is held
 
-    if keys[pygame.K_TAB]:
+    if keys_down[pygame.K_TAB] and current_menu == None:
+        current_menu = 'inventory'
+        keys_down[pygame.K_TAB] = 0
+    elif keys_down[pygame.K_TAB] and current_menu != None:
+        current_menu = None
+
+    if current_menu == 'furnace':
+        #draw furnace aspects
+
+        inventory_mouse_location = [(mouse_location[0] - 544) // 43, (mouse_location[1] - 152) // 43]
+        
+        display.blit(dimming_overlay, (0, 0))
+        display.blit(furnace_background, (340, 100))
+        display.blit(inventory_square, (470, 150))
+        display.blit(inventory_square, (387, 150))
+        display.blit(inventory_square, (431, 325))
+        display.blit(hotbar, (542, 150))
+        display.blit(inventory, (542, 150))
+
+    if current_menu == 'inventory':
         #draw inventory aspects
         
         inventory_mouse_location = [(mouse_location[0] - 544) // 43, (mouse_location[1] - 152) // 43]
@@ -175,8 +208,8 @@ while 1:
         display.blit(inventory, (542, 150))
         display.blit(crafting_menu, (385, 150))
         display.blit(hotbar, (1060, 4))
-        display.blit(player_model, (825, 175))
         display.blit(legs_model, (825, 175))
+        display.blit(player_model, (825, 175))
         display.blit(inventory_square, (430, 352))
 
         #make sure the player is not stuck in a swinging animation when tab is pressed
@@ -189,7 +222,7 @@ while 1:
         for row in range(len(crafting.crafting_grid)):
             for column in range(len(crafting.crafting_grid[row])):
                 if crafting.crafting_grid[row][column].id != 0:
-                    display.blit(textures[crafting.crafting_grid[row][column].id], (387 + column * 43, 152 + row * 43))
+                    display.blit(mini_textures[crafting.crafting_grid[row][column].id], (392 + column * 43, 157 + row * 43))
                     text = font.render(str(math.floor(crafting.crafting_grid[row][column].amount)), True, (255, 255, 255))
                     if math.floor(crafting.crafting_grid[row][column].amount < 10):
                         display.blit(text, (418 + column * 43, 179 + row * 43))
@@ -204,7 +237,7 @@ while 1:
                     if player.inventory[row][column].amount < 1:
                         empty = Item(0, [-tilesize, -tilesize])
                         player.inventory[row][column] = empty
-                    display.blit(textures[player.inventory[row][column].id], (544 + column * 43, 152 + row * 43))
+                    display.blit(mini_textures[player.inventory[row][column].id], (549 + column * 43, 157 + row * 43))
                     text = font.render(str(math.floor(player.inventory[row][column].amount)), True, (255, 255, 255))
                     if math.floor(player.inventory[row][column].amount < 10):
                         display.blit(text, (575 + column * 43, 179 + row * 43))
@@ -214,7 +247,7 @@ while 1:
         # check if the crafting grid matches a recipe
         if crafting.check_recipes() != 0:
             crafting.resultant = crafting.check_recipes()
-            display.blit(textures[crafting.resultant[0]], (432, 354))
+            display.blit(mini_textures[crafting.resultant[0]], (437, 359))
             text = font.render(str(math.floor(crafting.resultant[1])), True, (255, 255, 255))
             if math.floor(crafting.resultant[0]) < 10:
                 display.blit(text, (463, 381))
@@ -302,7 +335,8 @@ while 1:
                         crafting.crafting_grid[crafting_mouse_location[1]][crafting_mouse_location[0]].amount = math.floor(crafting.crafting_grid[crafting_mouse_location[1]][crafting_mouse_location[0]].amount)
                         cursor['carrying'] = copy.deepcopy(crafting.crafting_grid[crafting_mouse_location[1]][crafting_mouse_location[0]])
                         crafting.crafting_grid[crafting_mouse_location[1]][crafting_mouse_location[0]].amount += 1
-    else:
+                        
+    if current_menu == None:
         #check if mouse 1 or mouse 2 is clicked, removing or building blocks.
         if mouse[0] or mouse[2]:
             if frame % 4 == 0:
@@ -338,7 +372,7 @@ while 1:
                 if tilemap[mousex][mousey].id != 0: #if the tile right clicked is a block
                     if tilemap[mousex][mousey].id == 12:
                         #ability to open furnace here
-                        pass
+                        current_menu = 'furnace'
                 else:
                     if player.inhand.id < 200:
                         block = tilemap[mousex][mousey]
@@ -375,7 +409,7 @@ while 1:
             if player.inventory[0][column].amount < 1:
                 empty = Item(0, [-tilesize, -tilesize])
                 player.inventory[0][column] = empty
-            display.blit(textures[player.inventory[0][column].id], (1062 + column * 43, 6))
+            display.blit(mini_textures[player.inventory[0][column].id], (1067 + column * 43, 11))
             text = font.render(str(math.floor(player.inventory[0][column].amount)), True, (255, 255, 255))
             if math.floor(player.inventory[0][column].amount < 10):
                 display.blit(text, (1093 + column * 43, 33))
@@ -388,8 +422,9 @@ while 1:
 
     frame += 1
 
+    
     player.update_position()
     player.update_vitals(frame)
-    mouse_down = [0, 0]
+    
     pygame.display.update()
     clock.tick(fps)
