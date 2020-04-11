@@ -12,6 +12,7 @@ crafting = Crafting(player.empty)
 gui = Gui()
 player.inventory[0][0] = Item(12, amount = 64)
 player.inventory[0][1] = Item(259)
+player.inventory[0][2] = Item(8, amount = 64)
 mobs = []
 zombie = Zombie(0, 5, tilemap)
 mobs.append(zombie)
@@ -243,9 +244,15 @@ while 1:
                         player.inventory[inventory_mouse_location[1]][inventory_mouse_location[0]], cursor['carrying'] = cursor['carrying'], player.inventory[inventory_mouse_location[1]][inventory_mouse_location[0]]
 
             if 389 <= mouse_location[0] <= 429 and 152 <= mouse_location[1] <= 192:
-                tilemap[current_container_location[0]][current_container_location[1]].nbt_tags['furnace']['smelt'], cursor['carrying'] = cursor['carrying'], tilemap[current_container_location[0]][current_container_location[1]].nbt_tags['furnace']['smelt']
+                current_furnace['smelt'], cursor['carrying'] = cursor['carrying'], current_furnace['smelt']
+                current_furnace['progress'] = 0
+
             if 472 <= mouse_location[0] <= 512 and 152 <= mouse_location[1] <= 192:
-                tilemap[current_container_location[0]][current_container_location[1]].nbt_tags['furnace']['fuel'], cursor['carrying'] = cursor['carrying'], tilemap[current_container_location[0]][current_container_location[1]].nbt_tags['furnace']['fuel']
+                current_furnace['fuel'], cursor['carrying'] = cursor['carrying'], current_furnace['fuel']
+
+            if 433 <= mouse_location[0] <= 473 and 327 <= mouse_location[1] <= 367 and cursor['carrying'].id == 0:
+                current_furnace['resultant'], cursor['carrying'] = cursor['carrying'], current_furnace['resultant']
+                
         # allow inventory items to be split
 
         if mouse_down[1] == 1:
@@ -270,10 +277,30 @@ while 1:
             display.blit(mini_textures[cursor['carrying'].id], (mouse_location[0] + tilesize // 3, mouse_location[1] + tilesize // 3))
 
         if current_furnace['fuel'].id in crafting.fuels:
-            current_furnace['fuel'].amount -= 1
-            current_furnace['
-            if current_furnace['fuel'].amount < 1:
-                current_furnace['fuel'] = player.empty
+            if frame%60 == 0:
+                current_furnace['fuel'].amount -= 1
+                current_furnace['fuel_amount'] += crafting.fuels[current_furnace['fuel'].id]
+                if current_furnace['fuel'].amount < 1:
+                    current_furnace['fuel'] = player.empty
+
+        if current_furnace['smelt'].id in crafting.furnace_recipes:
+            if current_furnace['progress'] == 0:
+                current_furnace['smelt'].amount -= 1
+                current_furnace['currently_cooking'] = current_furnace['smelt']
+                if current_furnace['smelt'].amount < 1:
+                    current_furnace['smelt'] = player.empty
+                current_furnace['progress'] += 1
+
+        if current_furnace['progress'] > 0 and frame%15 == 0 and current_furnace['fuel_amount'] > 0: #change here to reduce / increase time of cooking
+            current_furnace['progress'] += 1
+            current_furnace['fuel_amount'] -= 1
+
+        if current_furnace['progress'] >= 100:
+            if current_furnace['resultant'].id == Item(crafting.furnace_recipes[current_furnace['currently_cooking'].id]).id:
+                current_furnace['resultant'].amount += 1
+            else:
+                current_furnace['resultant'] = Item(crafting.furnace_recipes[current_furnace['currently_cooking'].id])
+            current_furnace['progress'] = 0
 
         display.blit(mini_textures[current_furnace['smelt'].id], (394, 157))
         display.blit(mini_textures[current_furnace['resultant'].id], (438, 333))
@@ -285,6 +312,10 @@ while 1:
         display.blit(text, (431 + fontx, 325 + fonty))
         text = font.render(str(current_furnace['fuel'].amount), True, (255, 255, 255))
         display.blit(text, (470 + fontx, 150 + fonty))
+        text = font.render('Fuel : ' + str(current_furnace['fuel_amount']), True, (255, 255, 255))
+        display.blit(text, (473, 140))
+        text = font.render('Progress : ' + str(current_furnace['progress']) + "%", True, (255, 255, 255))
+        display.blit(text, (380, 140))
 
     if current_menu == 'inventory':
         #draw inventory aspects
@@ -465,7 +496,7 @@ while 1:
                         current_menu = 'furnace'
                         current_container_location = [mousex, mousey]
                         if 'furnace' not in tilemap[mousex][mousey].nbt_tags:
-                            tilemap[mousex][mousey].nbt_tags['furnace'] = {'fuel' : player.empty, 'smelt' : player.empty, 'resultant' : player.empty, 'fuel_amount' : 0}
+                            tilemap[mousex][mousey].nbt_tags['furnace'] = {'fuel' : player.empty, 'smelt' : player.empty, 'resultant' : player.empty, 'fuel_amount' : 0, 'progress' : 0, 'currently_cooking' : player.empty}
                 else:
                     if player.inhand.id < 200:
                         block = tilemap[mousex][mousey]

@@ -60,7 +60,6 @@ class Creature:
           self.vy = 0
           self.on_ground = True
       # Jump if there is a block in the way
-      print(points_touching_wall)
       if points_touching_wall >= hitbox_points/5 and self.on_ground:
         self.x -= self.vx
         self.vx = 0
