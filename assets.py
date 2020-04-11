@@ -41,11 +41,14 @@ current_menu = None #current menu the player has open
 current_container_location = [0, 0] #location of the opened container, used for chests, furnaces, etc
 
 fog_of_war_textures = {}
+item_name_to_id = {}
+block_name_to_id = {}
 
 def load_block(id, name, durability, required_tool, transparency = False, exact_tool_required = False, pass_through = False, dropid = 'self'):
     block = Block(id, name, durability, required_tool, exact_tool_required = exact_tool_required, pass_through = pass_through, dropid = dropid)
     blocks[id] = block
     blocks[name] = block
+    block_name_to_id[name] = id
 
     if transparency == True:
         block_img = pygame.image.load('blocks/' + name + '.png').convert_alpha()
@@ -72,6 +75,7 @@ def load_item(id, name, hit_multiplier = 1, tooltype = 'none'):
     item_hit_multipliers[name] = hit_multiplier
     item_tooltypes[id] = tooltype
     item_tooltypes[name] = tooltype
+    item_name_to_id[name] = id
 
 player_models = {} #dictionary of all the player images.
 
