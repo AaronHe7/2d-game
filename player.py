@@ -29,7 +29,7 @@ class Player:
         self.inventory = [[0,0,0,0,0],[0,0,0,0,0],[0,0,0,0,0],[0,0,0,0,0]]
         self.inhand = 0
         self.highlighted = 0
-        self.empty = Item(0, [-tilesize, -tilesize])
+        self.empty = Item(0, amount='')
         for row in range(len(self.inventory)):
             for column in range(len(self.inventory[row])):
                 self.inventory[row][column] = self.empty

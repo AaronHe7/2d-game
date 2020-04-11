@@ -9,7 +9,7 @@ from crafting import *
 player = Player(0, 4, tilemap)
 crafting = Crafting(player.empty)
 gui = Gui()
-player.inventory[0][0] = Item(12)
+player.inventory[0][0] = Item(12, amount = 64)
 player.inventory[0][1] = Item(259)
 
 while 1:
@@ -85,7 +85,7 @@ while 1:
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_TAB:
                 keys_down[pygame.K_TAB] = 1
-            
+
 
     x_start = math.floor(player.x - ((width/2)//tilesize)) - 5
     x_end = math.floor(player.x + ((width/2)//tilesize)) + 5
@@ -104,7 +104,7 @@ while 1:
                 # Fog of War for Blocks not directly visible to player or near visible
                 if 1==1:
                     pass
-                    
+
                 #durability and breaking of blocks
                 if tilemap[x][y].durability < tilemap[x][y].max_durability:
                     if tilemap[x][y].frames_since_last_touched > 60:
@@ -152,7 +152,7 @@ while 1:
     display.blit(player_model, (math.floor(player_x_display), math.floor(player_y_display)))
 
     #draw particles
-                
+
     for particle in particles:
         particle[0][0] += particle[2][0]
         particle[0][1] += particle[2][1]
@@ -166,7 +166,7 @@ while 1:
         if particle[3] <= 0:
             particles.remove(particle)
         pygame.draw.circle(display, particle[1], particle[0], int(particle[3]))
-    
+
     #draw hunger and hp bars
 
     bar = gui.return_bar(player.hp)
@@ -188,7 +188,8 @@ while 1:
         #draw furnace aspects
 
         inventory_mouse_location = [(mouse_location[0] - 544) // 43, (mouse_location[1] - 152) // 43]
-        
+        current_furnace = tilemap[current_container_location[0]][current_container_location[1]].nbt_tags['furnace']
+
         display.blit(dimming_overlay, (0, 0))
         display.blit(furnace_background, (340, 100))
         display.blit(inventory_square, (470, 150)) #right fuel square
@@ -215,18 +216,6 @@ while 1:
                     elif math.floor(player.inventory[row][column].amount >= 10):
                         display.blit(text, (571 + column * 43, 179 + row * 43))
 
-        # draw items in the furnace
-
-        for i in range(len(crafting.furnace_grid)):
-            if crafting.furnace_grid[i].id != 0:
-                display.blit(mini_textures[crafting.furnace_grid[i].id], (394 + i * 83, 157))
-                text = font.render(str(math.floor(crafting.furnace_grid[i].amount)), True, (255, 255, 255))
-                if math.floor(crafting.furnace_grid[i].amount < 10):
-                    display.blit(text, (394 + fontx + i * 83, 157 + fonty))
-                elif math.floor(crafting.furnace_grid[i].amount >= 10):
-                    display.blit(text, (390 + fontx + i * 83, 157 + fonty))
-                
-
         # allow inventory items to be moved
 
         if mouse_down[0] == 1:
@@ -244,21 +233,9 @@ while 1:
                         player.inventory[inventory_mouse_location[1]][inventory_mouse_location[0]], cursor['carrying'] = cursor['carrying'], player.inventory[inventory_mouse_location[1]][inventory_mouse_location[0]]
 
             if 389 <= mouse_location[0] <= 429 and 152 <= mouse_location[1] <= 192:
-                if cursor['carrying'].id != 0:
-                    crafting.furnace_grid[0] = cursor['carrying']
-                    cursor['carrying'] = player.empty
-                else:
-                    cursor['carrying'] = crafting.furnace_grid[0]
-                    crafting.furnace_grid[0] = player.empty
-
+                tilemap[current_container_location[0]][current_container_location[1]].nbt_tags['furnace']['smelt'], cursor['carrying'] = cursor['carrying'], tilemap[current_container_location[0]][current_container_location[1]].nbt_tags['furnace']['smelt']
             if 472 <= mouse_location[0] <= 512 and 152 <= mouse_location[1] <= 192:
-                if cursor['carrying'].id != 0:
-                    crafting.furnace_grid[1] = cursor['carrying']
-                    cursor['carrying'] = player.empty
-                else:
-                    cursor['carrying'] = crafting.furnace_grid[1]
-                    crafting.furnace_grid[1] = player.empty
-
+                tilemap[current_container_location[0]][current_container_location[1]].nbt_tags['furnace']['fuel'], cursor['carrying'] = cursor['carrying'], tilemap[current_container_location[0]][current_container_location[1]].nbt_tags['furnace']['fuel']
         # allow inventory items to be split
 
         if mouse_down[1] == 1:
@@ -282,42 +259,29 @@ while 1:
         if cursor['carrying'].id != 0:
             display.blit(mini_textures[cursor['carrying'].id], (mouse_location[0] + tilesize // 3, mouse_location[1] + tilesize // 3))
 
-        if crafting.furnace_grid[1].id in crafting.fuels and frame%60 == 0:
-            crafting.furnace_grid[1].amount -= 1
-            crafting.furnace_fuel += crafting.fuels[crafting.furnace_grid[1].id]
-            if crafting.furnace_grid[1].amount <= 0:
-                crafting.furnace_grid[1] = player.empty
+        if current_furnace['fuel'].id in crafting.fuels:
+            current_furnace['fuel'].amount -= 1
+            current_furnace['
+            if current_furnace['fuel'].amount < 1:
+                current_furnace['fuel'] = player.empty
 
-        if crafting.check_furnace_recipes() != 0 or crafting.furnace_currently_cooking.id != 0:
-            crafting.furnace_currently_cooking = crafting.furnace_grid[0]
-            if frame%60 == 0:
-                if crafting.furnace_progress == 0 and crafting.furnace_grid[0].id != 0 and crafting.furnace_fuel >= 1 and crafting.furnace_resultant.id == 0:
-                    crafting.furnace_grid[0].amount -= 1
-                if crafting.furnace_grid[0].amount <= 0:
-                    crafting.furnace_grid[0] = player.empty
-                if crafting.furnace_fuel > 0 and frame%60 == 0:
-                    crafting.furnace_progress += 1
-                    crafting.furnace_fuel -= 1
-                
-        if crafting.furnace_progress == 10:
-            crafting.furnace_resultant = crafting.check_furnace_recipes()
-        if crafting.furnace_progress >= 10:
-            crafting.furnace_progress = 10.1
-        if crafting.furnace_resultant != player.empty:
-            display.blit(mini_textures[crafting.furnace_resultant], (438, 332))
+        display.blit(mini_textures[current_furnace['smelt'].id], (394, 157))
+        display.blit(mini_textures[current_furnace['resultant'].id], (438, 333))
+        display.blit(mini_textures[current_furnace['fuel'].id], (477, 157))
 
-        text = font.render(str(math.floor(crafting.furnace_fuel)), True, (255, 255, 255))
-        display.blit(text, (490, 260))
-        text = font.render(str(math.floor(crafting.furnace_progress)), True, (255, 255, 255))
-        display.blit(text, (407, 260))
-        
+        text = font.render(str(current_furnace['smelt'].amount), True, (255, 255, 255))
+        display.blit(text, (384 + fontx, 150 + fonty))
+        text = font.render(str(current_furnace['resultant'].amount), True, (255, 255, 255))
+        display.blit(text, (431 + fontx, 325 + fonty))
+        text = font.render(str(current_furnace['fuel'].amount), True, (255, 255, 255))
+        display.blit(text, (470 + fontx, 150 + fonty))
 
     if current_menu == 'inventory':
         #draw inventory aspects
-        
+
         inventory_mouse_location = [(mouse_location[0] - 544) // 43, (mouse_location[1] - 152) // 43]
         crafting_mouse_location = [(mouse_location[0] - 387) // 43, (mouse_location[1] - 152) // 43]
-        
+
         display.blit(dimming_overlay, (0, 0))
         display.blit(inventory_background, (340, 100))
         display.blit(hotbar, (542, 150))
@@ -334,7 +298,7 @@ while 1:
             player.handstate = 0
 
         #draw the items in the crafting grid
-        
+
         for row in range(len(crafting.crafting_grid)):
             for column in range(len(crafting.crafting_grid[row])):
                 if crafting.crafting_grid[row][column].id != 0:
@@ -345,7 +309,7 @@ while 1:
                     elif math.floor(crafting.crafting_grid[row][column].amount >= 10):
                         display.blit(text, (414 + column * 43, 179 + row * 43))
 
-        #draw the items in the player's inventory     
+        #draw the items in the player's inventory
 
         for row in range(len(player.inventory)):
             for column in range(len(player.inventory[row])):
@@ -390,12 +354,12 @@ while 1:
                                         crafting.crafting_grid[row][column].amount -= 1
                                         if crafting.crafting_grid[row][column].amount < 1:
                                             crafting.crafting_grid[row][column] = player.empty
-            
+
         if cursor['carrying'].id != 0:
             display.blit(mini_textures[cursor['carrying'].id], (mouse_location[0] + tilesize // 3, mouse_location[1] + tilesize // 3))
-            
+
         #allow inventory items to be moved
-            
+
         if mouse_down[0] == 1:
             if 0 <= inventory_mouse_location[0] <= 4 and 0 <= inventory_mouse_location[1] <= 3:
                 hovered_inventory_space = player.inventory[inventory_mouse_location[1]][inventory_mouse_location[0]]
@@ -409,7 +373,7 @@ while 1:
                         cursor['carrying'] = copy.deepcopy(player.empty)
                     else:
                         player.inventory[inventory_mouse_location[1]][inventory_mouse_location[0]], cursor['carrying'] = cursor['carrying'], player.inventory[inventory_mouse_location[1]][inventory_mouse_location[0]]
-                        
+
             elif 0 <= crafting_mouse_location[0] <= 2 and 0 <= crafting_mouse_location[1] <= 2:
                 hovered_crafting_space = crafting.crafting_grid[crafting_mouse_location[1]][crafting_mouse_location[0]]
                 if cursor['carrying'].id == 0:
@@ -424,7 +388,7 @@ while 1:
                         crafting.crafting_grid[crafting_mouse_location[1]][crafting_mouse_location[0]], cursor['carrying'] = cursor['carrying'], crafting.crafting_grid[crafting_mouse_location[1]][crafting_mouse_location[0]]
 
         # allow inventory and crafting items to be split
-        
+
         if mouse_down[1] == 1:
             if 0 <= inventory_mouse_location[0] <= 4 and 0 <= inventory_mouse_location[1] <= 3:
                 hovered_inventory_space = player.inventory[inventory_mouse_location[1]][inventory_mouse_location[0]]
@@ -438,7 +402,7 @@ while 1:
                         player.inventory[inventory_mouse_location[1]][inventory_mouse_location[0]].amount = math.floor(player.inventory[inventory_mouse_location[1]][inventory_mouse_location[0]].amount)
                         cursor['carrying'] = copy.deepcopy(player.inventory[inventory_mouse_location[1]][inventory_mouse_location[0]])
                         player.inventory[inventory_mouse_location[1]][inventory_mouse_location[0]].amount += 1
-                        
+
             elif 0 <= crafting_mouse_location[0] <= 2 and 0 <= crafting_mouse_location[1] <= 2:
                 hovered_crafting_space = crafting.crafting_grid[crafting_mouse_location[1]][crafting_mouse_location[0]]
                 if cursor['carrying'].id == 0 and hovered_crafting_space.id != 0 and hovered_crafting_space.amount > 1:
@@ -451,7 +415,7 @@ while 1:
                         crafting.crafting_grid[crafting_mouse_location[1]][crafting_mouse_location[0]].amount = math.floor(crafting.crafting_grid[crafting_mouse_location[1]][crafting_mouse_location[0]].amount)
                         cursor['carrying'] = copy.deepcopy(crafting.crafting_grid[crafting_mouse_location[1]][crafting_mouse_location[0]])
                         crafting.crafting_grid[crafting_mouse_location[1]][crafting_mouse_location[0]].amount += 1
-                        
+
     if current_menu == None:
         #check if mouse 1 or mouse 2 is clicked, removing or building blocks.
         if mouse[0] or mouse[2]:
@@ -483,12 +447,15 @@ while 1:
                                 drop = Item(block.dropid, [mouse_location[0], mouse_location[1]])
                                 entities_group.append(drop)
 
-            # if the player clicks right click and is holding a block then check if it can be placed           
+            # if the player clicks right click and is holding a block then check if it can be placed
             if mouse[2]:
-                if tilemap[mousex][mousey].id != 0: #if the tile right clicked is a block
-                    if tilemap[mousex][mousey].id == 12:
+                if tilemap[mousex][mousey].id != 0 and not keys[pygame.K_LSHIFT]: #if the tile right clicked is a block
+                    if tilemap[mousex][mousey].id == 12 or tilemap[mousex][mousey].id == 14:
                         #ability to open furnace here
                         current_menu = 'furnace'
+                        current_container_location = [mousex, mousey]
+                        if 'furnace' not in tilemap[mousex][mousey].nbt_tags:
+                            tilemap[mousex][mousey].nbt_tags['furnace'] = {'fuel' : player.empty, 'smelt' : player.empty, 'resultant' : player.empty, 'fuel_amount' : 0}
                 else:
                     if player.inhand.id < 200:
                         block = tilemap[mousex][mousey]
@@ -538,9 +505,9 @@ while 1:
 
     frame += 1
 
-    
+
     player.update_position()
     player.update_vitals(frame)
-    
+
     pygame.display.update()
     clock.tick(fps)

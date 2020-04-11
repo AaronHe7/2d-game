@@ -29,8 +29,8 @@ mini_textures = {} #mini item and block textures
 
 cursor = {'carrying':''} #used for inventory management, 'carrying' key shows the object that the cursor is carrying
 font = pygame.font.Font("gui/font.ttf", 10) #font used
-fontx = 26
-fonty = 22
+fontx = 33
+fonty = 29
 
 particles = [] #the particles list
 
@@ -38,6 +38,7 @@ item_hit_multipliers = {} #a dictionary of all the item hit multipliers used to 
 item_tooltypes = {} #a dictionary of all the item tooltypes to determine the type of tool an item could be
 
 current_menu = None #current menu the player has open
+current_container_location = [0, 0] #location of the opened container, used for chests, furnaces, etc
 
 fog_of_war_textures = {}
 
@@ -79,7 +80,7 @@ def load_tile_img(index, file_name):
     sprite = pygame.transform.scale(file, (math.floor(0.85 * tilesize), math.floor(1.8 * tilesize)))
     player_models[index] = sprite
 
-sky = pygame.Surface((tilesize, tilesize))
+sky = pygame.Surface((0, 0))
 textures[0] = sky
 mini_textures[0] = sky
 blocks[0] = Block(0, 'sky', 0, 0)
@@ -106,6 +107,7 @@ load_block(10, 'diamond_ore', 30, ['pickaxe', 2], exact_tool_required = True)
 load_block(11, 'bloodstone_ore', 50, ['pickaxe', 3], exact_tool_required = True)
 load_block(12, 'furnace', 20, ['pickaxe', 0], exact_tool_required = True)
 load_block(13, 'wood_wall', 10, ['axe', 0], pass_through = True)
+load_block(14, 'furnace_lit', 20, ['pickaxe', 0], exact_tool_required = True)
 
 #tooltype : the type of tool and the tier it is
 #number after name : the hit multiplier of the item when hitting the correct type of block
