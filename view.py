@@ -10,6 +10,7 @@ player = Player(0, 4, tilemap)
 crafting = Crafting(player.empty)
 gui = Gui()
 player.inventory[0][0] = Item(12)
+player.inventory[0][1] = Item(259)
 
 while 1:
     pygame_events = pygame.event.get()
@@ -190,11 +191,126 @@ while 1:
         
         display.blit(dimming_overlay, (0, 0))
         display.blit(furnace_background, (340, 100))
-        display.blit(inventory_square, (470, 150))
-        display.blit(inventory_square, (387, 150))
-        display.blit(inventory_square, (431, 325))
+        display.blit(inventory_square, (470, 150)) #right fuel square
+        display.blit(inventory_square, (387, 150)) #left burn square
+        display.blit(inventory_square, (431, 325)) #resultant square
         display.blit(hotbar, (542, 150))
         display.blit(inventory, (542, 150))
+
+        if player.handstate > 0:
+            player.handstate = 0
+
+        #draw the items in the inventory
+
+        for row in range(len(player.inventory)):
+            for column in range(len(player.inventory[row])):
+                if player.inventory[row][column].id != 0:
+                    if player.inventory[row][column].amount < 1:
+                        empty = Item(0, [-tilesize, -tilesize])
+                        player.inventory[row][column] = empty
+                    display.blit(mini_textures[player.inventory[row][column].id], (549 + column * 43, 157 + row * 43))
+                    text = font.render(str(math.floor(player.inventory[row][column].amount)), True, (255, 255, 255))
+                    if math.floor(player.inventory[row][column].amount < 10):
+                        display.blit(text, (575 + column * 43, 179 + row * 43))
+                    elif math.floor(player.inventory[row][column].amount >= 10):
+                        display.blit(text, (571 + column * 43, 179 + row * 43))
+
+        # draw items in the furnace
+
+        for i in range(len(crafting.furnace_grid)):
+            if crafting.furnace_grid[i].id != 0:
+                display.blit(mini_textures[crafting.furnace_grid[i].id], (394 + i * 83, 157))
+                text = font.render(str(math.floor(crafting.furnace_grid[i].amount)), True, (255, 255, 255))
+                if math.floor(crafting.furnace_grid[i].amount < 10):
+                    display.blit(text, (394 + fontx + i * 83, 157 + fonty))
+                elif math.floor(crafting.furnace_grid[i].amount >= 10):
+                    display.blit(text, (390 + fontx + i * 83, 157 + fonty))
+                
+
+        # allow inventory items to be moved
+
+        if mouse_down[0] == 1:
+            if 0 <= inventory_mouse_location[0] <= 4 and 0 <= inventory_mouse_location[1] <= 3:
+                hovered_inventory_space = player.inventory[inventory_mouse_location[1]][inventory_mouse_location[0]]
+                if cursor['carrying'].id == 0:
+                    if hovered_inventory_space.id != 0:
+                        cursor['carrying'] = hovered_inventory_space
+                        player.inventory[inventory_mouse_location[1]][inventory_mouse_location[0]] = copy.deepcopy(player.empty)
+                elif cursor['carrying'].id >= 0:
+                    if hovered_inventory_space.id == cursor['carrying'].id and hovered_inventory_space.amount + cursor['carrying'].amount <= 64:
+                        player.inventory[inventory_mouse_location[1]][inventory_mouse_location[0]].amount += cursor['carrying'].amount
+                        cursor['carrying'] = copy.deepcopy(player.empty)
+                    else:
+                        player.inventory[inventory_mouse_location[1]][inventory_mouse_location[0]], cursor['carrying'] = cursor['carrying'], player.inventory[inventory_mouse_location[1]][inventory_mouse_location[0]]
+
+            if 389 <= mouse_location[0] <= 429 and 152 <= mouse_location[1] <= 192:
+                if cursor['carrying'].id != 0:
+                    crafting.furnace_grid[0] = cursor['carrying']
+                    cursor['carrying'] = player.empty
+                else:
+                    cursor['carrying'] = crafting.furnace_grid[0]
+                    crafting.furnace_grid[0] = player.empty
+
+            if 472 <= mouse_location[0] <= 512 and 152 <= mouse_location[1] <= 192:
+                if cursor['carrying'].id != 0:
+                    crafting.furnace_grid[1] = cursor['carrying']
+                    cursor['carrying'] = player.empty
+                else:
+                    cursor['carrying'] = crafting.furnace_grid[1]
+                    crafting.furnace_grid[1] = player.empty
+
+        # allow inventory items to be split
+
+        if mouse_down[1] == 1:
+            if 0 <= inventory_mouse_location[0] <= 4 and 0 <= inventory_mouse_location[1] <= 3:
+                hovered_inventory_space = player.inventory[inventory_mouse_location[1]][inventory_mouse_location[0]]
+                if cursor['carrying'].id == 0 and hovered_inventory_space.id != 0 and hovered_inventory_space.amount > 1:
+                    if hovered_inventory_space.amount%2 == 0:
+                        player.inventory[inventory_mouse_location[1]][inventory_mouse_location[0]].amount /= 2
+                        player.inventory[inventory_mouse_location[1]][inventory_mouse_location[0]].amount = math.floor(player.inventory[inventory_mouse_location[1]][inventory_mouse_location[0]].amount)
+                        cursor['carrying'] = copy.deepcopy(player.inventory[inventory_mouse_location[1]][inventory_mouse_location[0]])
+                    elif hovered_inventory_space.amount%2 == 1:
+                        player.inventory[inventory_mouse_location[1]][inventory_mouse_location[0]].amount /= 2
+                        player.inventory[inventory_mouse_location[1]][inventory_mouse_location[0]].amount = math.floor(player.inventory[inventory_mouse_location[1]][inventory_mouse_location[0]].amount)
+                        cursor['carrying'] = copy.deepcopy(player.inventory[inventory_mouse_location[1]][inventory_mouse_location[0]])
+                        player.inventory[inventory_mouse_location[1]][inventory_mouse_location[0]].amount += 1
+
+            if 389 <= mousex <= 429 and 152 <= mousey <= 192:
+                if cursor['carrying'].id == 0:
+                    pass
+
+        if cursor['carrying'].id != 0:
+            display.blit(mini_textures[cursor['carrying'].id], (mouse_location[0] + tilesize // 3, mouse_location[1] + tilesize // 3))
+
+        if crafting.furnace_grid[1].id in crafting.fuels and frame%60 == 0:
+            crafting.furnace_grid[1].amount -= 1
+            crafting.furnace_fuel += crafting.fuels[crafting.furnace_grid[1].id]
+            if crafting.furnace_grid[1].amount <= 0:
+                crafting.furnace_grid[1] = player.empty
+
+        if crafting.check_furnace_recipes() != 0 or crafting.furnace_currently_cooking.id != 0:
+            crafting.furnace_currently_cooking = crafting.furnace_grid[0]
+            if frame%60 == 0:
+                if crafting.furnace_progress == 0 and crafting.furnace_grid[0].id != 0 and crafting.furnace_fuel >= 1 and crafting.furnace_resultant.id == 0:
+                    crafting.furnace_grid[0].amount -= 1
+                if crafting.furnace_grid[0].amount <= 0:
+                    crafting.furnace_grid[0] = player.empty
+                if crafting.furnace_fuel > 0 and frame%60 == 0:
+                    crafting.furnace_progress += 1
+                    crafting.furnace_fuel -= 1
+                
+        if crafting.furnace_progress == 10:
+            crafting.furnace_resultant = crafting.check_furnace_recipes()
+        if crafting.furnace_progress >= 10:
+            crafting.furnace_progress = 10.1
+        if crafting.furnace_resultant != player.empty:
+            display.blit(mini_textures[crafting.furnace_resultant], (438, 332))
+
+        text = font.render(str(math.floor(crafting.furnace_fuel)), True, (255, 255, 255))
+        display.blit(text, (490, 260))
+        text = font.render(str(math.floor(crafting.furnace_progress)), True, (255, 255, 255))
+        display.blit(text, (407, 260))
+        
 
     if current_menu == 'inventory':
         #draw inventory aspects
@@ -266,7 +382,7 @@ while 1:
                                         crafting.crafting_grid[row][column].amount -= 1
                                         if crafting.crafting_grid[row][column].amount < 1:
                                             crafting.crafting_grid[row][column] = player.empty
-                        else:
+                        elif cursor['carrying'].id == crafting.resultant[0] and cursor['carrying'].amount + crafting.resultant[1] <= 64:
                             cursor['carrying'].amount += crafting.resultant[1]
                             for row in range(len(crafting.crafting_grid)):
                                 for column in range(len(crafting.crafting_grid[row])):

@@ -29,6 +29,8 @@ mini_textures = {} #mini item and block textures
 
 cursor = {'carrying':''} #used for inventory management, 'carrying' key shows the object that the cursor is carrying
 font = pygame.font.Font("gui/font.ttf", 10) #font used
+fontx = 26
+fonty = 22
 
 particles = [] #the particles list
 
@@ -110,12 +112,22 @@ load_block(13, 'wood_wall', 10, ['axe', 0], pass_through = True)
 
 load_item(200, 'stick')
 load_item(201, 'iron_ingot')
+load_item(202, 'gold_ingot')
+load_item(203, 'bloodstone_ingot')
+load_item(204, 'ash')
+
 load_item(256, 'wooden_pickaxe', 2, tooltype = ['pickaxe', 0])
 load_item(257, 'stone_pickaxe', 3, tooltype = ['pickaxe', 1])
 load_item(258, 'iron_pickaxe', 5, tooltype = ['pickaxe', 2])
 load_item(259, 'diamond_pickaxe', 6, tooltype = ['pickaxe', 3])
 load_item(260, 'wooden_shovel', 2, tooltype = ['shovel', 0])
-load_item(264, 'wooden_axe', 2, tooltype = ['axe', 0])
+load_item(261, 'stone_shovel', 3, tooltype = ['shovel', 1])
+load_item(262, 'iron_shovel', 3.5, tooltype = ['shovel', 2])
+load_item(263, 'diamond_shovel', 4, tooltype = ['shovel', 3])
+load_item(264, 'wooden_axe', 1.35, tooltype = ['axe', 0])
+load_item(265, 'stone_axe', 1.75, tooltype = ['axe', 1])
+load_item(266, 'iron_axe', 2, tooltype = ['axe', 2])
+load_item(267, 'diamond_axe', 2.25, tooltype = ['axe', 3])
 
 #load gui hunger and heart elements
 

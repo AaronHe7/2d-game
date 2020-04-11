@@ -12,6 +12,11 @@ class Crafting:
         self.furnace_grid = [empty, empty]
         self.recipes = []
         self.furnace_recipes = []
+        self.furnace_progress = 0
+        self.furnace_fuel = 0
+        self.fuels = {3 : 10, 4 : 2, 6 : 5, 200 : 2}
+        self.furnace_currently_cooking = empty
+        
         self.resultant = empty #the resultant from the crafting table
         self.furnace_resultant = empty #the resultant from the furnace
         with open("crafting_recipes/crafting_recipes.txt") as recipes: #open crafting recipes from text file
@@ -32,6 +37,18 @@ class Crafting:
                 # [id, amount]
                 return [recipe[1], recipe[2]]
         return 0 #if the crafting table does not match any recipe, then return nothing.
+    def check_furnace_recipes(self):
+        for recipe in self.furnace_recipes:
+            converted_grid = [0, 0]
+            for i in range(len(converted_grid)):
+                converted_grid[i] = self.furnace_grid[i].id
+            if converted_grid[0] == recipe[0]:
+                #id,amount
+                return recipe[1]
+        if self.furnace_grid[0].id != 0:
+            return 204
+        else:
+            return 0
     def clear_crafting_grid(self, empty): #unused
         self.crafting_grid = [[empty, empty, empty],
                               [empty, empty, empty],
