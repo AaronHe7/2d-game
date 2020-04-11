@@ -106,9 +106,36 @@ while 1:
             if tilemap[x][y].id != 0:
                 # Display block relative to player
                 display.blit(textures[tilemap[x][y].id], (math.floor(player_x_display + tilesize * (x - player.x)), math.floor(player_y_display -  tilesize * (y - player.y))))
-                # Fog of War for Blocks not directly visible to player or near visible
-                if 1==1:
-                    pass
+                # furnace
+                if tilemap[x][y].id == 12 or tilemap[x][y].id == 14:
+                    if 'furnace' not in tilemap[x][y].nbt_tags:
+                        tilemap[x][y].nbt_tags['furnace'] = {'fuel' : player.empty, 'smelt' : player.empty, 'resultant' : player.empty, 'fuel_amount' : 0, 'progress' : 0, 'currently_cooking' : player.empty}
+                    current_furnace = tilemap[x][y].nbt_tags['furnace']
+                    if current_furnace['fuel'].id in crafting.fuels:
+                        if frame%60 == 0:
+                            current_furnace['fuel'].amount -= 1
+                            current_furnace['fuel_amount'] += crafting.fuels[current_furnace['fuel'].id]
+                            if current_furnace['fuel'].amount < 1:
+                                current_furnace['fuel'] = player.empty
+
+                    if current_furnace['smelt'].id in crafting.furnace_recipes:
+                        if current_furnace['progress'] == 0:
+                            current_furnace['smelt'].amount -= 1
+                            current_furnace['currently_cooking'] = current_furnace['smelt']
+                            if current_furnace['smelt'].amount < 1:
+                                current_furnace['smelt'] = player.empty
+                            current_furnace['progress'] += 1
+
+                    if current_furnace['progress'] > 0 and frame%15 == 0 and current_furnace['fuel_amount'] > 0: #change here to reduce / increase time of cooking
+                        current_furnace['progress'] += 1
+                        current_furnace['fuel_amount'] -= 1
+
+                    if current_furnace['progress'] >= 100:
+                        if current_furnace['resultant'].id == Item(crafting.furnace_recipes[current_furnace['currently_cooking'].id]).id:
+                            current_furnace['resultant'].amount += 1
+                        else:
+                            current_furnace['resultant'] = Item(crafting.furnace_recipes[current_furnace['currently_cooking'].id])
+                        current_furnace['progress'] = 0
 
                 #durability and breaking of blocks
                 if tilemap[x][y].durability < tilemap[x][y].max_durability:
@@ -198,8 +225,8 @@ while 1:
     if current_menu == 'furnace':
         #draw furnace aspects
 
-        inventory_mouse_location = [(mouse_location[0] - 544) // 43, (mouse_location[1] - 152) // 43]
         current_furnace = tilemap[current_container_location[0]][current_container_location[1]].nbt_tags['furnace']
+        inventory_mouse_location = [(mouse_location[0] - 544) // 43, (mouse_location[1] - 152) // 43]
 
         display.blit(dimming_overlay, (0, 0))
         display.blit(furnace_background, (340, 100))
@@ -246,7 +273,7 @@ while 1:
             if 389 <= mouse_location[0] <= 429 and 152 <= mouse_location[1] <= 192:
                 current_furnace['smelt'], cursor['carrying'] = cursor['carrying'], current_furnace['smelt']
                 current_furnace['progress'] = 0
-
+                
             if 472 <= mouse_location[0] <= 512 and 152 <= mouse_location[1] <= 192:
                 current_furnace['fuel'], cursor['carrying'] = cursor['carrying'], current_furnace['fuel']
 
@@ -275,32 +302,6 @@ while 1:
 
         if cursor['carrying'].id != 0:
             display.blit(mini_textures[cursor['carrying'].id], (mouse_location[0] + tilesize // 3, mouse_location[1] + tilesize // 3))
-
-        if current_furnace['fuel'].id in crafting.fuels:
-            if frame%60 == 0:
-                current_furnace['fuel'].amount -= 1
-                current_furnace['fuel_amount'] += crafting.fuels[current_furnace['fuel'].id]
-                if current_furnace['fuel'].amount < 1:
-                    current_furnace['fuel'] = player.empty
-
-        if current_furnace['smelt'].id in crafting.furnace_recipes:
-            if current_furnace['progress'] == 0:
-                current_furnace['smelt'].amount -= 1
-                current_furnace['currently_cooking'] = current_furnace['smelt']
-                if current_furnace['smelt'].amount < 1:
-                    current_furnace['smelt'] = player.empty
-                current_furnace['progress'] += 1
-
-        if current_furnace['progress'] > 0 and frame%15 == 0 and current_furnace['fuel_amount'] > 0: #change here to reduce / increase time of cooking
-            current_furnace['progress'] += 1
-            current_furnace['fuel_amount'] -= 1
-
-        if current_furnace['progress'] >= 100:
-            if current_furnace['resultant'].id == Item(crafting.furnace_recipes[current_furnace['currently_cooking'].id]).id:
-                current_furnace['resultant'].amount += 1
-            else:
-                current_furnace['resultant'] = Item(crafting.furnace_recipes[current_furnace['currently_cooking'].id])
-            current_furnace['progress'] = 0
 
         display.blit(mini_textures[current_furnace['smelt'].id], (394, 157))
         display.blit(mini_textures[current_furnace['resultant'].id], (438, 333))
@@ -495,8 +496,6 @@ while 1:
                         #ability to open furnace here
                         current_menu = 'furnace'
                         current_container_location = [mousex, mousey]
-                        if 'furnace' not in tilemap[mousex][mousey].nbt_tags:
-                            tilemap[mousex][mousey].nbt_tags['furnace'] = {'fuel' : player.empty, 'smelt' : player.empty, 'resultant' : player.empty, 'fuel_amount' : 0, 'progress' : 0, 'currently_cooking' : player.empty}
                 else:
                     if player.inhand.id < 200:
                         block = tilemap[mousex][mousey]
