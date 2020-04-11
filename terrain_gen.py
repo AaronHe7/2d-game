@@ -2,12 +2,15 @@ import random, math
 from block import *
 from assets import *
 
+seed = 239427
+
 class Terrain:
     def __init__(self):
         self.surface_level = 0
         self.blocks_since_cave = 0
         self.bedrock_level = -100
     def generate(self, x, y):
+        random.seed((seed + 49 * x ** 2 + 397 * y) % (10**9+7))
         if (x in tilemap and y in tilemap[x]):
             return
         surface_level = self.surface_level
@@ -69,7 +72,7 @@ class Terrain:
             else:
                 angle = random.uniform(305, 325)
 
-            cave = self.generate_cave(x, y, angle, depth, width)
+            cave = self.generate_cave(x, y + 2, angle, depth, width)
             for x in cave:
                 if x not in tilemap:
                     tilemap[x] = {}
