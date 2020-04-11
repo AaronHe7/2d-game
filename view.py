@@ -5,12 +5,16 @@ from gui import *
 from terrain_gen import *
 from entities import *
 from crafting import *
+from mobs import *
 
-player = Player(0, 4, tilemap)
+
 crafting = Crafting(player.empty)
 gui = Gui()
 player.inventory[0][0] = Item(12, amount = 64)
 player.inventory[0][1] = Item(259)
+mobs = []
+zombie = Zombie(0, 5, tilemap)
+mobs.append(zombie)
 
 while 1:
     pygame_events = pygame.event.get()
@@ -112,6 +116,12 @@ while 1:
                     durability_index = math.floor(9 - 9 * tilemap[x][y].durability // tilemap[x][y].max_durability)
                     display.blit(breaking_models[durability_index], (math.floor(player_x_display + tilesize * (x - player.x)), math.floor(player_y_display -  tilesize *(y - player.y))))
                 tilemap[x][y].frames_since_last_touched += 1
+    
+    for mob in mobs:
+      x = math.floor(player_x_display + tilesize * (mob.x - player.x))
+      y = math.floor(player_y_display -  tilesize * (mob.y - player.y))
+      mob.update_position()
+      pygame.draw.rect(display, (0, 0, 0), [x, y, mob.w * tilesize, mob.h * tilesize])
 
     #check player direction
 

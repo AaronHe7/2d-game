@@ -109,10 +109,4 @@ class Player:
             self.on_ground = True
             self.vx /= self.vxmultiplier
     
-
-
-
-
-
-
-  
+player = Player(0, 4, tilemap)
