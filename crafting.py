@@ -11,7 +11,7 @@ class Crafting:
                               [empty, empty, empty],
                               [empty, empty, empty]]
 
-        self.fuels = {3 : 150, 4 : 10, 6 : 25, 200 : 10}
+        self.fuels = {3 : 150, 4 : 10, 6 : 25, 200 : 10, 206: 500}
         
         self.resultant = empty #the resultant from the crafting table
         self.recipes = compile_recipes()

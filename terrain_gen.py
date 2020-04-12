@@ -2,7 +2,7 @@ import random, math
 from block import *
 from assets import *
 
-seed = 239427
+seed = 2323
 
 class Terrain:
     def __init__(self):

@@ -8,6 +8,7 @@ class Item:
         self.amount = amount #the amount of the item
         self.velx = 0 #used for entity drops
         self.vely = 0 #etc
+        self.nbt_tags = {}
         if self.id <= 100: #if the item is a block, it has no tooltype and has a hit multiplier of 1
             self.hit_multiplier = 1
             self.type = 'block'

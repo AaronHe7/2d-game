@@ -14,8 +14,6 @@ player.inventory[0][0] = Item(12, amount = 64)
 player.inventory[0][1] = Item(259)
 player.inventory[0][2] = Item(8, amount = 64)
 mobs = []
-zombie = Zombie(0, 5, tilemap)
-mobs.append(zombie)
 
 while 1:
     pygame_events = pygame.event.get()
@@ -111,6 +109,10 @@ while 1:
                     if 'furnace' not in tilemap[x][y].nbt_tags:
                         tilemap[x][y].nbt_tags['furnace'] = {'fuel' : player.empty, 'smelt' : player.empty, 'resultant' : player.empty, 'fuel_amount' : 0, 'progress' : 0, 'currently_cooking' : player.empty}
                     current_furnace = tilemap[x][y].nbt_tags['furnace']
+                    if current_furnace['progress'] > 0:
+                        tilemap[x][y].id = 14
+                    else:
+                        tilemap[x][y].id = 12
                     if current_furnace['fuel'].id in crafting.fuels:
                         if frame%60 == 0:
                             current_furnace['fuel'].amount -= 1
@@ -146,10 +148,10 @@ while 1:
                 tilemap[x][y].frames_since_last_touched += 1
     
     for mob in mobs:
-      x = math.floor(player_x_display + tilesize * (mob.x - player.x))
-      y = math.floor(player_y_display -  tilesize * (mob.y - player.y))
-      mob.update_position()
-      pygame.draw.rect(display, (0, 0, 0), [x, y, mob.w * tilesize, mob.h * tilesize])
+        x = math.floor(player_x_display + tilesize * (mob.x - player.x))
+        y = math.floor(player_y_display -  tilesize * (mob.y - player.y))
+        mob.update_position()
+        pygame.draw.rect(display, (0, 0, 0), [x, y, mob.w * tilesize, mob.h * tilesize])
 
     #check player direction
 
@@ -176,6 +178,7 @@ while 1:
                 elif locator[-1] == False:
                     player.inventory[locator[0]][locator[1]] = drop
             else:
+                pass
                 drop.velx = -(drop.location[0] - 640 - tilesize // 20)
                 drop.vely = (drop.location[1] - 360)
                 drop.location[0] += math.floor(drop.velx / 20)
@@ -245,7 +248,7 @@ while 1:
             for column in range(len(player.inventory[row])):
                 if player.inventory[row][column].id != 0:
                     if player.inventory[row][column].amount < 1:
-                        empty = Item(0, [-tilesize, -tilesize])
+                        empty = Item(0)
                         player.inventory[row][column] = empty
                     display.blit(mini_textures[player.inventory[row][column].id], (549 + column * 43, 157 + row * 43))
                     text = font.render(str(math.floor(player.inventory[row][column].amount)), True, (255, 255, 255))
@@ -357,7 +360,7 @@ while 1:
             for column in range(len(player.inventory[row])):
                 if player.inventory[row][column].id != 0:
                     if player.inventory[row][column].amount < 1:
-                        empty = Item(0, [-tilesize, -tilesize])
+                        empty = Item(0)
                         player.inventory[row][column] = empty
                     display.blit(mini_textures[player.inventory[row][column].id], (549 + column * 43, 157 + row * 43))
                     text = font.render(str(math.floor(player.inventory[row][column].amount)), True, (255, 255, 255))
@@ -461,7 +464,7 @@ while 1:
     if current_menu == None:
         #check if mouse 1 or mouse 2 is clicked, removing or building blocks.
         if mouse[0] or mouse[2]:
-            if frame % 4 == 0:
+            if frame % 5 == 0:
                 player.handstate %= 7
                 player.handstate += 1
             if mouse[0]:
@@ -518,7 +521,7 @@ while 1:
                                 tilemap[mousex][mousey] = blocks[player.inhand.id].get_copy()
                                 player.inhand.amount -= 1
         else:
-            if player.handstate > 0 and frame%4 == 1:
+            if player.handstate > 0 and frame%5 == 1:
                 player.handstate += 1
             if player.handstate > 7:
                 player.handstate = 0
@@ -527,10 +530,24 @@ while 1:
 
     display.blit(hotbar, (1060, 4))
 
+    if player.handstate > 0 and player.inhand.id >= 200:
+        if player.direction[0] == 1:
+            angle = -player.handstate * 180/6 - 270
+            temp_item = pygame.transform.rotate(mini_textures[player.inhand.id], angle)
+            temp_item_offset_x = 60/9 * (-(player.handstate - 4) ** 2 + 9)
+            temp_item_offset_y = player.handstate * 20
+            display.blit(temp_item, (629 + temp_item_offset_x - int(temp_item.get_width() / 2), 280 + temp_item_offset_y - int(temp_item.get_height() / 2)))
+        else:
+            angle = -(-player.handstate * 180/6)
+            temp_item = pygame.transform.rotate(mini_textures[player.inhand.id], angle)
+            temp_item_offset_x = 60/9 * (-(player.handstate - 4) ** 2 + 9) * -1
+            temp_item_offset_y = player.handstate * 20
+            display.blit(temp_item, (641 + temp_item_offset_x - int(temp_item.get_width() / 2), 280 + temp_item_offset_y - int(temp_item.get_height() / 2)))
+
     for column in range(len(player.inventory[0])):
         if player.inventory[0][column].id != 0:
             if player.inventory[0][column].amount < 1:
-                empty = Item(0, [-tilesize, -tilesize])
+                empty = Item(0)
                 player.inventory[0][column] = empty
             display.blit(mini_textures[player.inventory[0][column].id], (1067 + column * 43, 11))
             text = font.render(str(math.floor(player.inventory[0][column].amount)), True, (255, 255, 255))
@@ -544,7 +561,6 @@ while 1:
     display.blit(highlighted, (1061 + (player.highlighted) * 43, 5))
 
     frame += 1
-
 
     player.update_position()
     player.update_vitals(frame)
