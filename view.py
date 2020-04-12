@@ -464,7 +464,7 @@ while 1:
     if current_menu == None:
         #check if mouse 1 or mouse 2 is clicked, removing or building blocks.
         if mouse[0] or mouse[2]:
-            if frame % 5 == 0:
+            if frame % 4 == 0:
                 player.handstate %= 7
                 player.handstate += 1
             if mouse[0]:
@@ -521,7 +521,7 @@ while 1:
                                 tilemap[mousex][mousey] = blocks[player.inhand.id].get_copy()
                                 player.inhand.amount -= 1
         else:
-            if player.handstate > 0 and frame%5 == 1:
+            if player.handstate > 0 and frame%4 == 1:
                 player.handstate += 1
             if player.handstate > 7:
                 player.handstate = 0
@@ -530,19 +530,16 @@ while 1:
 
     display.blit(hotbar, (1060, 4))
 
-    if player.handstate > 0 and player.inhand.id >= 200:
-        if player.direction[0] == 1:
-            angle = -player.handstate * 180/6 - 270
-            temp_item = pygame.transform.rotate(mini_textures[player.inhand.id], angle)
-            temp_item_offset_x = 60/9 * (-(player.handstate - 4) ** 2 + 9)
-            temp_item_offset_y = player.handstate * 20
-            display.blit(temp_item, (629 + temp_item_offset_x - int(temp_item.get_width() / 2), 280 + temp_item_offset_y - int(temp_item.get_height() / 2)))
+    if player.handstate > 0:
+        if player.inhand.id < 200:
+            temp_item = pygame.transform.flip(mini_textures[player.inhand.id], 1, 0)
+            display.blit(temp_item, (mouse_location[0] - int(temp_item.get_width() / 2) + 30, mouse_location[1] - int(temp_item.get_height() / 2) + 30))
         else:
             angle = -(-player.handstate * 180/6)
             temp_item = pygame.transform.rotate(mini_textures[player.inhand.id], angle)
             temp_item_offset_x = 60/9 * (-(player.handstate - 4) ** 2 + 9) * -1
             temp_item_offset_y = player.handstate * 20
-            display.blit(temp_item, (641 + temp_item_offset_x - int(temp_item.get_width() / 2), 280 + temp_item_offset_y - int(temp_item.get_height() / 2)))
+            display.blit(temp_item, (mouse_location[0] - int(temp_item.get_width() / 2) + 30, mouse_location[1] - int(temp_item.get_height() / 2) + 30))
 
     for column in range(len(player.inventory[0])):
         if player.inventory[0][column].id != 0:

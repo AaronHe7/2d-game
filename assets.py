@@ -107,11 +107,12 @@ load_block(6, 'wood_planks', 10, ['axe', 0])
 load_block(7, 'bedrock', float('inf'), ['none', 0])
 load_block(8, 'iron_ore', 20, ['pickaxe', 1], exact_tool_required = True)
 load_block(9, 'coal_ore', 20, ['pickaxe', 0], exact_tool_required = True, dropid = 206)
-load_block(10, 'diamond_ore', 30, ['pickaxe', 2], exact_tool_required = True)
+load_block(10, 'diamond_ore', 30, ['pickaxe', 2], exact_tool_required = True, dropid = 205)
 load_block(11, 'bloodstone_ore', 50, ['pickaxe', 3], exact_tool_required = True)
 load_block(12, 'furnace', 20, ['pickaxe', 0], exact_tool_required = True)
 load_block(13, 'wood_wall', 10, ['axe', 0], pass_through = True)
 load_block(14, 'furnace_lit', 20, ['pickaxe', 0], exact_tool_required = True)
+load_block(15, 'chest', 10, ['axe', 0])
 
 #tooltype : the type of tool and the tier it is
 #number after name : the hit multiplier of the item when hitting the correct type of block
