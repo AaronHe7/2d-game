@@ -13,6 +13,7 @@ gui = Gui()
 player.inventory[0][0] = Item(12, amount = 64)
 player.inventory[0][1] = Item(259)
 player.inventory[0][2] = Item(8, amount = 64)
+player.inventory[0][3] = Item(11, amount = 64)
 mobs = []
 
 while 1:
@@ -120,7 +121,7 @@ while 1:
                             if current_furnace['fuel'].amount < 1:
                                 current_furnace['fuel'] = player.empty
 
-                    if current_furnace['smelt'].id in crafting.furnace_recipes:
+                    if current_furnace['smelt'].id in crafting.furnace_recipes and current_furnace['fuel_amount'] > 0:
                         if current_furnace['progress'] == 0:
                             current_furnace['smelt'].amount -= 1
                             current_furnace['currently_cooking'] = current_furnace['smelt']

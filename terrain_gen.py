@@ -47,7 +47,6 @@ class Terrain:
         elif y < self.bedrock_level: # void
             block = blocks[0]
 
-
         tilemap[x][y] = block.get_copy()
 
         # Generate tree at random

@@ -113,6 +113,7 @@ load_block(12, 'furnace', 20, ['pickaxe', 0], exact_tool_required = True)
 load_block(13, 'wood_wall', 10, ['axe', 0], pass_through = True)
 load_block(14, 'furnace_lit', 20, ['pickaxe', 0], exact_tool_required = True)
 load_block(15, 'chest', 10, ['axe', 0])
+load_block(16, 'stone_wall', 20, ['pickaxe', 0], exact_tool_required = True)
 
 #tooltype : the type of tool and the tier it is
 #number after name : the hit multiplier of the item when hitting the correct type of block
