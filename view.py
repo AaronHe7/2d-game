@@ -15,6 +15,8 @@ player.inventory[0][1] = Item(259)
 player.inventory[0][2] = Item(8, amount = 64)
 player.inventory[0][3] = Item(11, amount = 64)
 mobs = []
+zombie = Zombie(player.x, player.y, tilemap)
+#mobs.append(zombie)
 
 while 1:
     pygame_events = pygame.event.get()
