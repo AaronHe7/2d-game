@@ -18,6 +18,7 @@ class Block:
         self.exact_tool_required = exact_tool_required
         self.nbt_tags = {}
     def reduce_durability(self, multiplier = 1):
+        self.durability = 0
         self.durability -= self.destroy_rate * multiplier
         self.durability = max(self.durability, 0)
         if self.durability == 0:
