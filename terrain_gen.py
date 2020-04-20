@@ -99,17 +99,15 @@ class Terrain:
     def generate_beach(self, x, y, length, height):
         beach = {}
         for i in range(length):
-            if i not in beach:
-                beach[i] = {}
-            if y != height:
+            if x + i not in beach:
+                beach[x + i] = {}
+            for j in range(height):
                 if i == 0:
-                    beach[i][y] = blocks['sand']
+                    beach[x + i][y - j] = blocks['sand']
                 elif i == length - 1:
-                    beach[i][y] = blocks['sand']
+                    beach[x + i][y - j] = blocks['sand']
                 else:
-                    beach[i][y] = blocks['water']
-            if y == height:
-                beach[i][y] == blocks['sand']
+                    beach[x + i][y - j] = blocks['water']
         return beach
         
     def generate_tree(self, x, y, height):
