@@ -129,7 +129,7 @@ while 1:
                                 current_furnace['smelt'] = player.empty
                             current_furnace['progress'] += 1
 
-                    if current_furnace['progress'] > 0 and frame%15 == 0 and current_furnace['fuel_amount'] > 0: #change here to reduce / increase time of cooking
+                    if current_furnace['progress'] > 0 and frame%10 == 0 and current_furnace['fuel_amount'] > 0: #change here to reduce / increase time of cooking
                         current_furnace['progress'] += 1
                         current_furnace['fuel_amount'] -= 1
 

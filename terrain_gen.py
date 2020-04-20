@@ -2,7 +2,7 @@ import random, math
 from block import *
 from assets import *
 
-seed = 2323
+seed = 2324
 
 class Terrain:
     def __init__(self):
@@ -49,6 +49,15 @@ class Terrain:
 
         tilemap[x][y] = block.get_copy()
 
+        # Generate Beach at Random
+        if y == surface_level and random.randint(0, 45) == 0:
+            beach = self.generate_beach(x, y, random.randint(4, 10), 4)
+            for x in beach:
+                if x not in tilemap:
+                    tilemap[x] = {}
+                for y in beach[x]:
+                    tilemap[x][y] = beach[x][y].get_copy()
+
         # Generate tree at random
         if y == surface_level and random.randint(0, 15) == 0:
             tree = self.generate_tree(x, y + 1, random.randint(6, 11))
@@ -86,6 +95,22 @@ class Terrain:
                 surface_level += 1
             else:
                 surface_level -= 1
+
+    def generate_beach(self, x, y, length, height):
+        beach = {}
+        for i in range(length):
+            if i not in beach:
+                beach[i] = {}
+            if y != height:
+                if i == 0:
+                    beach[i][y] = blocks['sand']
+                elif i == length - 1:
+                    beach[i][y] = blocks['sand']
+                else:
+                    beach[i][y] = blocks['water']
+            if y == height:
+                beach[i][y] == blocks['sand']
+        return beach
         
     def generate_tree(self, x, y, height):
         tree = {}
