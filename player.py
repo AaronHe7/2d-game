@@ -30,6 +30,7 @@ class Player:
         self.inhand = 0
         self.highlighted = 0
         self.empty = Item(0, amount='')
+        self.armor = [self.empty, self.empty, self.empty, self.empty]
         for row in range(len(self.inventory)):
             for column in range(len(self.inventory[row])):
                 self.inventory[row][column] = self.empty

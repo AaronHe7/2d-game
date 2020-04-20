@@ -93,10 +93,10 @@ while 1:
                 keys_down[pygame.K_TAB] = 1
 
 
-    x_start = math.floor(player.x - ((width/2)//tilesize)) - 5
-    x_end = math.floor(player.x + ((width/2)//tilesize)) + 5
-    y_start = math.floor(player.y - ((height/2)//tilesize)) - 5
-    y_end = math.floor(player.y + ((height/2)//tilesize)) + 5
+    x_start = math.floor(player.x - ((width/2)//tilesize)) - 10
+    x_end = math.floor(player.x + ((width/2)//tilesize)) + 10
+    y_start = math.floor(player.y - ((height/2)//tilesize)) - 10
+    y_end = math.floor(player.y + ((height/2)//tilesize)) + 10
 
     for x in range(x_start, x_end):
         for y in range(y_start, y_end):
@@ -329,6 +329,7 @@ while 1:
 
         inventory_mouse_location = [(mouse_location[0] - 544) // 43, (mouse_location[1] - 152) // 43]
         crafting_mouse_location = [(mouse_location[0] - 387) // 43, (mouse_location[1] - 152) // 43]
+        armor_mouse_location = [(mouse_location[0] - 762) // 43, 0]
 
         display.blit(dimming_overlay, (0, 0))
         display.blit(inventory_background, (340, 100))
@@ -339,6 +340,10 @@ while 1:
         display.blit(legs_model, (825, 175))
         display.blit(player_model, (825, 175))
         display.blit(inventory_square, (430, 352))
+        display.blit(inventory_square, (760, 279))
+        display.blit(inventory_square, (803, 279))
+        display.blit(inventory_square, (846, 279))
+        display.blit(inventory_square, (889, 279))
 
         #make sure the player is not stuck in a swinging animation when tab is pressed
 

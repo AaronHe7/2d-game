@@ -51,7 +51,7 @@ class Terrain:
 
         # Generate Beach at Random
         if y == surface_level and random.randint(0, 45) == 0:
-            beach = self.generate_beach(x, y, random.randint(4, 10), 4)
+            beach = self.generate_beach(x, y, random.randint(4, 10), random.randint(1,4))
             for x in beach:
                 if x not in tilemap:
                     tilemap[x] = {}
@@ -102,12 +102,15 @@ class Terrain:
             if x + i not in beach:
                 beach[x + i] = {}
             for j in range(height):
-                if i == 0:
-                    beach[x + i][y - j] = blocks['sand']
-                elif i == length - 1:
-                    beach[x + i][y - j] = blocks['sand']
+                if j < height - 1:
+                    if i == 0:
+                        beach[x + i][y - j] = blocks['sand']
+                    elif i == length - 1:
+                        beach[x + i][y - j] = blocks['sand']
+                    else:
+                        beach[x + i][y - j] = blocks['water']
                 else:
-                    beach[x + i][y - j] = blocks['water']
+                    beach[x + i][y - j] = blocks['sand']
         return beach
         
     def generate_tree(self, x, y, height):
