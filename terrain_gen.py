@@ -10,7 +10,7 @@ class Terrain:
         self.blocks_since_cave = 0
         self.bedrock_level = -100
     def generate(self, x, y):
-        random.seed((seed + 13441 * x + 13331 * y) % (10**9+7))
+        random.seed((seed + 98479 * x + 98491 * y) % (10**9+7))
         if (x in tilemap and y in tilemap[x]):
             return
         surface_level = self.surface_level

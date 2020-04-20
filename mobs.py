@@ -12,6 +12,8 @@ class Creature:
         self.ay = 0
         self.hp = 20
 
+  def contains(self, x, y):
+    return x >= self.x and x <= self.x + self.w and y >= self.y - self.h and y <= self.y
   def update_position(self):
       self.x += self.vx
       self.y += self.vy

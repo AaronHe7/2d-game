@@ -16,7 +16,7 @@ player.inventory[0][2] = Item(8, amount = 64)
 player.inventory[0][3] = Item(11, amount = 64)
 mobs = []
 zombie = Zombie(player.x, player.y, tilemap)
-#mobs.append(zombie)
+mobs.append(zombie)
 
 while 1:
     pygame_events = pygame.event.get()
@@ -155,7 +155,13 @@ while 1:
         y = math.floor(player_y_display -  tilesize * (mob.y - player.y))
         mob.update_position()
         pygame.draw.rect(display, (0, 0, 0), [x, y, mob.w * tilesize, mob.h * tilesize])
-
+        cursorx = player.x + (mouse_location[0] - player_x_display)/tilesize
+        cursory = player.y - (mouse_location[1] - player_y_display)/tilesize
+        if mouse_down[0] and (mob.x - player.x) ** 2 + (mob.y - player.y) ** 2 <= break_radius ** 2 and mob.contains(cursorx, cursory):
+            mob.hp -= 10
+            if (mob.hp <= 0):
+                mobs.remove(mob)
+                del mob
     #check player direction
 
     if player.vx > 0:
