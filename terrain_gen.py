@@ -90,11 +90,11 @@ class Terrain:
             self.blocks_since_cave += 1
 
         # Increase or decrease surface level at random
-        if y == surface_level + 1 and random.randint(0, 20) == 0:
+        if y == surface_level + 1 and random.randint(0, 10) == 0:
             if random.randint(0, 1) == 1:
-                surface_level += 1
+                self.surface_level += 1
             else:
-                surface_level -= 1
+                self.surface_level -= 1
 
     def generate_beach(self, x, y, length, height):
         beach = {}
@@ -104,13 +104,13 @@ class Terrain:
             for j in range(height):
                 if j < height - 1:
                     if i == 0:
-                        beach[x + i][y - j] = blocks['sand']
+                        beach[x + i][y - j] = blocks['clay']
                     elif i == length - 1:
-                        beach[x + i][y - j] = blocks['sand']
+                        beach[x + i][y - j] = blocks['clay']
                     else:
                         beach[x + i][y - j] = blocks['water']
                 else:
-                    beach[x + i][y - j] = blocks['sand']
+                    beach[x + i][y - j] = blocks['clay']
         return beach
         
     def generate_tree(self, x, y, height):

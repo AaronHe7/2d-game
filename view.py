@@ -14,6 +14,7 @@ player.inventory[0][0] = Item(12, amount = 64)
 player.inventory[0][1] = Item(259)
 player.inventory[0][2] = Item(8, amount = 64)
 player.inventory[0][3] = Item(11, amount = 64)
+player.inventory[0][4] = Item(3, amount = 64)
 mobs = []
 zombie = Zombie(player.x, player.y, tilemap)
 mobs.append(zombie)
@@ -499,12 +500,14 @@ while 1:
                         # Set block to air when destroyed
                         tilemap[mousex][mousey] = blocks[0]
                         if block.exact_tool_required == False:
-                            drop = Item(block.dropid, [mouse_location[0], mouse_location[1]])
-                            entities_group.append(drop)
-                        else:
-                            if block.required_tool[0] == player.inhand.tooltype[0] and block.required_tool[1] <= player.inhand.tooltype[1]:
+                            if random.random() < block.dropchance:
                                 drop = Item(block.dropid, [mouse_location[0], mouse_location[1]])
                                 entities_group.append(drop)
+                        else:
+                            if block.required_tool[0] == player.inhand.tooltype[0] and block.required_tool[1] <= player.inhand.tooltype[1]:
+                                if random.random() < block.dropchance:
+                                    drop = Item(block.dropid, [mouse_location[0], mouse_location[1]])
+                                    entities_group.append(drop)
 
             # if the player clicks right click and is holding a block then check if it can be placed
             if mouse[2]:

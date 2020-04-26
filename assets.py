@@ -44,8 +44,8 @@ fog_of_war_textures = {}
 item_name_to_id = {}
 block_name_to_id = {}
 
-def load_block(id, name, durability, required_tool, transparency = False, exact_tool_required = False, pass_through = False, dropid = 'self'):
-    block = Block(id, name, durability, required_tool, exact_tool_required = exact_tool_required, pass_through = pass_through, dropid = dropid)
+def load_block(id, name, durability, required_tool, transparency = False, exact_tool_required = False, pass_through = False, dropid = 'self', dropchance = 1):
+    block = Block(id, name, durability, required_tool, exact_tool_required = exact_tool_required, pass_through = pass_through, dropid = dropid, dropchance = dropchance)
     blocks[id] = block
     blocks[name] = block
     block_name_to_id[name] = id
@@ -95,13 +95,14 @@ blocks[0].pass_through = True
 #transparency : whether or not the block has transparency
 #exact_tool_required : if this is true, the block will not drop the dropid item unless the correct tool is used. if unspecified it will always drop the item even if the wrong tool is used
 #pass_through : if the block can be passed through by the player.
+#drop chance : float for the chance that the block drops the dropid item
 
 #required parameters are ID, NAME, DURABILITY, and REQUIRED_TOOL
 
 load_block(1, 'grass', 5, ['shovel', 0])
 load_block(2, 'dirt', 5, ['shovel', 0])
 load_block(3, 'wood', 10, ['axe', 0])
-load_block(4, 'leaves', 3, ['none', 0], transparency = True, exact_tool_required = True)
+load_block(4, 'leaves', 3, ['none', 0], transparency = True, dropid = 208, dropchance = 0.02)
 load_block(5, 'stone', 20, ['pickaxe', 0], exact_tool_required = True)
 load_block(6, 'wood_planks', 10, ['axe', 0])
 load_block(7, 'bedrock', float('inf'), ['none', 0])
@@ -117,6 +118,9 @@ load_block(16, 'stone_wall', 20, ['pickaxe', 0], exact_tool_required = True, pas
 load_block(17, 'glass', 4, ['none', 0], transparency = True, exact_tool_required = True)
 load_block(18, 'sand', 5, ['shovel', 0])
 load_block(19, 'water', 1, ['none', 0], pass_through = True, transparency = True)
+load_block(20, 'oak_door_top', 10, ['axe', 0], pass_through = True, transparency = True)
+load_block(21, 'oak_door_bottom', 10, ['axe', 0], pass_through = True)
+load_block(22, 'clay', 5, ['shovel', 0])
 
 #tooltype : the type of tool and the tier it is
 #number after name : the hit multiplier of the item when hitting the correct type of block
@@ -128,6 +132,8 @@ load_item(203, 'bloodstone_ingot')
 load_item(204, 'ash')
 load_item(205, 'diamond')
 load_item(206, 'coal')
+load_item(207, 'rotten_flesh')
+load_item(208, 'apple')
 
 load_item(256, 'wooden_pickaxe', 2, tooltype = ['pickaxe', 0])
 load_item(257, 'stone_pickaxe', 3, tooltype = ['pickaxe', 1])

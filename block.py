@@ -1,7 +1,7 @@
 import pygame, copy 
 
 class Block:
-    def __init__(self, id, name, durability, required_tool, exact_tool_required = False, pass_through = False, dropid = 'self', use = None):
+    def __init__(self, id, name, durability, required_tool, exact_tool_required = False, pass_through = False, dropid = 'self', use = None, dropchance = 1):
         self.id = id
         if dropid == 'self':
             self.dropid = id
@@ -17,6 +17,7 @@ class Block:
         self.destroy_rate = 0.075
         self.exact_tool_required = exact_tool_required
         self.nbt_tags = {}
+        self.dropchance = dropchance
     def reduce_durability(self, multiplier = 1):
         self.durability = 0
         self.durability -= self.destroy_rate * multiplier

@@ -1,5 +1,7 @@
 stone stone stone stone 0 stone stone stone stone -> furnace
 wood_planks wood_planks wood_planks wood_planks 0 wood_planks wood_planks wood_planks wood_planks -> chest
+wood_planks wood_planks wood_planks wood_planks 0 wood_planks wood_planks 0 wood_planks -> oak_door_top
+wood_planks 0 wood_planks wood_planks wood_planks wood_planks wood_planks wood_planks wood_planks -> oak_door_bottom
 
 wood 0 0 0 0 0 0 0 0 -> 4 wood_planks
 wood_planks 0 0 wood_planks 0 0 0 0 0 -> 4 stick
@@ -18,4 +20,5 @@ iron_ingot iron_ingot iron_ingot 0 stick 0 0 stick 0 -> iron_pickaxe
 diamond diamond diamond 0 stick 0 0 stick 0 -> diamond_pickaxe
 
 stone stone stone stone stone stone stone stone stone -> 18 stone_wall
+wood_planks wood_planks wood_planks wood_planks wood_planks wood_planks wood_planks wood_planks wood_planks -> 18 wood_wall
 
